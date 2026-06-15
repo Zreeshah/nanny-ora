@@ -1,11 +1,10 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db/prisma";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma) as any,
+  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "nannyora-dev-secret-change-in-production",
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
@@ -68,6 +67,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         token.role = (user as any).role;
       }
       return token;
@@ -75,6 +75,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (session.user as any).role = token.role as string;
       }
       return session;
