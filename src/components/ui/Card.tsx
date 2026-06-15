@@ -1,0 +1,44 @@
+import { cn } from "@/lib/utils";
+
+interface CardProps {
+  children: React.ReactNode;
+  className?: string;
+  hover?: boolean;
+  padding?: "none" | "sm" | "md" | "lg";
+  id?: string;
+}
+
+export function Card({ children, className, hover = false, padding = "md", id }: CardProps) {
+  const paddings = {
+    none: "",
+    sm: "p-4",
+    md: "p-6",
+    lg: "p-8",
+  };
+
+  return (
+    <div
+      id={id}
+      className={cn(
+        "bg-card rounded-2xl border border-border/40 shadow-card",
+        hover && "transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-card-hover hover:-translate-y-1 hover:border-border/80",
+        paddings[padding],
+        className
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
+export function CardHeader({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <div className={cn("mb-4", className)}>{children}</div>;
+}
+
+export function CardTitle({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <h3 className={cn("text-lg font-semibold text-foreground", className)}>{children}</h3>;
+}
+
+export function CardDescription({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <p className={cn("text-sm text-muted-foreground", className)}>{children}</p>;
+}

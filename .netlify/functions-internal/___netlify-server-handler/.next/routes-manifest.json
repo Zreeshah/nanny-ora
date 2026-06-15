@@ -1,0 +1,208 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "onMatchHeaders": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/api/auth/[...nextauth]",
+      "regex": "^/api/auth/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPnextauth": "nxtPnextauth"
+      },
+      "namedRegex": "^/api/auth/(?<nxtPnextauth>.+?)(?:/)?$"
+    },
+    {
+      "page": "/nannies/auckland/[suburb]",
+      "regex": "^/nannies/auckland/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPsuburb": "nxtPsuburb"
+      },
+      "namedRegex": "^/nannies/auckland/(?<nxtPsuburb>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/nannies/[id]",
+      "regex": "^/nannies/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/nannies/(?<nxtPid>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/admin",
+      "regex": "^/admin(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin(?:/)?$"
+    },
+    {
+      "page": "/admin/enquiries",
+      "regex": "^/admin/enquiries(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/enquiries(?:/)?$"
+    },
+    {
+      "page": "/admin/jobs",
+      "regex": "^/admin/jobs(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/jobs(?:/)?$"
+    },
+    {
+      "page": "/admin/nannies",
+      "regex": "^/admin/nannies(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/nannies(?:/)?$"
+    },
+    {
+      "page": "/apply-as-nanny",
+      "regex": "^/apply\\-as\\-nanny(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/apply\\-as\\-nanny(?:/)?$"
+    },
+    {
+      "page": "/dashboard/nanny",
+      "regex": "^/dashboard/nanny(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/nanny(?:/)?$"
+    },
+    {
+      "page": "/dashboard/parent",
+      "regex": "^/dashboard/parent(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/parent(?:/)?$"
+    },
+    {
+      "page": "/ece-nanny-auckland",
+      "regex": "^/ece\\-nanny\\-auckland(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/ece\\-nanny\\-auckland(?:/)?$"
+    },
+    {
+      "page": "/favicon.ico",
+      "regex": "^/favicon\\.ico(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/favicon\\.ico(?:/)?$"
+    },
+    {
+      "page": "/find-a-nanny",
+      "regex": "^/find\\-a\\-nanny(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/find\\-a\\-nanny(?:/)?$"
+    },
+    {
+      "page": "/how-it-works",
+      "regex": "^/how\\-it\\-works(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/how\\-it\\-works(?:/)?$"
+    },
+    {
+      "page": "/login",
+      "regex": "^/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/login(?:/)?$"
+    },
+    {
+      "page": "/nannies/auckland",
+      "regex": "^/nannies/auckland(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/nannies/auckland(?:/)?$"
+    },
+    {
+      "page": "/neurodiverse-childcare-auckland",
+      "regex": "^/neurodiverse\\-childcare\\-auckland(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/neurodiverse\\-childcare\\-auckland(?:/)?$"
+    },
+    {
+      "page": "/post-a-job",
+      "regex": "^/post\\-a\\-job(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/post\\-a\\-job(?:/)?$"
+    },
+    {
+      "page": "/pricing",
+      "regex": "^/pricing(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/pricing(?:/)?$"
+    },
+    {
+      "page": "/register-family",
+      "regex": "^/register\\-family(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/register\\-family(?:/)?$"
+    },
+    {
+      "page": "/sensory-aware-nanny-auckland",
+      "regex": "^/sensory\\-aware\\-nanny\\-auckland(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/sensory\\-aware\\-nanny\\-auckland(?:/)?$"
+    },
+    {
+      "page": "/specialist-childcare-auckland",
+      "regex": "^/specialist\\-childcare\\-auckland(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/specialist\\-childcare\\-auckland(?:/)?$"
+    },
+    {
+      "page": "/trust-and-safety",
+      "regex": "^/trust\\-and\\-safety(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/trust\\-and\\-safety(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}
