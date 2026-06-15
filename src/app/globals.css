@@ -80,6 +80,18 @@
   --font-heading: var(--font-heading), Georgia, serif;
   --font-body: var(--font-body), system-ui, sans-serif;
 
+  /* Global typography scale adjustment — premium, larger, highly readable fonts */
+  --text-xs: 0.8125rem;       /* ~13px */
+  --text-sm: 0.9375rem;       /* ~15px */
+  --text-base: 1.0625rem;     /* ~17px */
+  --text-lg: 1.1875rem;       /* ~19px */
+  --text-xl: 1.3125rem;       /* ~21px */
+  --text-2xl: 1.625rem;       /* ~26px */
+  --text-3xl: 2rem;           /* ~32px */
+  --text-4xl: 2.625rem;       /* ~42px */
+  --text-5xl: 3.25rem;        /* ~52px */
+  --text-6xl: 4rem;           /* ~64px */
+
   --shadow-card: var(--shadow-sm);
   --shadow-card-hover: var(--shadow-md);
   --shadow-elevated: var(--shadow-lg);
@@ -104,6 +116,7 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-body);
+  font-size: var(--text-base);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -112,6 +125,10 @@ body {
 /* ============================================================
    Typography
    ============================================================ */
+
+p {
+  font-size: var(--text-base);
+}
 
 h1, h2, h3, h4 {
   font-family: var(--font-heading);
