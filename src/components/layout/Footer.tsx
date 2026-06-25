@@ -58,7 +58,7 @@ export function Footer() {
               <img
                 src="/logo.jpg"
                 alt="NannyOra"
-                className="h-10 w-auto rounded-md shadow-sm"
+                className="h-12 w-auto rounded-md shadow-sm"
               />
             </div>
 

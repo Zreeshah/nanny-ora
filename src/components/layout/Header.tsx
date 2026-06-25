@@ -38,7 +38,7 @@ export function Header() {
             <img
               src="/logo.jpg"
               alt="NannyOra"
-              className="h-10 w-auto rounded-md shadow-sm transition-transform duration-200 group-hover:scale-[1.02]"
+              className="h-12 w-auto rounded-md shadow-sm transition-transform duration-200 group-hover:scale-[1.02]"
             />
           </Link>
 
