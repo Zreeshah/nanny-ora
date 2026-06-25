@@ -8,25 +8,25 @@
 
 :root {
   /* Core palette — Modern Premium Design System */
-  --background: #FDFCF7;
-  --foreground: #122A25;
-  --primary: #0E4B3E;
-  --primary-light: #166656;
-  --primary-dark: #073027;
+  --background: #FDFBF7;
+  --foreground: #0C1E36;
+  --primary: #0F2E52;
+  --primary-light: #204E7D;
+  --primary-dark: #071930;
   --primary-foreground: #FFFFFF;
-  --secondary: #F0F6F4;
-  --secondary-foreground: #122A25;
-  --accent: #DE6038;
-  --accent-light: #E87E5E;
+  --secondary: #F4EFE6;
+  --secondary-foreground: #0C1E36;
+  --accent: #B88A58;
+  --accent-light: #CC9F70;
   --accent-foreground: #FFFFFF;
-  --muted: #F6F3ED;
-  --muted-foreground: #6B7B78;
+  --muted: #F7F4EC;
+  --muted-foreground: #5B6D80;
   --card: #FFFFFF;
-  --card-foreground: #122A25;
-  --border: #EBE6DE;
-  --destructive: #DC2626;
+  --card-foreground: #0C1E36;
+  --border: #E8E2D5;
+  --destructive: #D9463E;
   --destructive-foreground: #FFFFFF;
-  --ring: #0E4B3E;
+  --ring: #0F2E52;
 
   /* Semantic badges */
   --badge-verified: #0D9488;

@@ -34,13 +34,12 @@ export function Header() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-8.5 h-8.5 rounded-full bg-primary flex items-center justify-center shadow-md shadow-primary/10 transition-transform group-hover:scale-105">
-              <span className="text-primary-foreground font-heading text-base font-bold">N</span>
-            </div>
-            <span className="font-heading text-lg font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary">
-              NannyOra
-            </span>
+          <Link href="/" className="flex items-center gap-2 group">
+            <img
+              src="/logo.jpg"
+              alt="NannyOra"
+              className="h-10 w-auto rounded-md shadow-sm transition-transform duration-200 group-hover:scale-[1.02]"
+            />
           </Link>
 
           {/* Desktop Nav */}
