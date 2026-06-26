@@ -36,9 +36,9 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <img
-              src="/logo.jpg"
+              src="/logo.png"
               alt="NannyOra"
-              className="h-12 w-auto rounded-md shadow-sm transition-transform duration-200 group-hover:scale-[1.02]"
+              className="h-14 w-auto rounded-md transition-transform duration-200 group-hover:scale-[1.02]"
             />
           </Link>
 

@@ -56,9 +56,9 @@ export function Footer() {
             {/* Logo */}
             <div className="flex items-center gap-2">
               <img
-                src="/logo.jpg"
+                src="/logo.png"
                 alt="NannyOra"
-                className="h-12 w-auto rounded-md shadow-sm"
+                className="h-14 w-auto rounded-md"
               />
             </div>
 
