@@ -87,6 +87,12 @@ export async function updateNannyProfile(
     await prisma.nannyProfile.update({
       where: { id: profile.id },
       data: {
+        user: {
+          update: {
+            ...(updates.name && { name: updates.name }),
+            ...(updates.phone !== undefined && { phone: updates.phone || null }),
+          },
+        },
         ...(updates.suburb && { suburb: updates.suburb }),
         ...(updates.areasCovered && { areasCovered: JSON.stringify(updates.areasCovered) }),
         ...(updates.yearsExperience !== undefined && { yearsExperience: updates.yearsExperience }),
