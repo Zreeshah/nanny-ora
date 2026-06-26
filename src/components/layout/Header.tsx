@@ -32,13 +32,13 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 bg-background/60 backdrop-blur-md border-b border-border/30">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between py-3 md:py-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <img
               src="/logo.png"
-              alt="NannyOra"
-              className="h-14 w-auto rounded-md transition-transform duration-200 group-hover:scale-[1.02]"
+              alt="NannyOra - Curated Care. Warm Hearts."
+              className="h-14 md:h-20 w-auto rounded-md transition-transform duration-200 group-hover:scale-[1.02]"
             />
           </Link>
 

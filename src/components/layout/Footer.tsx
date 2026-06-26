@@ -57,8 +57,8 @@ export function Footer() {
             <div className="flex items-center gap-2">
               <img
                 src="/logo.png"
-                alt="NannyOra"
-                className="h-14 w-auto rounded-md"
+                alt="NannyOra - Curated Care. Warm Hearts."
+                className="h-16 md:h-20 w-auto rounded-md"
               />
             </div>
 
