@@ -278,530 +278,522 @@ export default function ApplyAsNannyPage() {
       <Card className="rounded-3xl border-border/40 p-6 sm:p-8 bg-card shadow-sm">
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
           {/* STEP 1: Personal info & Suburb coverage */}
-          {step === 1 && (
-            <div className="space-y-6 animate-fade-in">
-              <div>
-                <h2 className="text-sm font-bold text-foreground uppercase tracking-wider mb-4 pb-2 border-b border-border/40">
-                  Personal Details
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Input name="name" label="Full Name" required placeholder="e.g. Sarah Mitchell" className="rounded-2xl" />
-                  <Input name="email" label="Email Address" type="email" required placeholder="sarah@email.com" className="rounded-2xl" />
-                  <Input name="phone" label="Phone Number" type="tel" required placeholder="021 123 4567" className="rounded-2xl" />
-                  <Select
-                    name="suburb"
-                    label="Home Suburb"
-                    required
-                    options={AUCKLAND_SUBURBS.map((s) => ({ value: s, label: s }))}
-                    placeholder="Select suburb"
-                    className="rounded-2xl"
-                  />
-                  <Input name="password" label="Choose Password" type="password" required placeholder="••••••••" className="rounded-2xl" />
-                  <Input name="confirmPassword" label="Confirm Password" type="password" required placeholder="••••••••" className="rounded-2xl" />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-foreground mb-3 uppercase tracking-wide">
-                  Suburbs You Cover <span className="text-destructive">*</span>
-                </label>
-                <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto p-2 bg-secondary/35 rounded-2xl border border-border/20">
-                  {AUCKLAND_SUBURBS.map((s) => {
-                    const isSelected = selectedSuburbs.includes(s);
-                    return (
-                      <button
-                        type="button"
-                        key={s}
-                        onClick={() => handleToggleSuburb(s)}
-                        className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full border transition-all text-xs font-semibold cursor-pointer ${
-                          isSelected
-                            ? "bg-primary/5 border-primary text-primary font-bold shadow-sm"
-                            : "bg-white border-border hover:border-primary/30 text-muted-foreground"
-                        }`}
-                      >
-                        {isSelected && <Check className="w-3 h-3 stroke-[2.5]" />}
-                        <span>{s}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-                <p className="text-[10px] text-muted-foreground mt-2">
-                  Select all Auckland suburbs you are willing to travel to.
-                </p>
-                {/* Hidden Inputs */}
-                {selectedSuburbs.map(s => (
-                  <input key={s} type="hidden" name="areasCovered" value={s} />
-                ))}
-              </div>
-
-              <div className="flex justify-end pt-4">
-                <Button type="button" variant="primary" className="rounded-full px-6" onClick={() => setStep(2)}>
-                  Next: Experience Details
-                </Button>
+          <div className={step === 1 ? "space-y-6 animate-fade-in" : "hidden"}>
+            <div>
+              <h2 className="text-sm font-bold text-foreground uppercase tracking-wider mb-4 pb-2 border-b border-border/40">
+                Personal Details
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Input name="name" label="Full Name" required placeholder="e.g. Sarah Mitchell" className="rounded-2xl" />
+                <Input name="email" label="Email Address" type="email" required placeholder="sarah@email.com" className="rounded-2xl" />
+                <Input name="phone" label="Phone Number" type="tel" required placeholder="021 123 4567" className="rounded-2xl" />
+                <Select
+                  name="suburb"
+                  label="Home Suburb"
+                  required
+                  options={AUCKLAND_SUBURBS.map((s) => ({ value: s, label: s }))}
+                  placeholder="Select suburb"
+                  className="rounded-2xl"
+                />
+                <Input name="password" label="Choose Password" type="password" required placeholder="••••••••" className="rounded-2xl" />
+                <Input name="confirmPassword" label="Confirm Password" type="password" required placeholder="••••••••" className="rounded-2xl" />
               </div>
             </div>
-          )}
 
-          {/* STEP 2: Experience & Specialties */}
-          {step === 2 && (
-            <div className="space-y-6 animate-fade-in">
-              <div>
-                <h2 className="text-sm font-bold text-foreground uppercase tracking-wider mb-4 pb-2 border-b border-border/40">
-                  Experience & Skills
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Input
-                    name="yearsExperience"
-                    label="Years of Childcare Experience"
-                    type="number"
-                    min={0}
-                    required
-                    placeholder="e.g. 5"
-                    className="rounded-2xl"
-                  />
-                  <Input
-                    name="hourlyRate"
-                    label="Hourly Rate (NZD)"
-                    type="number"
-                    min={20}
-                    max={150}
-                    required
-                    placeholder="e.g. 35"
-                    helperText="$20–$150 per hour"
-                    className="rounded-2xl"
-                  />
-                </div>
-              </div>
-
-              {/* Care Types Selection */}
-              <div>
-                <label className="block text-xs font-bold text-foreground mb-2.5 uppercase tracking-wide">
-                  Care Types You Provide <span className="text-destructive">*</span>
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {CARE_TYPES.map((ct) => {
-                    const isSelected = selectedCareTypes.includes(ct.value);
-                    return (
-                      <button
-                        type="button"
-                        key={ct.value}
-                        onClick={() => handleToggleCareType(ct.value)}
-                        className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border transition-all text-xs font-semibold cursor-pointer min-h-[40px] ${
-                          isSelected
-                            ? "bg-primary/5 border-primary text-primary font-bold shadow-sm"
-                            : "bg-white border-border hover:border-primary/30 text-muted-foreground"
-                        }`}
-                      >
-                        {isSelected && <Check className="w-3.5 h-3.5 stroke-[2.5]" />}
-                        <span>{ct.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-                {/* Hidden Inputs */}
-                {selectedCareTypes.map(ct => (
-                  <input key={ct} type="hidden" name="careTypes" value={ct} />
-                ))}
-              </div>
-
-              {/* Availability */}
-              <div>
-                <label className="block text-xs font-bold text-foreground mb-2.5 uppercase tracking-wide">
-                  Weekly Availability <span className="text-destructive">*</span>
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {AVAILABILITY_OPTIONS.map((a) => {
-                    const isSelected = selectedAvailability.includes(a.value);
-                    return (
-                      <button
-                        type="button"
-                        key={a.value}
-                        onClick={() => handleToggleAvailability(a.value)}
-                        className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border transition-all text-xs font-semibold cursor-pointer min-h-[40px] ${
-                          isSelected
-                            ? "bg-primary/5 border-primary text-primary font-bold shadow-sm"
-                            : "bg-white border-border hover:border-primary/30 text-muted-foreground"
-                        }`}
-                      >
-                        {isSelected && <Check className="w-3.5 h-3.5 stroke-[2.5]" />}
-                        <span>{a.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-                {/* Hidden Inputs */}
-                {selectedAvailability.map(a => (
-                  <input key={a} type="hidden" name="availability" value={a} />
-                ))}
-              </div>
-
-              {/* Academic qualification input */}
-              <Input name="qualifications" label="Qualifications" placeholder="e.g. Diploma in ECE, First Aid Certificate" helperText="Separate multiple credentials with commas" className="rounded-2xl" />
-
-              {/* Toggle checklist items styled as clean grid rows */}
-              <div>
-                <label className="block text-xs font-bold text-foreground mb-2.5 uppercase tracking-wide">
-                  Certifications & Background checks
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {[
-                    { state: eceExp, setter: setEceExp, label: "I have ECE / Teaching experience", name: "eceExperience" },
-                    { state: neuroExp, setter: setNeuroExp, label: "I have neurodiverse childcare experience", name: "neurodiverseExperience" },
-                    { state: firstAid, setter: setFirstAid, label: "I possess a current First Aid certificate", name: "firstAidCurrent" },
-                    { state: licence, setter: setLicence, label: "I hold a full clean driver licence", name: "driverLicence" },
-                  ].map((item) => (
+            <div>
+              <label className="block text-xs font-bold text-foreground mb-3 uppercase tracking-wide">
+                Suburbs You Cover <span className="text-destructive">*</span>
+              </label>
+              <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto p-2 bg-secondary/35 rounded-2xl border border-border/20">
+                {AUCKLAND_SUBURBS.map((s) => {
+                  const isSelected = selectedSuburbs.includes(s);
+                  return (
                     <button
                       type="button"
-                      key={item.name}
-                      onClick={() => item.setter(!item.state)}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-2xl border text-left transition-all text-xs font-semibold cursor-pointer ${
-                        item.state
-                          ? "bg-primary/5 border-primary text-primary shadow-sm"
+                      key={s}
+                      onClick={() => handleToggleSuburb(s)}
+                      className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full border transition-all text-xs font-semibold cursor-pointer ${
+                        isSelected
+                          ? "bg-primary/5 border-primary text-primary font-bold shadow-sm"
                           : "bg-white border-border hover:border-primary/30 text-muted-foreground"
                       }`}
                     >
-                      <div className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${
-                        item.state ? "bg-primary border-primary text-white" : "border-border bg-white"
-                      }`}>
-                        {item.state && <Check className="w-3 h-3 stroke-[3]" />}
-                      </div>
-                      <span>{item.label}</span>
-                      <input type="hidden" name={item.name} value={item.state ? "on" : "off"} />
+                      {isSelected && <Check className="w-3 h-3 stroke-[2.5]" />}
+                      <span>{s}</span>
                     </button>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
+              <p className="text-[10px] text-muted-foreground mt-2">
+                Select all Auckland suburbs you are willing to travel to.
+              </p>
+              {/* Hidden Inputs */}
+              {selectedSuburbs.map(s => (
+                <input key={s} type="hidden" name="areasCovered" value={s} />
+              ))}
+            </div>
 
-              {/* Specialist tags list */}
-              <div>
-                <label className="block text-xs font-bold text-foreground mb-2.5 uppercase tracking-wide">Specialist Tags</label>
-                <div className="flex flex-wrap gap-2">
-                  {SPECIALIST_TAGS.map((tag) => {
-                    const isSelected = selectedSpecialistTags.includes(tag.value);
-                    return (
-                      <button
-                        type="button"
-                        key={tag.value}
-                        onClick={() => handleToggleSpecialistTag(tag.value)}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all text-[10px] font-bold uppercase tracking-wider cursor-pointer ${
-                          isSelected
-                            ? "bg-blue-100 border-blue-300 text-badge-specialist"
-                            : "bg-white border-border hover:border-blue-200 text-muted-foreground"
-                        }`}
-                      >
-                        <span>{tag.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-                {/* Hidden Inputs */}
-                {selectedSpecialistTags.map(t => (
-                  <input key={t} type="hidden" name="specialistTags" value={t} />
-                ))}
-              </div>
+            <div className="flex justify-end pt-4">
+              <Button type="button" variant="primary" className="rounded-full px-6" onClick={() => setStep(2)}>
+                Next: Experience Details
+              </Button>
+            </div>
+          </div>
 
-              <div className="flex justify-between pt-4">
-                <Button type="button" variant="ghost" className="rounded-full" onClick={() => setStep(1)}>Back</Button>
-                <Button type="button" variant="primary" className="rounded-full px-6" onClick={() => setStep(3)}>Next: Safety Checks</Button>
+          {/* STEP 2: Experience & Specialties */}
+          <div className={step === 2 ? "space-y-6 animate-fade-in" : "hidden"}>
+            <div>
+              <h2 className="text-sm font-bold text-foreground uppercase tracking-wider mb-4 pb-2 border-b border-border/40">
+                Experience & Skills
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Input
+                  name="yearsExperience"
+                  label="Years of Childcare Experience"
+                  type="number"
+                  min={0}
+                  required
+                  placeholder="e.g. 5"
+                  className="rounded-2xl"
+                />
+                <Input
+                  name="hourlyRate"
+                  label="Hourly Rate (NZD)"
+                  type="number"
+                  min={20}
+                  max={150}
+                  required
+                  placeholder="e.g. 35"
+                  helperText="$20–$150 per hour"
+                  className="rounded-2xl"
+                />
               </div>
             </div>
-          )}
+
+            {/* Care Types Selection */}
+            <div>
+              <label className="block text-xs font-bold text-foreground mb-2.5 uppercase tracking-wide">
+                Care Types You Provide <span className="text-destructive">*</span>
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {CARE_TYPES.map((ct) => {
+                  const isSelected = selectedCareTypes.includes(ct.value);
+                  return (
+                    <button
+                      type="button"
+                      key={ct.value}
+                      onClick={() => handleToggleCareType(ct.value)}
+                      className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border transition-all text-xs font-semibold cursor-pointer min-h-[40px] ${
+                        isSelected
+                          ? "bg-primary/5 border-primary text-primary font-bold shadow-sm"
+                          : "bg-white border-border hover:border-primary/30 text-muted-foreground"
+                      }`}
+                    >
+                      {isSelected && <Check className="w-3.5 h-3.5 stroke-[2.5]" />}
+                      <span>{ct.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              {/* Hidden Inputs */}
+              {selectedCareTypes.map(ct => (
+                <input key={ct} type="hidden" name="careTypes" value={ct} />
+              ))}
+            </div>
+
+            {/* Availability */}
+            <div>
+              <label className="block text-xs font-bold text-foreground mb-2.5 uppercase tracking-wide">
+                Weekly Availability <span className="text-destructive">*</span>
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {AVAILABILITY_OPTIONS.map((a) => {
+                  const isSelected = selectedAvailability.includes(a.value);
+                  return (
+                    <button
+                      type="button"
+                      key={a.value}
+                      onClick={() => handleToggleAvailability(a.value)}
+                      className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border transition-all text-xs font-semibold cursor-pointer min-h-[40px] ${
+                        isSelected
+                          ? "bg-primary/5 border-primary text-primary font-bold shadow-sm"
+                          : "bg-white border-border hover:border-primary/30 text-muted-foreground"
+                      }`}
+                    >
+                      {isSelected && <Check className="w-3.5 h-3.5 stroke-[2.5]" />}
+                      <span>{a.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              {/* Hidden Inputs */}
+              {selectedAvailability.map(a => (
+                <input key={a} type="hidden" name="availability" value={a} />
+              ))}
+            </div>
+
+            {/* Academic qualification input */}
+            <Input name="qualifications" label="Qualifications" placeholder="e.g. Diploma in ECE, First Aid Certificate" helperText="Separate multiple credentials with commas" className="rounded-2xl" />
+
+            {/* Toggle checklist items styled as clean grid rows */}
+            <div>
+              <label className="block text-xs font-bold text-foreground mb-2.5 uppercase tracking-wide">
+                Certifications & Background checks
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {[
+                  { state: eceExp, setter: setEceExp, label: "I have ECE / Teaching experience", name: "eceExperience" },
+                  { state: neuroExp, setter: setNeuroExp, label: "I have neurodiverse childcare experience", name: "neurodiverseExperience" },
+                  { state: firstAid, setter: setFirstAid, label: "I possess a current First Aid certificate", name: "firstAidCurrent" },
+                  { state: licence, setter: setLicence, label: "I hold a full clean driver licence", name: "driverLicence" },
+                ].map((item) => (
+                  <button
+                    type="button"
+                    key={item.name}
+                    onClick={() => item.setter(!item.state)}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-2xl border text-left transition-all text-xs font-semibold cursor-pointer ${
+                      item.state
+                        ? "bg-primary/5 border-primary text-primary shadow-sm"
+                        : "bg-white border-border hover:border-primary/30 text-muted-foreground"
+                    }`}
+                  >
+                    <div className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${
+                      item.state ? "bg-primary border-primary text-white" : "border-border bg-white"
+                    }`}>
+                      {item.state && <Check className="w-3 h-3 stroke-[3]" />}
+                    </div>
+                    <span>{item.label}</span>
+                    <input type="hidden" name={item.name} value={item.state ? "on" : "off"} />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Specialist tags list */}
+            <div>
+              <label className="block text-xs font-bold text-foreground mb-2.5 uppercase tracking-wide">Specialist Tags</label>
+              <div className="flex flex-wrap gap-2">
+                {SPECIALIST_TAGS.map((tag) => {
+                  const isSelected = selectedSpecialistTags.includes(tag.value);
+                  return (
+                    <button
+                      type="button"
+                      key={tag.value}
+                      onClick={() => handleToggleSpecialistTag(tag.value)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all text-[10px] font-bold uppercase tracking-wider cursor-pointer ${
+                        isSelected
+                          ? "bg-blue-100 border-blue-300 text-badge-specialist"
+                          : "bg-white border-border hover:border-blue-200 text-muted-foreground"
+                      }`}
+                    >
+                      <span>{tag.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              {/* Hidden Inputs */}
+              {selectedSpecialistTags.map(t => (
+                <input key={t} type="hidden" name="specialistTags" value={t} />
+              ))}
+            </div>
+
+            <div className="flex justify-between pt-4">
+              <Button type="button" variant="ghost" className="rounded-full" onClick={() => setStep(1)}>Back</Button>
+              <Button type="button" variant="primary" className="rounded-full px-6" onClick={() => setStep(3)}>Next: Safety Checks</Button>
+            </div>
+          </div>
 
           {/* STEP 3: Safety & Vetting Checks */}
-          {step === 3 && (
-            <div className="space-y-6 animate-fade-in">
-              <div>
-                <h2 className="text-sm font-bold text-foreground uppercase tracking-wider mb-2 pb-2 border-b border-border/40 flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-primary" />
-                  Safety & Vetting Checks
-                </h2>
-                <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
-                  NannyOra requires all carers to complete 7 safety vetting checks aligned with NZ child safety standards. 
-                  Upload your documents below — our admin team will verify each one.
-                </p>
-              </div>
+          <div className={step === 3 ? "space-y-6 animate-fade-in" : "hidden"}>
+            <div>
+              <h2 className="text-sm font-bold text-foreground uppercase tracking-wider mb-2 pb-2 border-b border-border/40 flex items-center gap-2">
+                <Shield className="w-4 h-4 text-primary" />
+                Safety & Vetting Checks
+              </h2>
+              <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
+                NannyOra requires all carers to complete 7 safety vetting checks aligned with NZ child safety standards. 
+                Upload your documents below — our admin team will verify each one.
+              </p>
+            </div>
 
-              {/* Checks 1–5: Nanny-uploadable */}
-              <div className="space-y-4">
-                {SAFETY_CHECKS.filter(c => c.nannyUploadable).map((check) => {
+            {/* Checks 1–5: Nanny-uploadable */}
+            <div className="space-y-4">
+              {SAFETY_CHECKS.filter(c => c.nannyUploadable).map((check) => {
+                const IconComponent = CHECK_ICONS[check.key] || Shield;
+                const file = check.documentType ? uploadedFiles[check.documentType] : null;
+
+                return (
+                  <div
+                    key={check.key}
+                    className="rounded-2xl border border-border/60 bg-secondary/10 overflow-hidden transition-all hover:border-primary/30"
+                  >
+                    {/* Check header */}
+                    <div className="flex items-start gap-4 p-4 sm:p-5">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+                        <IconComponent className="w-5 h-5 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                            Check {check.number}
+                          </span>
+                          <h3 className="text-sm font-bold text-foreground leading-none">{check.title}</h3>
+                        </div>
+                        <p className="text-xs text-muted-foreground leading-relaxed mt-1.5">
+                          {check.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Upload area */}
+                    {check.documentType && (
+                      <div className="px-4 sm:px-5 pb-4 sm:pb-5">
+                        <div className={`flex items-center justify-between p-3.5 rounded-xl border border-dashed transition-all ${
+                          file
+                            ? "border-badge-verified/40 bg-emerald-50/50"
+                            : "border-border/60 bg-white hover:border-primary/40 hover:bg-secondary/20"
+                        }`}>
+                          <div className="flex items-center gap-3 min-w-0 flex-1">
+                            {file ? (
+                              <>
+                                <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center flex-shrink-0">
+                                  <CheckCircle className="w-4 h-4 text-badge-verified" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-xs font-bold text-foreground truncate">{file.name}</p>
+                                  <p className="text-[10px] text-muted-foreground">{(file.size / 1024).toFixed(1)} KB</p>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => handleFileChange(check.documentType!, null)}
+                                  className="p-1.5 rounded-lg hover:bg-red-50 text-muted-foreground hover:text-red-500 transition-colors flex-shrink-0"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <div className="w-8 h-8 rounded-lg bg-white border border-border/40 flex items-center justify-center flex-shrink-0">
+                                  <Upload className="w-4 h-4 text-muted-foreground" />
+                                </div>
+                                <span className="text-xs font-semibold text-muted-foreground">
+                                  {DOCUMENT_TYPE_LABELS[check.documentType as DocumentType]}
+                                </span>
+                              </>
+                            )}
+                          </div>
+                          {!file && (
+                            <label className="cursor-pointer flex-shrink-0">
+                              <span className="text-xs font-bold text-primary bg-white px-3 py-1.5 rounded-full border border-border hover:bg-primary hover:text-white hover:border-primary transition-all">
+                                Choose File
+                              </span>
+                              <input
+                                type="file"
+                                className="hidden"
+                                accept=".pdf,.jpg,.jpeg,.png"
+                                onChange={(e) => handleFileChange(check.documentType!, e.target.files?.[0] || null)}
+                              />
+                            </label>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Referee-specific: structured fields */}
+                    {check.key === "refereeCheckStatus" && (
+                      <div className="px-4 sm:px-5 pb-4 sm:pb-5 space-y-4">
+                        <div className="border-t border-border/30 pt-4">
+                          <p className="text-xs font-bold text-foreground mb-3 uppercase tracking-wide">
+                            Referee Contact Details <span className="text-destructive">*</span>
+                          </p>
+                          <p className="text-[10px] text-muted-foreground mb-4">
+                            Provide at least one non-family referee. Our team will contact them directly.
+                          </p>
+                          {referees.map((referee, idx) => (
+                            <div key={idx} className="relative bg-white rounded-xl border border-border/40 p-4 mb-3">
+                              <div className="flex items-center justify-between mb-3">
+                                <span className="text-xs font-bold text-primary">Referee {idx + 1}</span>
+                                {referees.length > 1 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => removeReferee(idx)}
+                                    className="p-1 rounded-lg hover:bg-red-50 text-muted-foreground hover:text-red-500 transition-colors"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                )}
+                              </div>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <Input
+                                  label="Full Name"
+                                  value={referee.name}
+                                  onChange={(e) => handleRefereeChange(idx, "name", e.target.value)}
+                                  placeholder="e.g. Jane Smith"
+                                  className="rounded-xl"
+                                  required
+                                />
+                                <Input
+                                  label="Phone"
+                                  value={referee.phone}
+                                  onChange={(e) => handleRefereeChange(idx, "phone", e.target.value)}
+                                  placeholder="021 000 0000"
+                                  className="rounded-xl"
+                                  required
+                                />
+                                <Input
+                                  label="Email"
+                                  type="email"
+                                  value={referee.email}
+                                  onChange={(e) => handleRefereeChange(idx, "email", e.target.value)}
+                                  placeholder="jane@example.com"
+                                  className="rounded-xl"
+                                  required
+                                />
+                                <Input
+                                  label="Relationship"
+                                  value={referee.relationship}
+                                  onChange={(e) => handleRefereeChange(idx, "relationship", e.target.value)}
+                                  placeholder="e.g. Former Employer"
+                                  className="rounded-xl"
+                                  required
+                                />
+                              </div>
+                            </div>
+                          ))}
+                          {referees.length < 3 && (
+                            <button
+                              type="button"
+                              onClick={addReferee}
+                              className="flex items-center gap-2 text-xs font-bold text-primary hover:text-primary-light transition-colors mt-2 cursor-pointer"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              Add another referee
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Checks 6–7: Admin-only (informational) */}
+            <div className="mt-6">
+              <div className="flex items-center gap-2 mb-3">
+                <Info className="w-4 h-4 text-primary" />
+                <p className="text-xs font-bold text-foreground uppercase tracking-wide">Admin-completed checks</p>
+              </div>
+              <p className="text-[10px] text-muted-foreground mb-4 leading-relaxed">
+                The following checks are completed by the NannyOra admin team after your application is received. You do not need to upload anything for these.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {SAFETY_CHECKS.filter(c => !c.nannyUploadable).map((check) => {
                   const IconComponent = CHECK_ICONS[check.key] || Shield;
-                  const file = check.documentType ? uploadedFiles[check.documentType] : null;
+                  return (
+                    <div
+                      key={check.key}
+                      className="flex items-start gap-3 p-4 rounded-2xl bg-secondary/30 border border-border/30"
+                    >
+                      <div className="w-9 h-9 rounded-xl bg-muted/60 flex items-center justify-center flex-shrink-0">
+                        <IconComponent className="w-4.5 h-4.5 text-muted-foreground" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-[10px] font-bold text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full">
+                            Check {check.number}
+                          </span>
+                        </div>
+                        <h4 className="text-xs font-bold text-foreground">{check.title}</h4>
+                        <p className="text-[10px] text-muted-foreground leading-relaxed mt-1">
+                          {check.description}
+                        </p>
+                        <Badge variant="outline" className="mt-2 text-[9px] font-bold uppercase tracking-wider rounded-full px-2 py-0.5 border-border text-muted-foreground">
+                          Completed by admin
+                        </Badge>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
+              Supported file types: PDF, PNG, JPG. Maximum file size: 10MB per upload. All documents are encrypted and only accessible by authorised admin reviewers.
+            </p>
+
+            <div className="flex justify-between pt-4">
+              <Button type="button" variant="ghost" className="rounded-full" onClick={() => setStep(2)}>Back</Button>
+              <Button type="button" variant="primary" className="rounded-full px-6" onClick={() => setStep(4)}>Next: Biography</Button>
+            </div>
+          </div>
+
+          {/* STEP 4: Biography & Final Review */}
+          <div className={step === 4 ? "space-y-6 animate-fade-in" : "hidden"}>
+            <div>
+              <h2 className="text-sm font-bold text-foreground uppercase tracking-wider mb-4 pb-2 border-b border-border/40">
+                Carer Biography
+              </h2>
+              <Textarea
+                name="bio"
+                label="About You"
+                required
+                placeholder="Tell families about your childhood training, care philosophy, and activities you enjoy leading..."
+                helperText="Provide at least 20 characters. This bio represents you on your public search profile."
+                className="min-h-[120px] rounded-2xl"
+              />
+            </div>
+
+            {/* Summary of uploaded checks */}
+            <div className="border-t border-border/40 pt-6">
+              <h2 className="text-sm font-bold text-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
+                <Shield className="w-4 h-4 text-primary" />
+                Vetting Summary
+              </h2>
+              <p className="text-xs text-muted-foreground mb-4">
+                Overview of your safety check submissions. You can update documents later from your profile dashboard.
+              </p>
+              <div className="space-y-2">
+                {SAFETY_CHECKS.map((check) => {
+                  const hasFile = check.documentType ? !!uploadedFiles[check.documentType] : false;
+                  const hasReferee = check.key === "refereeCheckStatus" && referees.some(r => r.name.trim() && r.phone.trim());
+                  const isSubmitted = hasFile || hasReferee;
+                  const isAdminOnly = !check.nannyUploadable;
 
                   return (
                     <div
                       key={check.key}
-                      className="rounded-2xl border border-border/60 bg-secondary/10 overflow-hidden transition-all hover:border-primary/30"
+                      className="flex items-center justify-between p-3 rounded-xl bg-secondary/20 border border-border/30"
                     >
-                      {/* Check header */}
-                      <div className="flex items-start gap-4 p-4 sm:p-5">
-                        <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
-                          <IconComponent className="w-5 h-5 text-primary" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                              Check {check.number}
-                            </span>
-                            <h3 className="text-sm font-bold text-foreground leading-none">{check.title}</h3>
-                          </div>
-                          <p className="text-xs text-muted-foreground leading-relaxed mt-1.5">
-                            {check.description}
-                          </p>
-                        </div>
+                      <div className="flex items-center gap-2.5">
+                        <span className="text-[10px] font-bold text-primary/70 w-5">{check.number}.</span>
+                        <span className="text-xs font-semibold text-foreground">{check.title}</span>
                       </div>
-
-                      {/* Upload area */}
-                      {check.documentType && (
-                        <div className="px-4 sm:px-5 pb-4 sm:pb-5">
-                          <div className={`flex items-center justify-between p-3.5 rounded-xl border border-dashed transition-all ${
-                            file
-                              ? "border-badge-verified/40 bg-emerald-50/50"
-                              : "border-border/60 bg-white hover:border-primary/40 hover:bg-secondary/20"
-                          }`}>
-                            <div className="flex items-center gap-3 min-w-0 flex-1">
-                              {file ? (
-                                <>
-                                  <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center flex-shrink-0">
-                                    <CheckCircle className="w-4 h-4 text-badge-verified" />
-                                  </div>
-                                  <div className="min-w-0 flex-1">
-                                    <p className="text-xs font-bold text-foreground truncate">{file.name}</p>
-                                    <p className="text-[10px] text-muted-foreground">{(file.size / 1024).toFixed(1)} KB</p>
-                                  </div>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleFileChange(check.documentType!, null)}
-                                    className="p-1.5 rounded-lg hover:bg-red-50 text-muted-foreground hover:text-red-500 transition-colors flex-shrink-0"
-                                  >
-                                    <X className="w-4 h-4" />
-                                  </button>
-                                </>
-                              ) : (
-                                <>
-                                  <div className="w-8 h-8 rounded-lg bg-white border border-border/40 flex items-center justify-center flex-shrink-0">
-                                    <Upload className="w-4 h-4 text-muted-foreground" />
-                                  </div>
-                                  <span className="text-xs font-semibold text-muted-foreground">
-                                    {DOCUMENT_TYPE_LABELS[check.documentType as DocumentType]}
-                                  </span>
-                                </>
-                              )}
-                            </div>
-                            {!file && (
-                              <label className="cursor-pointer flex-shrink-0">
-                                <span className="text-xs font-bold text-primary bg-white px-3 py-1.5 rounded-full border border-border hover:bg-primary hover:text-white hover:border-primary transition-all">
-                                  Choose File
-                                </span>
-                                <input
-                                  type="file"
-                                  className="hidden"
-                                  accept=".pdf,.jpg,.jpeg,.png"
-                                  onChange={(e) => handleFileChange(check.documentType!, e.target.files?.[0] || null)}
-                                />
-                              </label>
-                            )}
-                          </div>
+                      {isAdminOnly ? (
+                        <Badge variant="outline" className="text-[9px] rounded-full px-2 py-0.5 font-bold text-muted-foreground border-border">
+                          Admin
+                        </Badge>
+                      ) : isSubmitted ? (
+                        <div className="flex items-center gap-1.5">
+                          <CheckCircle className="w-3.5 h-3.5 text-badge-verified" />
+                          <span className="text-[10px] font-bold text-badge-verified">Attached</span>
                         </div>
-                      )}
-
-                      {/* Referee-specific: structured fields */}
-                      {check.key === "refereeCheckStatus" && (
-                        <div className="px-4 sm:px-5 pb-4 sm:pb-5 space-y-4">
-                          <div className="border-t border-border/30 pt-4">
-                            <p className="text-xs font-bold text-foreground mb-3 uppercase tracking-wide">
-                              Referee Contact Details <span className="text-destructive">*</span>
-                            </p>
-                            <p className="text-[10px] text-muted-foreground mb-4">
-                              Provide at least one non-family referee. Our team will contact them directly.
-                            </p>
-                            {referees.map((referee, idx) => (
-                              <div key={idx} className="relative bg-white rounded-xl border border-border/40 p-4 mb-3">
-                                <div className="flex items-center justify-between mb-3">
-                                  <span className="text-xs font-bold text-primary">Referee {idx + 1}</span>
-                                  {referees.length > 1 && (
-                                    <button
-                                      type="button"
-                                      onClick={() => removeReferee(idx)}
-                                      className="p-1 rounded-lg hover:bg-red-50 text-muted-foreground hover:text-red-500 transition-colors"
-                                    >
-                                      <Trash2 className="w-3.5 h-3.5" />
-                                    </button>
-                                  )}
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                  <Input
-                                    label="Full Name"
-                                    value={referee.name}
-                                    onChange={(e) => handleRefereeChange(idx, "name", e.target.value)}
-                                    placeholder="e.g. Jane Smith"
-                                    className="rounded-xl"
-                                    required
-                                  />
-                                  <Input
-                                    label="Phone"
-                                    value={referee.phone}
-                                    onChange={(e) => handleRefereeChange(idx, "phone", e.target.value)}
-                                    placeholder="021 000 0000"
-                                    className="rounded-xl"
-                                    required
-                                  />
-                                  <Input
-                                    label="Email"
-                                    type="email"
-                                    value={referee.email}
-                                    onChange={(e) => handleRefereeChange(idx, "email", e.target.value)}
-                                    placeholder="jane@example.com"
-                                    className="rounded-xl"
-                                    required
-                                  />
-                                  <Input
-                                    label="Relationship"
-                                    value={referee.relationship}
-                                    onChange={(e) => handleRefereeChange(idx, "relationship", e.target.value)}
-                                    placeholder="e.g. Former Employer"
-                                    className="rounded-xl"
-                                    required
-                                  />
-                                </div>
-                              </div>
-                            ))}
-                            {referees.length < 3 && (
-                              <button
-                                type="button"
-                                onClick={addReferee}
-                                className="flex items-center gap-2 text-xs font-bold text-primary hover:text-primary-light transition-colors mt-2 cursor-pointer"
-                              >
-                                <Plus className="w-3.5 h-3.5" />
-                                Add another referee
-                              </button>
-                            )}
-                          </div>
-                        </div>
+                      ) : (
+                        <span className="text-[10px] font-semibold text-muted-foreground">Not uploaded</span>
                       )}
                     </div>
                   );
                 })}
               </div>
-
-              {/* Checks 6–7: Admin-only (informational) */}
-              <div className="mt-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <Info className="w-4 h-4 text-primary" />
-                  <p className="text-xs font-bold text-foreground uppercase tracking-wide">Admin-completed checks</p>
-                </div>
-                <p className="text-[10px] text-muted-foreground mb-4 leading-relaxed">
-                  The following checks are completed by the NannyOra admin team after your application is received. You do not need to upload anything for these.
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {SAFETY_CHECKS.filter(c => !c.nannyUploadable).map((check) => {
-                    const IconComponent = CHECK_ICONS[check.key] || Shield;
-                    return (
-                      <div
-                        key={check.key}
-                        className="flex items-start gap-3 p-4 rounded-2xl bg-secondary/30 border border-border/30"
-                      >
-                        <div className="w-9 h-9 rounded-xl bg-muted/60 flex items-center justify-center flex-shrink-0">
-                          <IconComponent className="w-4.5 h-4.5 text-muted-foreground" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-[10px] font-bold text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full">
-                              Check {check.number}
-                            </span>
-                          </div>
-                          <h4 className="text-xs font-bold text-foreground">{check.title}</h4>
-                          <p className="text-[10px] text-muted-foreground leading-relaxed mt-1">
-                            {check.description}
-                          </p>
-                          <Badge variant="outline" className="mt-2 text-[9px] font-bold uppercase tracking-wider rounded-full px-2 py-0.5 border-border text-muted-foreground">
-                            Completed by admin
-                          </Badge>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
-                Supported file types: PDF, PNG, JPG. Maximum file size: 10MB per upload. All documents are encrypted and only accessible by authorised admin reviewers.
-              </p>
-
-              <div className="flex justify-between pt-4">
-                <Button type="button" variant="ghost" className="rounded-full" onClick={() => setStep(2)}>Back</Button>
-                <Button type="button" variant="primary" className="rounded-full px-6" onClick={() => setStep(4)}>Next: Biography</Button>
-              </div>
             </div>
-          )}
 
-          {/* STEP 4: Biography & Final Review */}
-          {step === 4 && (
-            <div className="space-y-6 animate-fade-in">
-              <div>
-                <h2 className="text-sm font-bold text-foreground uppercase tracking-wider mb-4 pb-2 border-b border-border/40">
-                  Carer Biography
-                </h2>
-                <Textarea
-                  name="bio"
-                  label="About You"
-                  required
-                  placeholder="Tell families about your childhood training, care philosophy, and activities you enjoy leading..."
-                  helperText="Provide at least 20 characters. This bio represents you on your public search profile."
-                  className="min-h-[120px] rounded-2xl"
-                />
-              </div>
-
-              {/* Summary of uploaded checks */}
-              <div className="border-t border-border/40 pt-6">
-                <h2 className="text-sm font-bold text-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-primary" />
-                  Vetting Summary
-                </h2>
-                <p className="text-xs text-muted-foreground mb-4">
-                  Overview of your safety check submissions. You can update documents later from your profile dashboard.
-                </p>
-                <div className="space-y-2">
-                  {SAFETY_CHECKS.map((check) => {
-                    const hasFile = check.documentType ? !!uploadedFiles[check.documentType] : false;
-                    const hasReferee = check.key === "refereeCheckStatus" && referees.some(r => r.name.trim() && r.phone.trim());
-                    const isSubmitted = hasFile || hasReferee;
-                    const isAdminOnly = !check.nannyUploadable;
-
-                    return (
-                      <div
-                        key={check.key}
-                        className="flex items-center justify-between p-3 rounded-xl bg-secondary/20 border border-border/30"
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <span className="text-[10px] font-bold text-primary/70 w-5">{check.number}.</span>
-                          <span className="text-xs font-semibold text-foreground">{check.title}</span>
-                        </div>
-                        {isAdminOnly ? (
-                          <Badge variant="outline" className="text-[9px] rounded-full px-2 py-0.5 font-bold text-muted-foreground border-border">
-                            Admin
-                          </Badge>
-                        ) : isSubmitted ? (
-                          <div className="flex items-center gap-1.5">
-                            <CheckCircle className="w-3.5 h-3.5 text-badge-verified" />
-                            <span className="text-[10px] font-bold text-badge-verified">Attached</span>
-                          </div>
-                        ) : (
-                          <span className="text-[10px] font-semibold text-muted-foreground">Not uploaded</span>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="flex justify-between pt-4">
-                <Button type="button" variant="ghost" className="rounded-full" onClick={() => setStep(3)}>Back</Button>
-                <Button type="submit" variant="accent" size="lg" isLoading={isLoading} className="rounded-full shadow-md shadow-accent/10 px-6">
-                  Submit Application
-                </Button>
-              </div>
+            <div className="flex justify-between pt-4">
+              <Button type="button" variant="ghost" className="rounded-full" onClick={() => setStep(3)}>Back</Button>
+              <Button type="submit" variant="accent" size="lg" isLoading={isLoading} className="rounded-full shadow-md shadow-accent/10 px-6">
+                Submit Application
+              </Button>
             </div>
-          )}
+          </div>
         </form>
       </Card>
     </div>
