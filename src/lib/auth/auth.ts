@@ -22,22 +22,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const email = credentials.email as string;
         const password = credentials.password as string;
 
-        // Hardcoded Demo Accounts to bypass SQLite/Vercel serverless issues
+        // Demo accounts remain available before the production database is configured.
         if (password === "demo1234") {
-          try {
-            const dbUser = await prisma.user.findUnique({ where: { email } });
-            if (dbUser) {
-              return {
-                id: dbUser.id,
-                email: dbUser.email,
-                name: dbUser.name,
-                role: dbUser.role,
-                image: dbUser.image,
-              };
+          if (process.env.DATABASE_URL?.trim()) {
+            try {
+              const dbUser = await prisma.user.findUnique({ where: { email } });
+              if (dbUser) {
+                return {
+                  id: dbUser.id,
+                  email: dbUser.email,
+                  name: dbUser.name,
+                  role: dbUser.role,
+                  image: dbUser.image,
+                };
+              }
+            } catch (error) {
+              console.error("Prisma error during demo login bypass:", error);
             }
-          } catch (e) {
-            console.error("Prisma error during demo login bypass:", e);
           }
+
           if (email === "admin@nannyora.co.nz") {
             return { id: "demo-admin", email, name: "Admin User", role: "ADMIN" };
           }

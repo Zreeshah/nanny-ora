@@ -77,6 +77,13 @@ export async function updateNannyProfile(
       return { success: false, error: "Unauthorised" };
     }
 
+    if (!process.env.DATABASE_URL?.trim()) {
+      return {
+        success: false,
+        error: "Profile saving is unavailable until the production database is configured.",
+      };
+    }
+
     await prisma.$transaction(async (tx) => {
       // Update user details
       await tx.user.update({

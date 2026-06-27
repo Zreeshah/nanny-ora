@@ -21,16 +21,18 @@ export default async function NannyProfilePage() {
   let profile: ProfileWithUser = null;
   let databaseUser: DatabaseUser = null;
 
-  try {
-    profile = await getNannyProfile(session.user.id);
+  if (process.env.DATABASE_URL?.trim()) {
+    try {
+      profile = await getNannyProfile(session.user.id);
 
-    if (!profile) {
-      databaseUser = await getUser(session.user.id);
+      if (!profile) {
+        databaseUser = await getUser(session.user.id);
+      }
+    } catch (error) {
+      // Demo accounts must remain usable when the configured database cannot
+      // be reached.
+      console.error("Unable to load nanny profile from the database:", error);
     }
-  } catch (error) {
-    // Demo accounts must remain usable when the database is unavailable or
-    // has not yet been configured in the deployment environment.
-    console.error("Unable to load nanny profile from the database:", error);
   }
 
   // Fetch user details if profile row doesn't exist yet
