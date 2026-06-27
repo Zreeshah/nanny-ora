@@ -1,16 +1,27 @@
-import { auth } from "@/lib/auth/auth";
+import { getToken } from "next-auth/jwt";
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-export default auth((req) => {
-  const { nextUrl, auth: session } = req;
+const authSecret =
+  process.env.AUTH_SECRET ||
+  process.env.NEXTAUTH_SECRET ||
+  "nannyora-dev-secret-change-in-production";
+
+export async function proxy(req: NextRequest) {
+  const { nextUrl } = req;
   const pathname = nextUrl.pathname;
-  const role = (session?.user as any)?.role;
-  const isLoggedIn = !!session?.user;
+  const token = await getToken({
+    req,
+    secret: authSecret,
+    secureCookie: nextUrl.protocol === "https:",
+  });
+  const role = token?.role;
+  const isLoggedIn = !!token;
 
   // Admin routes — ADMIN only
   if (pathname.startsWith("/admin")) {
     if (!isLoggedIn) {
-      return NextResponse.redirect(new URL("/login?callbackUrl=/admin", nextUrl));
+      return redirectToLogin(req);
     }
     if (role !== "ADMIN") {
       return NextResponse.redirect(new URL("/", nextUrl));
@@ -20,7 +31,7 @@ export default auth((req) => {
   // Nanny dashboard — NANNY only
   if (pathname.startsWith("/dashboard/nanny")) {
     if (!isLoggedIn) {
-      return NextResponse.redirect(new URL("/login?callbackUrl=/dashboard/nanny", nextUrl));
+      return redirectToLogin(req);
     }
     if (role !== "NANNY") {
       return NextResponse.redirect(new URL("/", nextUrl));
@@ -30,7 +41,7 @@ export default auth((req) => {
   // Parent dashboard — PARENT only
   if (pathname.startsWith("/dashboard/parent")) {
     if (!isLoggedIn) {
-      return NextResponse.redirect(new URL("/login?callbackUrl=/dashboard/parent", nextUrl));
+      return redirectToLogin(req);
     }
     if (role !== "PARENT") {
       return NextResponse.redirect(new URL("/", nextUrl));
@@ -38,7 +49,13 @@ export default auth((req) => {
   }
 
   return NextResponse.next();
-});
+}
+
+function redirectToLogin(req: NextRequest) {
+  const loginUrl = new URL("/login", req.nextUrl);
+  loginUrl.searchParams.set("callbackUrl", req.nextUrl.pathname);
+  return NextResponse.redirect(loginUrl);
+}
 
 export const config = {
   matcher: [
