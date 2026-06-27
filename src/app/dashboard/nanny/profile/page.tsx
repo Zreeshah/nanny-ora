@@ -10,23 +10,31 @@ export const metadata = {
 
 export default async function NannyProfilePage() {
   const session = await auth();
-  
+
   if (!session?.user?.id || (session.user as any).role !== "NANNY") {
     redirect("/login");
   }
 
-  // Fetch the nanny profile along with core user attributes
-  const profile = await prisma.nannyProfile.findUnique({
-    where: { userId: session.user.id },
-    include: {
-      user: true,
-    },
-  });
+  type ProfileWithUser = Awaited<ReturnType<typeof getNannyProfile>>;
+  type DatabaseUser = Awaited<ReturnType<typeof getUser>>;
+
+  let profile: ProfileWithUser = null;
+  let databaseUser: DatabaseUser = null;
+
+  try {
+    profile = await getNannyProfile(session.user.id);
+
+    if (!profile) {
+      databaseUser = await getUser(session.user.id);
+    }
+  } catch (error) {
+    // Demo accounts must remain usable when the database is unavailable or
+    // has not yet been configured in the deployment environment.
+    console.error("Unable to load nanny profile from the database:", error);
+  }
 
   // Fetch user details if profile row doesn't exist yet
-  const user = profile?.user || await prisma.user.findUnique({
-    where: { id: session.user.id },
-  }) || {
+  const user = profile?.user || databaseUser || {
     id: session.user.id,
     name: session.user.name || "Demo Nanny",
     email: session.user.email || "emma@nannyora.co.nz",
@@ -75,4 +83,19 @@ export default async function NannyProfilePage() {
       <ProfileForm initialData={initialData} />
     </div>
   );
+}
+
+function getNannyProfile(userId: string) {
+  return prisma.nannyProfile.findUnique({
+    where: { userId },
+    include: {
+      user: true,
+    },
+  });
+}
+
+function getUser(userId: string) {
+  return prisma.user.findUnique({
+    where: { id: userId },
+  });
 }
