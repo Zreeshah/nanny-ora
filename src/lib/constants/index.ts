@@ -160,17 +160,100 @@ export const DOCUMENT_TYPES = {
   FIRST_AID_CERT: "FIRST_AID_CERT",
   POLICE_VET: "POLICE_VET",
   TEACHER_REGISTRATION: "TEACHER_REGISTRATION",
+  WORK_HISTORY: "WORK_HISTORY",
+  PROFESSIONAL_REGISTRATION: "PROFESSIONAL_REGISTRATION",
+  REFEREE_LETTER: "REFEREE_LETTER",
 } as const;
 export type DocumentType =
   (typeof DOCUMENT_TYPES)[keyof typeof DOCUMENT_TYPES];
 
 export const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
-  ID: "Photo ID",
+  ID: "Photo ID (Passport / Birth Certificate / RealMe)",
   REFERENCES: "References",
   FIRST_AID_CERT: "First Aid Certificate",
-  POLICE_VET: "Police Vet / Safety Check",
+  POLICE_VET: "NZ Police Vet Result",
   TEACHER_REGISTRATION: "Teacher Registration / ECE Qualification",
+  WORK_HISTORY: "Work History / CV / Employment References",
+  PROFESSIONAL_REGISTRATION: "Professional Registration Certificate",
+  REFEREE_LETTER: "Referee Reference Letter",
 };
+
+// --- Safety Check Statuses ---
+export const SAFETY_CHECK_STATUSES = {
+  NOT_STARTED: "NOT_STARTED",
+  SUBMITTED: "SUBMITTED",
+  VERIFIED: "VERIFIED",
+  REJECTED: "REJECTED",
+} as const;
+export type SafetyCheckStatus =
+  (typeof SAFETY_CHECK_STATUSES)[keyof typeof SAFETY_CHECK_STATUSES];
+
+export const SAFETY_CHECK_STATUS_LABELS: Record<SafetyCheckStatus, string> = {
+  NOT_STARTED: "Not Started",
+  SUBMITTED: "Submitted",
+  VERIFIED: "Verified",
+  REJECTED: "Rejected",
+};
+
+// --- 7 Safety Vetting Checks ---
+export const SAFETY_CHECKS = [
+  {
+    key: "identityVerified" as const,
+    number: 1,
+    title: "Verify Identity",
+    description: "Check and confirm identity using official documents (e.g., passport, birth certificate or RealMe).",
+    documentType: "ID" as DocumentType,
+    nannyUploadable: true,
+  },
+  {
+    key: "workHistoryVerified" as const,
+    number: 2,
+    title: "Work History",
+    description: "Gather and thoroughly verify previous employment history.",
+    documentType: "WORK_HISTORY" as DocumentType,
+    nannyUploadable: true,
+  },
+  {
+    key: "proRegVerified" as const,
+    number: 3,
+    title: "Professional Registration",
+    description: "Contact relevant professional bodies (e.g., Teaching Council of Auckland, NZ) to ensure current, valid credentials.",
+    documentType: "PROFESSIONAL_REGISTRATION" as DocumentType,
+    nannyUploadable: true,
+  },
+  {
+    key: "refereeCheckStatus" as const,
+    number: 4,
+    title: "Referee Checks",
+    description: "Contact at least one non-family referee to verify character and suitability.",
+    documentType: "REFEREE_LETTER" as DocumentType,
+    nannyUploadable: true,
+  },
+  {
+    key: "policeVetStatus" as const,
+    number: 5,
+    title: "Police Vet",
+    description: "Obtain a satisfactory New Zealand Police Vet check.",
+    documentType: "POLICE_VET" as DocumentType,
+    nannyUploadable: true,
+  },
+  {
+    key: "interviewStatus" as const,
+    number: 6,
+    title: "Interview",
+    description: "Conduct an interview focused on safety and suitability for working with children.",
+    documentType: null,
+    nannyUploadable: false,
+  },
+  {
+    key: "riskAssessmentStatus" as const,
+    number: 7,
+    title: "Risk Assessment",
+    description: "Synthesize all gathered information to formally assess whether the person poses any risk to children.",
+    documentType: null,
+    nannyUploadable: false,
+  },
+] as const;
 
 // --- Document Review Statuses ---
 export const DOCUMENT_REVIEW_STATUSES = {

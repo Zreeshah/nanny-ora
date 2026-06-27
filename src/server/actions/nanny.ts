@@ -52,6 +52,7 @@ export async function applyAsNanny(
           bio: data.bio,
           availability: JSON.stringify(data.availability),
           specialistTags: JSON.stringify(data.specialistTags || []),
+          refereeData: JSON.stringify(data.refereeData || []),
           verificationLevel: "LISTED",
           adminStatus: "SUBMITTED",
         },
@@ -112,6 +113,7 @@ export async function updateNannyProfile(
           bio: updates.bio || "",
           availability: JSON.stringify(updates.availability || []),
           specialistTags: JSON.stringify(updates.specialistTags || []),
+          refereeData: JSON.stringify(updates.refereeData || []),
         },
         update: {
           ...(updates.suburb && { suburb: updates.suburb }),
@@ -127,6 +129,7 @@ export async function updateNannyProfile(
           ...(updates.bio !== undefined && { bio: updates.bio }),
           ...(updates.availability && { availability: JSON.stringify(updates.availability) }),
           ...(updates.specialistTags && { specialistTags: JSON.stringify(updates.specialistTags) }),
+          ...(updates.refereeData !== undefined && { refereeData: JSON.stringify(updates.refereeData) }),
         },
       });
     });
@@ -135,5 +138,133 @@ export async function updateNannyProfile(
   } catch (error) {
     console.error("Update nanny profile error:", error);
     return { success: false, error: "Something went wrong. Please try again." };
+  }
+}
+
+// --- Document Management ---
+
+export async function uploadNannyDocument(
+  documentType: string,
+  fileName: string,
+  fileUrl?: string
+): Promise<ActionResult> {
+  try {
+    const session = await auth();
+    const userId = session?.user?.id;
+    if (!userId || (session.user as any).role !== "NANNY") {
+      return { success: false, error: "Unauthorised" };
+    }
+
+    const profile = await prisma.nannyProfile.findUnique({
+      where: { userId },
+    });
+    if (!profile) {
+      return { success: false, error: "Nanny profile not found. Please complete your profile first." };
+    }
+
+    const doc = await prisma.nannyDocument.create({
+      data: {
+        nannyProfileId: profile.id,
+        documentType,
+        fileName,
+        fileUrl: fileUrl || null,
+        reviewStatus: "PENDING",
+      },
+    });
+
+    // Auto-update the corresponding safety check status to SUBMITTED
+    const checkFieldMap: Record<string, string> = {
+      ID: "identityVerified",
+      WORK_HISTORY: "workHistoryVerified",
+      PROFESSIONAL_REGISTRATION: "proRegVerified",
+      REFEREE_LETTER: "refereeCheckStatus",
+      POLICE_VET: "policeVetStatus",
+    };
+
+    const checkField = checkFieldMap[documentType];
+    if (checkField) {
+      const currentStatus = (profile as any)[checkField];
+      // Only update to SUBMITTED if currently NOT_STARTED or REJECTED
+      if (currentStatus === "NOT_STARTED" || currentStatus === "REJECTED") {
+        await prisma.nannyProfile.update({
+          where: { id: profile.id },
+          data: { [checkField]: "SUBMITTED" },
+        });
+      }
+    }
+
+    return { success: true, data: { documentId: doc.id } };
+  } catch (error) {
+    console.error("Upload nanny document error:", error);
+    return { success: false, error: "Something went wrong. Please try again." };
+  }
+}
+
+export async function deleteNannyDocument(
+  documentId: string
+): Promise<ActionResult> {
+  try {
+    const session = await auth();
+    const userId = session?.user?.id;
+    if (!userId || (session.user as any).role !== "NANNY") {
+      return { success: false, error: "Unauthorised" };
+    }
+
+    const profile = await prisma.nannyProfile.findUnique({
+      where: { userId },
+    });
+    if (!profile) {
+      return { success: false, error: "Nanny profile not found." };
+    }
+
+    // Verify the document belongs to this nanny
+    const doc = await prisma.nannyDocument.findUnique({
+      where: { id: documentId },
+    });
+    if (!doc || doc.nannyProfileId !== profile.id) {
+      return { success: false, error: "Document not found or access denied." };
+    }
+
+    // Only allow deletion of PENDING documents
+    if (doc.reviewStatus !== "PENDING") {
+      return { success: false, error: "Cannot delete a document that has already been reviewed." };
+    }
+
+    await prisma.nannyDocument.delete({
+      where: { id: documentId },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Delete nanny document error:", error);
+    return { success: false, error: "Something went wrong. Please try again." };
+  }
+}
+
+export async function getNannyDocuments(): Promise<ActionResult> {
+  try {
+    const session = await auth();
+    const userId = session?.user?.id;
+    if (!userId || (session.user as any).role !== "NANNY") {
+      return { success: false, error: "Unauthorised" };
+    }
+
+    const profile = await prisma.nannyProfile.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+    if (!profile) {
+      return { success: true, data: [] };
+    }
+
+    const documents = await prisma.nannyDocument.findMany({
+      where: { nannyProfileId: profile.id },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return { success: true, data: documents };
+  } catch (error) {
+    console.error("Get nanny documents error:", error);
+    return { success: false, error: "Something went wrong." };
   }
 }

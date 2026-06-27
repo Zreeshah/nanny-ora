@@ -71,7 +71,29 @@ export default async function NannyProfilePage() {
     bio: profile?.bio || "",
     availability: parseJsonArray(profile?.availability),
     specialistTags: parseJsonArray(profile?.specialistTags),
+    refereeData: parseJsonArray(profile?.refereeData),
   };
+
+  // Safety check statuses
+  const safetyChecks = {
+    identityVerified: profile?.identityVerified || "NOT_STARTED",
+    workHistoryVerified: profile?.workHistoryVerified || "NOT_STARTED",
+    proRegVerified: profile?.proRegVerified || "NOT_STARTED",
+    refereeCheckStatus: profile?.refereeCheckStatus || "NOT_STARTED",
+    policeVetStatus: profile?.policeVetStatus || "NOT_STARTED",
+    interviewStatus: profile?.interviewStatus || "NOT_STARTED",
+    riskAssessmentStatus: profile?.riskAssessmentStatus || "NOT_STARTED",
+  };
+
+  // Documents
+  const documents = (profile?.documents || []).map((doc) => ({
+    id: doc.id,
+    documentType: doc.documentType,
+    fileName: doc.fileName,
+    fileUrl: doc.fileUrl,
+    reviewStatus: doc.reviewStatus,
+    createdAt: doc.createdAt.toISOString(),
+  }));
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 animate-fade-in pb-12">
@@ -82,7 +104,11 @@ export default async function NannyProfilePage() {
         </p>
       </div>
 
-      <ProfileForm initialData={initialData} />
+      <ProfileForm
+        initialData={initialData}
+        safetyChecks={safetyChecks}
+        documents={documents}
+      />
     </div>
   );
 }
@@ -92,6 +118,7 @@ function getNannyProfile(userId: string) {
     where: { userId },
     include: {
       user: true,
+      documents: true,
     },
   });
 }

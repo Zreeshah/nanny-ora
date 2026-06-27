@@ -46,6 +46,15 @@ export const parentIntakeSchema = z.object({
 });
 export type ParentIntakeInput = z.infer<typeof parentIntakeSchema>;
 
+// --- Referee Schema ---
+export const refereeSchema = z.object({
+  name: z.string().min(2, "Referee name is required"),
+  phone: z.string().min(6, "Referee phone number is required"),
+  email: z.string().email("Please enter a valid referee email"),
+  relationship: z.string().min(2, "Relationship description is required"),
+});
+export type RefereeInput = z.infer<typeof refereeSchema>;
+
 // --- Nanny Application Schema ---
 export const nannyApplicationSchema = z.object({
   name: z.string().min(2, "Full name is required"),
@@ -64,6 +73,8 @@ export const nannyApplicationSchema = z.object({
   bio: z.string().min(20, "Please write at least a short bio (20 characters)"),
   availability: z.array(z.string()).min(1, "Select at least one availability slot"),
   specialistTags: z.array(z.enum(specialistTagValues)).optional().default([]),
+  // Referee data for safety check #4
+  refereeData: z.array(refereeSchema).optional().default([]),
 });
 export type NannyApplicationInput = z.infer<typeof nannyApplicationSchema>;
 

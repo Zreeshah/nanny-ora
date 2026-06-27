@@ -81,6 +81,20 @@ model NannyProfile {
   verificationLevel      String   @default("LISTED") // LISTED, VERIFIED, PREMIUM_VETTED, SPECIALIST
   adminStatus            String   @default("SUBMITTED") // DRAFT, SUBMITTED, UNDER_REVIEW, APPROVED, VERIFIED, SPECIALIST, SUSPENDED, ARCHIVED
   profileImageUrl        String?
+
+  // Referee structured data (JSON array of {name, phone, email, relationship})
+  refereeData            String   @default("[]")
+
+  // --- 7 Safety Vetting Check Statuses ---
+  // Values: NOT_STARTED, SUBMITTED, VERIFIED, REJECTED
+  identityVerified       String   @default("NOT_STARTED")
+  workHistoryVerified    String   @default("NOT_STARTED")
+  proRegVerified         String   @default("NOT_STARTED")
+  refereeCheckStatus     String   @default("NOT_STARTED")
+  policeVetStatus        String   @default("NOT_STARTED")
+  interviewStatus        String   @default("NOT_STARTED")   // Admin-only
+  riskAssessmentStatus   String   @default("NOT_STARTED")   // Admin-only
+
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
 
@@ -99,7 +113,7 @@ model NannyDocument {
   id              String   @id @default(cuid())
   nannyProfileId  String
   nannyProfile    NannyProfile @relation(fields: [nannyProfileId], references: [id], onDelete: Cascade)
-  documentType    String   // ID, REFERENCES, FIRST_AID_CERT, POLICE_VET, TEACHER_REGISTRATION
+  documentType    String   // ID, REFERENCES, FIRST_AID_CERT, POLICE_VET, TEACHER_REGISTRATION, WORK_HISTORY, PROFESSIONAL_REGISTRATION, REFEREE_LETTER
   fileName        String
   fileUrl         String?
   reviewStatus    String   @default("PENDING") // PENDING, APPROVED, REJECTED

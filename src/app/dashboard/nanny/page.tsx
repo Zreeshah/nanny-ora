@@ -182,32 +182,48 @@ export default function NannyDashboard() {
             </div>
           </Card>
 
-          {/* Document Status */}
+          {/* Safety Vetting Checks */}
           <Card className="rounded-3xl border-border/40 p-5">
-            <h3 className="font-heading text-base font-bold text-foreground mb-4 flex items-center gap-2">
+            <h3 className="font-heading text-base font-bold text-foreground mb-2 flex items-center gap-2">
               <FileText className="w-4.5 h-4.5 text-primary" aria-hidden="true" />
-              Vetting Documents
+              Safety Vetting Checks
             </h3>
-            <div className="space-y-3.5 text-xs text-muted-foreground">
+            <p className="text-[10px] text-muted-foreground mb-4">7 checks required for full verification</p>
+            <div className="space-y-3 text-xs text-muted-foreground">
               {[
-                { name: "Photo ID copy", status: "APPROVED" },
-                { name: "First Aid Certificate", status: "APPROVED" },
-                { name: "Teacher Registration", status: "PENDING" },
-                { name: "NZ Police Vet file", status: "NOT_UPLOADED" },
-              ].map((doc) => (
-                <div key={doc.name} className="flex items-center justify-between">
-                  <span className="text-foreground">{doc.name}</span>
-                  {doc.status === "APPROVED" && (
-                    <CheckCircle className="w-4 h-4 text-badge-verified stroke-[2.5]" aria-label="Approved" />
+                { name: "Verify Identity", status: "NOT_STARTED" },
+                { name: "Work History", status: "NOT_STARTED" },
+                { name: "Professional Registration", status: "NOT_STARTED" },
+                { name: "Referee Checks", status: "NOT_STARTED" },
+                { name: "Police Vet", status: "NOT_STARTED" },
+                { name: "Interview", status: "NOT_STARTED" },
+                { name: "Risk Assessment", status: "NOT_STARTED" },
+              ].map((check) => (
+                <div key={check.name} className="flex items-center justify-between">
+                  <span className="text-foreground">{check.name}</span>
+                  {check.status === "VERIFIED" && (
+                    <CheckCircle className="w-4 h-4 text-badge-verified stroke-[2.5]" aria-label="Verified" />
                   )}
-                  {doc.status === "PENDING" && (
-                    <Clock className="w-4 h-4 text-badge-premium stroke-[2.5]" aria-label="Reviewing" />
+                  {check.status === "SUBMITTED" && (
+                    <Clock className="w-4 h-4 text-badge-premium stroke-[2.5]" aria-label="Pending review" />
                   )}
-                  {doc.status === "NOT_UPLOADED" && (
-                    <span className="text-[10px] font-bold text-primary hover:underline cursor-pointer">Upload →</span>
+                  {check.status === "NOT_STARTED" && (
+                    <Link href="/dashboard/nanny/profile" className="text-[10px] font-bold text-primary hover:underline cursor-pointer">
+                      Upload →
+                    </Link>
+                  )}
+                  {check.status === "REJECTED" && (
+                    <span className="text-[10px] font-bold text-red-500">Rejected</span>
                   )}
                 </div>
               ))}
+            </div>
+            <div className="mt-4 pt-3 border-t border-border/40">
+              <Link href="/dashboard/nanny/profile">
+                <Button variant="outline" fullWidth size="sm" className="rounded-full">
+                  Manage Documents & Checks
+                </Button>
+              </Link>
             </div>
           </Card>
 

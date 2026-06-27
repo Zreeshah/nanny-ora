@@ -88,6 +88,43 @@ export async function reviewDocument(
   }
 }
 
+// --- Safety Check Status Update (Admin) ---
+
+const VALID_CHECK_FIELDS = [
+  "identityVerified",
+  "workHistoryVerified",
+  "proRegVerified",
+  "refereeCheckStatus",
+  "policeVetStatus",
+  "interviewStatus",
+  "riskAssessmentStatus",
+] as const;
+
+export async function updateSafetyCheckStatus(
+  nannyProfileId: string,
+  checkField: string,
+  status: "NOT_STARTED" | "SUBMITTED" | "VERIFIED" | "REJECTED"
+): Promise<ActionResult> {
+  const authErr = await requireAdmin();
+  if (authErr) return authErr;
+
+  if (!VALID_CHECK_FIELDS.includes(checkField as any)) {
+    return { success: false, error: `Invalid check field: ${checkField}` };
+  }
+
+  try {
+    await prisma.nannyProfile.update({
+      where: { id: nannyProfileId },
+      data: { [checkField]: status },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Update safety check status error:", error);
+    return { success: false, error: "Something went wrong." };
+  }
+}
+
 // --- Admin Stats ---
 
 export async function getAdminStats(): Promise<ActionResult> {
