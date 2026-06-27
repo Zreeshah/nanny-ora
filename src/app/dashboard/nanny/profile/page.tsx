@@ -23,13 +23,20 @@ export default async function NannyProfilePage() {
     },
   });
 
-  if (!profile) {
-    // Fallback if user profile doesn't exist yet
-    redirect("/dashboard/nanny");
-  }
+  // Fetch user details if profile row doesn't exist yet
+  const user = profile?.user || await prisma.user.findUnique({
+    where: { id: session.user.id },
+  }) || {
+    id: session.user.id,
+    name: session.user.name || "Demo Nanny",
+    email: session.user.email || "emma@nannyora.co.nz",
+    phone: "",
+    role: "NANNY",
+  };
 
   // Parse stringified JSON arrays safely
-  const parseJsonArray = (str: string): string[] => {
+  const parseJsonArray = (str: string | undefined | null): string[] => {
+    if (!str) return [];
     try {
       return JSON.parse(str) || [];
     } catch {
@@ -38,22 +45,22 @@ export default async function NannyProfilePage() {
   };
 
   const initialData = {
-    name: profile.user.name,
-    email: profile.user.email,
-    phone: profile.user.phone || "",
-    suburb: profile.suburb,
-    areasCovered: parseJsonArray(profile.areasCovered),
-    yearsExperience: profile.yearsExperience,
-    careTypes: parseJsonArray(profile.careTypes),
-    qualifications: profile.qualifications || "",
-    eceExperience: profile.eceExperience,
-    neurodiverseExperience: profile.neurodiverseExperience,
-    firstAidCurrent: profile.firstAidCurrent,
-    driverLicence: profile.driverLicence,
-    hourlyRate: profile.hourlyRate,
-    bio: profile.bio,
-    availability: parseJsonArray(profile.availability),
-    specialistTags: parseJsonArray(profile.specialistTags),
+    name: user.name,
+    email: user.email,
+    phone: user.phone || "",
+    suburb: profile?.suburb || "",
+    areasCovered: parseJsonArray(profile?.areasCovered),
+    yearsExperience: profile?.yearsExperience || 0,
+    careTypes: parseJsonArray(profile?.careTypes),
+    qualifications: profile?.qualifications || "",
+    eceExperience: profile?.eceExperience || false,
+    neurodiverseExperience: profile?.neurodiverseExperience || false,
+    firstAidCurrent: profile?.firstAidCurrent || false,
+    driverLicence: profile?.driverLicence || false,
+    hourlyRate: profile?.hourlyRate || 25,
+    bio: profile?.bio || "",
+    availability: parseJsonArray(profile?.availability),
+    specialistTags: parseJsonArray(profile?.specialistTags),
   };
 
   return (

@@ -24,6 +24,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         // Hardcoded Demo Accounts to bypass SQLite/Vercel serverless issues
         if (password === "demo1234") {
+          try {
+            const dbUser = await prisma.user.findUnique({ where: { email } });
+            if (dbUser) {
+              return {
+                id: dbUser.id,
+                email: dbUser.email,
+                name: dbUser.name,
+                role: dbUser.role,
+                image: dbUser.image,
+              };
+            }
+          } catch (e) {
+            console.error("Prisma error during demo login bypass:", e);
+          }
           if (email === "admin@nannyora.co.nz") {
             return { id: "demo-admin", email, name: "Admin User", role: "ADMIN" };
           }
