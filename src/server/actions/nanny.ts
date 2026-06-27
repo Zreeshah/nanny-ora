@@ -7,7 +7,10 @@ import type { ActionResult } from "./auth";
 import bcrypt from "bcryptjs";
 
 export async function applyAsNanny(
-  input: NannyApplicationInput & { password: string }
+  input: NannyApplicationInput & {
+    password: string;
+    documents?: { documentType: string; fileName: string }[];
+  }
 ): Promise<ActionResult> {
   try {
     const parsed = nannyApplicationSchema.safeParse(input);
@@ -36,6 +39,25 @@ export async function applyAsNanny(
         },
       });
 
+      // Map document types to check status fields
+      const checkFieldMap: Record<string, string> = {
+        ID: "identityVerified",
+        WORK_HISTORY: "workHistoryVerified",
+        PROFESSIONAL_REGISTRATION: "proRegVerified",
+        REFEREE_LETTER: "refereeCheckStatus",
+        POLICE_VET: "policeVetStatus",
+      };
+
+      const safetyChecksUpdate: Record<string, string> = {};
+      if (input.documents) {
+        for (const doc of input.documents) {
+          const field = checkFieldMap[doc.documentType];
+          if (field) {
+            safetyChecksUpdate[field] = "SUBMITTED";
+          }
+        }
+      }
+
       const profile = await tx.nannyProfile.create({
         data: {
           userId: user.id,
@@ -55,8 +77,20 @@ export async function applyAsNanny(
           refereeData: JSON.stringify(data.refereeData || []),
           verificationLevel: "LISTED",
           adminStatus: "SUBMITTED",
+          ...safetyChecksUpdate,
         },
       });
+
+      if (input.documents && input.documents.length > 0) {
+        await tx.nannyDocument.createMany({
+          data: input.documents.map((doc) => ({
+            nannyProfileId: profile.id,
+            documentType: doc.documentType,
+            fileName: doc.fileName,
+            reviewStatus: "PENDING",
+          })),
+        });
+      }
 
       return { userId: user.id, profileId: profile.id };
     });

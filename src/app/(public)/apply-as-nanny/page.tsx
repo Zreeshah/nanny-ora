@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { useToast } from "@/components/ui/Toast";
+import { applyAsNanny } from "@/server/actions/nanny";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import { Card } from "@/components/ui/Card";
@@ -110,13 +112,104 @@ export default function ApplyAsNannyPage() {
     }
   };
 
+  const { toast } = useToast();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate submission
-    await new Promise((r) => setTimeout(r, 1500));
-    setIsLoading(false);
-    setSubmitted(true);
+
+    const formData = new FormData(e.currentTarget);
+    
+    // Extract input fields
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const phone = formData.get("phone") as string;
+    const suburb = formData.get("suburb") as string;
+    const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirmPassword") as string;
+    const qualifications = formData.get("qualifications") as string;
+    const bio = formData.get("bio") as string;
+    const yearsExperience = Number(formData.get("yearsExperience"));
+    const hourlyRate = Number(formData.get("hourlyRate"));
+    
+    // Binary flags (we read the state variables because form fields are not standard inputs in step 2)
+    const eceExperience = eceExp;
+    const neurodiverseExperience = neuroExp;
+    const firstAidCurrent = firstAid;
+    const driverLicence = licence;
+
+    if (!name || !email || !phone || !suburb || !password) {
+      toast("Please fill in all required contact details and choose a password.", "error");
+      setIsLoading(false);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast("Passwords do not match.", "error");
+      setIsLoading(false);
+      return;
+    }
+
+    if (selectedSuburbs.length === 0) {
+      toast("Please select at least one suburb you cover.", "error");
+      setIsLoading(false);
+      return;
+    }
+
+    if (selectedCareTypes.length === 0) {
+      toast("Please select at least one care type you provide.", "error");
+      setIsLoading(false);
+      return;
+    }
+
+    if (selectedAvailability.length === 0) {
+      toast("Please select at least one weekly availability slot.", "error");
+      setIsLoading(false);
+      return;
+    }
+
+    // Construct documents array
+    const documentsList = Object.entries(uploadedFiles)
+      .filter(([_, file]) => !!file)
+      .map(([type, file]) => ({
+        documentType: type,
+        fileName: file!.name,
+      }));
+
+    try {
+      const result = await applyAsNanny({
+        name,
+        email,
+        phone,
+        suburb,
+        areasCovered: selectedSuburbs,
+        yearsExperience,
+        careTypes: selectedCareTypes,
+        qualifications,
+        eceExperience,
+        neurodiverseExperience,
+        firstAidCurrent,
+        driverLicence,
+        hourlyRate,
+        bio,
+        availability: selectedAvailability,
+        specialistTags: selectedSpecialistTags,
+        refereeData: referees.filter(r => r.name.trim()),
+        password,
+        documents: documentsList,
+      } as any);
+
+      if (result.success) {
+        setSubmitted(true);
+      } else {
+        toast(result.error || "Failed to submit application.", "error");
+      }
+    } catch (err) {
+      console.error(err);
+      toast("An error occurred during submission.", "error");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (submitted) {
@@ -203,6 +296,8 @@ export default function ApplyAsNannyPage() {
                     placeholder="Select suburb"
                     className="rounded-2xl"
                   />
+                  <Input name="password" label="Choose Password" type="password" required placeholder="••••••••" className="rounded-2xl" />
+                  <Input name="confirmPassword" label="Confirm Password" type="password" required placeholder="••••••••" className="rounded-2xl" />
                 </div>
               </div>
 

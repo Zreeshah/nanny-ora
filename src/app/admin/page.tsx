@@ -3,18 +3,28 @@ import Link from "next/link";
 import { Users, Briefcase, MessageCircle, UserCheck, Clock, AlertCircle, ArrowRight, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 
-// Sample admin statistics values
-const stats = {
-  pendingNannies: 3,
-  approvedNannies: 7,
-  totalNannies: 10,
-  pendingJobs: 2,
-  approvedJobs: 5,
-  newEnquiries: 4,
-  totalParents: 15,
-};
+import { getAdminStats } from "@/server/actions/admin";
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  let stats = {
+    pendingNannies: 3,
+    approvedNannies: 7,
+    totalNannies: 10,
+    pendingJobs: 2,
+    approvedJobs: 5,
+    newEnquiries: 4,
+    totalParents: 15,
+  };
+
+  try {
+    const res = await getAdminStats();
+    if (res.success && res.data) {
+      stats = res.data;
+    }
+  } catch (err) {
+    console.error("Failed to load admin stats from database:", err);
+  }
+
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Admin header */}
