@@ -1,19 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import { Providers } from "@/components/providers/Providers";
 import "./globals.css";
-
-const fontHeading = Outfit({
-  subsets: ["latin"],
-  variable: "--font-heading",
-  display: "swap",
-});
-
-const fontBody = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-body",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -60,7 +47,12 @@ export default function RootLayout({
       lang="en"
       className="h-full"
     >
-      <body className={`min-h-dvh flex flex-col bg-background text-foreground font-body antialiased ${fontHeading.variable} ${fontBody.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet" />
+      </head>
+      <body className="min-h-dvh flex flex-col bg-background text-foreground font-body antialiased">
         <Providers>{children}</Providers>
       </body>
     </html>

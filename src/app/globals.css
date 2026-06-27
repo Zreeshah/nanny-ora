@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 /* ============================================================
-   NannyOra — Design System
-   Warm • Trustworthy • Premium • Calm • Family-safe
+   NannyOra - Design System
+   Warm * Trustworthy * Premium * Calm * Family-safe
    Deep Green + Warm Cream + Coral Orange palette
    ============================================================ */
 
@@ -77,8 +77,8 @@
   --color-badge-premium: var(--badge-premium);
   --color-badge-listed: var(--badge-listed);
 
-  --font-heading: var(--font-heading), Georgia, serif;
-  --font-body: var(--font-body), system-ui, sans-serif;
+  --font-heading: 'Outfit', Georgia, serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
 
   /* Global typography scale adjustment — premium, larger, highly readable fonts */
   --text-xs: 0.8125rem;       /* ~13px */
