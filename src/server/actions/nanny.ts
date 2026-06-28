@@ -3,13 +3,14 @@
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth/auth";
 import { nannyApplicationSchema, type NannyApplicationInput } from "@/lib/validations";
+import { supabaseServer, SUPABASE_BUCKET } from "@/lib/supabase/server";
 import type { ActionResult } from "./auth";
 import bcrypt from "bcryptjs";
 
 export async function applyAsNanny(
   input: NannyApplicationInput & {
     password: string;
-    documents?: { documentType: string; fileName: string }[];
+    documents?: { documentType: string; file: File }[];
   }
 ): Promise<ActionResult> {
   try {
@@ -27,6 +28,29 @@ export async function applyAsNanny(
     }
 
     const passwordHash = await bcrypt.hash(input.password || "temp123456", 10);
+
+    // Upload vetting documents to Supabase Storage (server-side, using service_role key).
+    // This happens BEFORE the DB transaction so we don't hold a DB connection during file IO.
+    const uploadedDocs: { documentType: string; fileName: string; fileUrl: string }[] = [];
+    if (input.documents && input.documents.length > 0) {
+      for (const doc of input.documents) {
+        const file = doc.file;
+        const safeName = file.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9._-]/g, "");
+        const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${safeName}`;
+        const arrayBuffer = await file.arrayBuffer();
+        const { error: upErr } = await supabaseServer
+          .storage
+          .from(SUPABASE_BUCKET)
+          .upload(path, arrayBuffer, {
+            upsert: false,
+            contentType: file.type || "application/octet-stream",
+          });
+        if (upErr) {
+          return { success: false, error: `Failed to upload ${file.name}: ${upErr.message}` };
+        }
+        uploadedDocs.push({ documentType: doc.documentType, fileName: file.name, fileUrl: path });
+      }
+    }
 
     const result = await prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
@@ -81,12 +105,13 @@ export async function applyAsNanny(
         },
       });
 
-      if (input.documents && input.documents.length > 0) {
+      if (uploadedDocs.length > 0) {
         await tx.nannyDocument.createMany({
-          data: input.documents.map((doc) => ({
+          data: uploadedDocs.map((doc) => ({
             nannyProfileId: profile.id,
             documentType: doc.documentType,
             fileName: doc.fileName,
+            fileUrl: doc.fileUrl,
             reviewStatus: "PENDING",
           })),
         });

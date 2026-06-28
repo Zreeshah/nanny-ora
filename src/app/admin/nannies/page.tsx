@@ -29,6 +29,7 @@ import {
   updateVerificationLevel,
   reviewDocument,
   updateSafetyCheckStatus,
+  getDocumentDownloadUrl,
 } from "@/server/actions/admin";
 
 const statusOptions = Object.entries(NANNY_STATUS_LABELS).map(([value, label]) => ({ value, label }));
@@ -240,6 +241,21 @@ export default function AdminNanniesPage() {
     });
   };
 
+  const handleDownload = async (docId: string, fileName: string) => {
+    startTransition(async () => {
+      try {
+        const res = await getDocumentDownloadUrl(docId);
+        if (res.success && res.data?.url) {
+          window.open(res.data.url, "_blank", "noopener,noreferrer");
+        } else {
+          toast(res.error || "Unable to download file.", "error");
+        }
+      } catch {
+        toast("An error occurred while fetching the file.", "error");
+      }
+    });
+  };
+
   const filtered = statusFilter ? nannies.filter((n) => n.adminStatus === statusFilter) : nannies;
 
   if (loading) {
@@ -382,25 +398,16 @@ export default function AdminNanniesPage() {
                                 </div>
                               </div>
                               <div className="flex items-center gap-1.5 flex-shrink-0">
-                                {doc.fileUrl ? (
-                                  <a
-                                    href={doc.fileUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    download={doc.fileName}
-                                    title={`Download / view ${doc.fileName}`}
-                                    className="inline-flex items-center justify-center h-7 w-7 p-0 rounded-lg text-primary hover:bg-primary/10 transition-colors"
-                                  >
-                                    <Download className="w-3.5 h-3.5" />
-                                  </a>
-                                ) : (
-                                  <span
-                                    title="No file stored. Only the filename was declared during application. Wire up Supabase Storage to enable real uploads."
-                                    className="inline-flex items-center justify-center h-7 w-7 p-0 rounded-lg text-muted-foreground/50 cursor-not-allowed bg-muted/30"
-                                  >
-                                    <Download className="w-3.5 h-3.5" />
-                                  </span>
-                                )}
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleDownload(doc.id, doc.fileName)}
+                                  disabled={isPending}
+                                  className="h-7 w-7 p-0 text-primary hover:bg-primary/10"
+                                  title={`Download / view ${doc.fileName}`}
+                                >
+                                  <Download className="w-3.5 h-3.5" />
+                                </Button>
                                 {doc.reviewStatus !== "APPROVED" && (
                                   <Button
                                     variant="ghost"

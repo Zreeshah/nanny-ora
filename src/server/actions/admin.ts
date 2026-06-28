@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth/auth";
+import { supabaseServer, SUPABASE_BUCKET } from "@/lib/supabase/server";
 import type { ActionResult } from "./auth";
 
 // Helper to check admin access
@@ -192,5 +193,32 @@ export async function getAdminNannies(filters?: {
   } catch (error) {
     console.error("Get admin nannies error:", error);
     return { success: false, error: "Failed to load nannies." };
+  }
+}
+
+// --- Generate signed download URL for a vetting document ---
+
+export async function getDocumentDownloadUrl(documentId: string): Promise<ActionResult> {
+  const authErr = await requireAdmin();
+  if (authErr) return authErr;
+
+  try {
+    const doc = await prisma.nannyDocument.findUnique({ where: { id: documentId } });
+    if (!doc) return { success: false, error: "Document not found." };
+    if (!doc.fileUrl) return { success: false, error: "No file stored for this document." };
+
+    const { data, error } = await supabaseServer.storage
+      .from(SUPABASE_BUCKET)
+      .createSignedUrl(doc.fileUrl, 300); // 5-minute signed URL
+
+    if (error || !data?.signedUrl) {
+      console.error("Signed URL error:", error);
+      return { success: false, error: "Failed to generate download link." };
+    }
+
+    return { success: true, data: { url: data.signedUrl } };
+  } catch (error) {
+    console.error("Get document download URL error:", error);
+    return { success: false, error: "Something went wrong." };
   }
 }

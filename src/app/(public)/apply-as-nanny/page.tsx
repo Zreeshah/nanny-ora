@@ -168,13 +168,11 @@ export default function ApplyAsNannyPage() {
       return;
     }
 
-    // Construct documents array
-    const documentsList = Object.entries(uploadedFiles)
+    // Construct documents array — pass raw File objects to the server action,
+    // which uploads them to Supabase Storage server-side using the service_role key.
+    const documentsList: { documentType: string; file: File }[] = Object.entries(uploadedFiles)
       .filter(([_, file]) => !!file)
-      .map(([type, file]) => ({
-        documentType: type,
-        fileName: file!.name,
-      }));
+      .map(([type, file]) => ({ documentType: type, file: file! }));
 
     try {
       const result = await applyAsNanny({
