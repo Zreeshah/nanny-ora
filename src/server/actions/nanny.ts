@@ -96,9 +96,11 @@ export async function applyAsNanny(
     });
 
     return { success: true, data: result };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Nanny application error:", error);
-    return { success: false, error: "Something went wrong. Please try again." };
+    const code = error?.code || "UNKNOWN";
+    const msg = error?.message || String(error);
+    return { success: false, error: `[${code}] ${msg}` };
   }
 }
 
