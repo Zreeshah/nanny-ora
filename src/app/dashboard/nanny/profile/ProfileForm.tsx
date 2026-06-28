@@ -153,7 +153,7 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
   const handleFileUpload = async (documentType: string, file: File) => {
     setUploadingType(documentType);
     try {
-      const result = await uploadNannyDocument(documentType, file.name);
+      const result = await uploadNannyDocument(documentType, file);
       if (result.success) {
         // Add the new document to local state
         setDocuments(prev => [
@@ -161,7 +161,7 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
             id: result.data?.documentId || Date.now().toString(),
             documentType,
             fileName: file.name,
-            fileUrl: null,
+            fileUrl: result.data?.fileUrl || null,
             reviewStatus: "PENDING",
             createdAt: new Date().toISOString(),
           },

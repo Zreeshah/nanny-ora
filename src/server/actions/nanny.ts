@@ -206,8 +206,7 @@ export async function updateNannyProfile(
 
 export async function uploadNannyDocument(
   documentType: string,
-  fileName: string,
-  fileUrl?: string
+  file: File
 ): Promise<ActionResult> {
   try {
     const session = await auth();
@@ -223,12 +222,29 @@ export async function uploadNannyDocument(
       return { success: false, error: "Nanny profile not found. Please complete your profile first." };
     }
 
+    // Upload the file to Supabase Storage
+    const safeName = file.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9._-]/g, "");
+    const storagePath = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${safeName}`;
+    const arrayBuffer = await file.arrayBuffer();
+    const { error: upErr } = await supabaseServer
+      .storage
+      .from(SUPABASE_BUCKET)
+      .upload(storagePath, arrayBuffer, {
+        upsert: false,
+        contentType: file.type || "application/octet-stream",
+      });
+
+    if (upErr) {
+      console.error("Storage upload error:", upErr);
+      return { success: false, error: `Failed to upload file: ${upErr.message}` };
+    }
+
     const doc = await prisma.nannyDocument.create({
       data: {
         nannyProfileId: profile.id,
         documentType,
-        fileName,
-        fileUrl: fileUrl || null,
+        fileName: file.name,
+        fileUrl: storagePath,
         reviewStatus: "PENDING",
       },
     });
@@ -254,7 +270,7 @@ export async function uploadNannyDocument(
       }
     }
 
-    return { success: true, data: { documentId: doc.id } };
+    return { success: true, data: { documentId: doc.id, fileUrl: storagePath } };
   } catch (error) {
     console.error("Upload nanny document error:", error);
     return { success: false, error: "Something went wrong. Please try again." };
