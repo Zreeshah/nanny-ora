@@ -1,5 +1,5 @@
 // Prisma Schema for NannyOra
-// Using SQLite for local dev, easily switchable to PostgreSQL
+// Vercel Postgres (Neon-backed PostgreSQL)
 
 generator client {
   provider = "prisma-client-js"
@@ -7,8 +7,8 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  url       = env("DATABASE_URL")   // pooled (pgbouncer) — runtime queries
+  directUrl = env("DIRECT_URL")     // direct — migrations / db push
 }
 
 // ============================================================

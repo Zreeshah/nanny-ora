@@ -36,6 +36,23 @@ yarn-error.log*
 # vercel
 .vercel
 
+# netlify (moving to Vercel — keep local cruft out of git)
+.netlify
+netlify.toml
+
+# local IDE / scratch files
+Library
+scratch_*.py
+replace-purple.js
+*.bak
+
+# prisma local sqlite (schema provider is postgresql)
+prisma/dev.db
+prisma/dev.db-journal
+
+# deno lockfile (project uses npm)
+deno.lock
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
