@@ -24,7 +24,7 @@ export default function NannyDashboard() {
         <div className="absolute bottom-0 left-1/3 w-24 h-24 bg-white/5 rounded-full filter blur-lg translate-y-8 pointer-events-none" />
 
         <div className="relative z-10">
-          <h1 className="font-heading text-3xl sm:text-4xl mb-1">
+          <h1 className="font-heading text-3xl sm:text-4xl mb-1 text-white">
             Welcome back, {userName} 👋
           </h1>
           <p className="text-white/80 text-sm">
