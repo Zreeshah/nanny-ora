@@ -20,6 +20,7 @@ import { getInitials, formatRate } from "@/lib/utils";
 import {
   MapPin, Eye, CheckCircle, XCircle, ChevronDown, ChevronUp,
   FileText, Shield, ThumbsUp, ThumbsDown, Loader2, Info, Mail, Phone,
+  Download,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -381,6 +382,25 @@ export default function AdminNanniesPage() {
                                 </div>
                               </div>
                               <div className="flex items-center gap-1.5 flex-shrink-0">
+                                {doc.fileUrl ? (
+                                  <a
+                                    href={doc.fileUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    download={doc.fileName}
+                                    title={`Download / view ${doc.fileName}`}
+                                    className="inline-flex items-center justify-center h-7 w-7 p-0 rounded-lg text-primary hover:bg-primary/10 transition-colors"
+                                  >
+                                    <Download className="w-3.5 h-3.5" />
+                                  </a>
+                                ) : (
+                                  <span
+                                    title="No file stored. Only the filename was declared during application. Wire up Supabase Storage to enable real uploads."
+                                    className="inline-flex items-center justify-center h-7 w-7 p-0 rounded-lg text-muted-foreground/50 cursor-not-allowed bg-muted/30"
+                                  >
+                                    <Download className="w-3.5 h-3.5" />
+                                  </span>
+                                )}
                                 {doc.reviewStatus !== "APPROVED" && (
                                   <Button
                                     variant="ghost"
