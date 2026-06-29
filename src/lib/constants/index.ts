@@ -87,6 +87,9 @@ export const CARE_TYPES = [
   { value: "weekend", label: "Weekend Care" },
   { value: "emergency_backup", label: "Emergency Backup Care" },
   { value: "specialist_sensory", label: "Specialist Sensory-Aware Care" },
+  { value: "maternity_newborn", label: "Maternity & Newborn Care (月嫂)" },
+  { value: "night_nanny", label: "Night Nanny / Overnight Care" },
+  { value: "inclusive_neurodiverse", label: "Inclusive & Neurodiverse Care" },
 ] as const;
 export type CareTypeValue = (typeof CARE_TYPES)[number]["value"];
 
