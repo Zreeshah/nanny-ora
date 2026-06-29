@@ -11,6 +11,7 @@ export async function applyAsNanny(
   input: NannyApplicationInput & {
     password: string;
     documents?: { documentType: string; file: File }[];
+    policeVetAuthorized?: boolean;
   }
 ): Promise<ActionResult> {
   try {
@@ -101,6 +102,8 @@ export async function applyAsNanny(
           refereeData: JSON.stringify(data.refereeData || []),
           verificationLevel: "LISTED",
           adminStatus: "SUBMITTED",
+          policeVetAuthorized: input.policeVetAuthorized || false,
+          policeVetAuthorizedAt: input.policeVetAuthorized ? new Date() : null,
           ...safetyChecksUpdate,
         },
       });

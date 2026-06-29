@@ -59,6 +59,9 @@ export default function ApplyAsNannyPage() {
   // Safety check documents
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, File | null>>({});
 
+  // Police vetting authorization (Children's Act 2014)
+  const [policeVetAuthorized, setPoliceVetAuthorized] = useState(false);
+
   // Referee data (check #4)
   const [referees, setReferees] = useState<RefereeEntry[]>([
     { name: "", phone: "", email: "", relationship: "" },
@@ -168,6 +171,12 @@ export default function ApplyAsNannyPage() {
       return;
     }
 
+    if (!policeVetAuthorized) {
+      toast("You must authorise the NZ Police vetting disclosure to submit your application.", "error");
+      setIsLoading(false);
+      return;
+    }
+
     // Construct documents array — pass raw File objects to the server action,
     // which uploads them to Supabase Storage server-side using the service_role key.
     const documentsList: { documentType: string; file: File }[] = Object.entries(uploadedFiles)
@@ -195,6 +204,7 @@ export default function ApplyAsNannyPage() {
         refereeData: referees.filter(r => r.name.trim()),
         password,
         documents: documentsList,
+        policeVetAuthorized,
       } as any);
 
       if (result.success) {
@@ -782,6 +792,41 @@ export default function ApplyAsNannyPage() {
                     </div>
                   );
                 })}
+              </div>
+            </div>
+
+            {/* Police Vetting Authorization Agreement */}
+            <div className="border-t border-border/40 pt-6">
+              <h2 className="text-sm font-bold text-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 text-primary" />
+                Police Vetting Authorization
+              </h2>
+              <div className={`rounded-2xl border p-4 transition-all ${
+                policeVetAuthorized
+                  ? "border-primary bg-primary/[0.02]"
+                  : "border-border bg-secondary/20"
+              }`}>
+                <p className="text-[11px] text-muted-foreground leading-relaxed mb-3">
+                  I authorise disclosure by New Zealand Police of any information held about me to NannyOra for the purpose of a safety check under the Children's Act 2014. I understand that while the Criminal Records (Clean Slate) Act 2004 allows certain convictions to be concealed in standard contexts, section 19(1)(ba) of that Act provides an exception for individuals working with children or vulnerable communities. Consequently, all relevant criminal history and police information will be disclosed.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setPoliceVetAuthorized(!policeVetAuthorized)}
+                  className={`flex items-start gap-3 w-full text-left p-3 rounded-xl border transition-all cursor-pointer ${
+                    policeVetAuthorized
+                      ? "border-primary bg-primary/5"
+                      : "border-border bg-white hover:border-primary/30"
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                    policeVetAuthorized ? "bg-primary border-primary text-white" : "border-border bg-white"
+                  }`}>
+                    {policeVetAuthorized && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                  </div>
+                  <span className="text-xs font-bold text-foreground">
+                    I have read and authorise the above Police vetting disclosure agreement <span className="text-destructive">*</span>
+                  </span>
+                </button>
               </div>
             </div>
 
