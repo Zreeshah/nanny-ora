@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { CheckCircle, ArrowRight, Check } from "lucide-react";
+import { ImageBand } from "@/components/ui/ImageBand";
 
 export const metadata: Metadata = {
   title: "Pricing",
@@ -79,6 +80,13 @@ export default function PricingPage() {
           NannyOra is free to use for families and nannies. Premium features are on the way.
         </p>
       </div>
+
+      <ImageBand
+        tags={["family", "find", "professional", "care"]}
+        seed="pricing"
+        aspect="aspect-[16/6]"
+        className="mb-16"
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 items-stretch">
         {plans.map((plan) => (

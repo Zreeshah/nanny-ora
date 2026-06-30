@@ -5,6 +5,7 @@ import { NannyCard } from "@/components/cards/NannyCard";
 import { getSampleNannies } from "@/lib/data/sample-nannies";
 import { ArrowRight, Heart, Sparkles, Smile, ShieldAlert } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { ImageBand } from "@/components/ui/ImageBand";
 
 export const metadata: Metadata = {
   title: "Sensory-Aware Nannies Auckland — Calm, Specialist Childcare",
@@ -29,6 +30,15 @@ export default function SensoryAwareNannyPage() {
           Find Auckland nannies who specialize in creating calm, structured care environments for children with sensory processing differences, avoiding triggers and supporting emotional regulation.
         </p>
       </div>
+
+      {/* Contextual hero image */}
+      <ImageBand
+        tags={["sensory", "neurodiverse", "specialist", "care"]}
+        seed="sensory-aware-nanny"
+        aspect="aspect-[16/7]"
+        priority
+        className="mb-16"
+      />
 
       {/* Info Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16">

@@ -5,6 +5,7 @@ import { NannyCard } from "@/components/cards/NannyCard";
 import { getSampleNannies } from "@/lib/data/sample-nannies";
 import { ArrowRight, Brain, Sparkles, HeartHandshake, Compass } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { ImageBand } from "@/components/ui/ImageBand";
 
 export const metadata: Metadata = {
   title: "Neurodiverse Childcare Auckland — Experienced Nannies",
@@ -29,6 +30,15 @@ export default function NeurodiverseChildcarePage() {
           Connect with vetted Auckland nannies experienced in supporting neurodivergent children. Dedicated carers trained to guide and nurture children with Autism, ADHD, and other learning differences.
         </p>
       </div>
+
+      {/* Contextual hero image */}
+      <ImageBand
+        tags={["neurodiverse", "sensory", "adhd", "specialist"]}
+        seed="neurodiverse-childcare"
+        aspect="aspect-[16/7]"
+        priority
+        className="mb-16"
+      />
 
       {/* Info Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16">

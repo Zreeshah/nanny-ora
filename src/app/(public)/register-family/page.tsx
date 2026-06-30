@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Card } from "@/components/ui/Card";
 import { AUCKLAND_SUBURBS, CARE_TYPES, CHILD_AGE_RANGES } from "@/lib/constants";
 import { CheckCircle, Heart, Shield, Check } from "lucide-react";
+import { ImageBand } from "@/components/ui/ImageBand";
 
 export default function RegisterFamilyPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -103,6 +104,13 @@ export default function RegisterFamilyPage() {
           Tell us about your childcare requirements and let us match you with qualified local nannies.
         </p>
       </div>
+
+      <ImageBand
+        tags={["family", "find", "book", "care"]}
+        seed="register-family"
+        aspect="aspect-[16/6]"
+        className="mb-8"
+      />
 
       <Card className="rounded-3xl border-border/40 p-6 sm:p-8 bg-card shadow-sm">
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>

@@ -19,6 +19,7 @@ import {
   User, Briefcase, GraduationCap, Users, ShieldAlert,
   ClipboardCheck, AlertTriangle, Info, X, Plus, Trash2,
 } from "lucide-react";
+import { ImageBand } from "@/components/ui/ImageBand";
 
 // Icons mapped to each safety check
 const CHECK_ICONS: Record<string, React.ElementType> = {
@@ -251,6 +252,13 @@ export default function ApplyAsNannyPage() {
           Join NannyOra and connect with Auckland families looking for specialist childcare.
         </p>
       </div>
+
+      <ImageBand
+        tags={["career", "jobs", "apply", "professional"]}
+        seed="apply-as-nanny"
+        aspect="aspect-[16/6]"
+        className="mb-10"
+      />
 
       {/* Step nodes tracker */}
       <div className="flex items-center justify-center gap-2 mb-10">

@@ -7,6 +7,7 @@ import { NannyCard } from "@/components/cards/NannyCard";
 import { getSampleNannies } from "@/lib/data/sample-nannies";
 import { SUBURB_SLUGS } from "@/lib/constants";
 import { ArrowRight, MapPin } from "lucide-react";
+import { ImageBand } from "@/components/ui/ImageBand";
 
 export const metadata: Metadata = {
   title: "Nannies in Auckland — Verified Local Childcare",
@@ -27,6 +28,15 @@ export default function AucklandNanniesPage() {
           Browse verified, experienced nannies across Auckland. From casual babysitting to specialist sensory-aware care — find the right nanny for your family.
         </p>
       </div>
+
+      <ImageBand
+        tags={["suburb", "auckland", "agency", "find"]}
+        seed="nannies-auckland"
+        count={3}
+        aspect="aspect-[4/3]"
+        priority
+        className="mb-12"
+      />
 
       {/* Suburb Links */}
       <section className="mb-12">

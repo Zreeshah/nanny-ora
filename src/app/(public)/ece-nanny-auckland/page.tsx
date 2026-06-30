@@ -5,6 +5,7 @@ import { NannyCard } from "@/components/cards/NannyCard";
 import { getSampleNannies } from "@/lib/data/sample-nannies";
 import { ArrowRight, GraduationCap, Star, BookOpen, Lightbulb } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { ImageBand } from "@/components/ui/ImageBand";
 
 export const metadata: Metadata = {
   title: "ECE Nannies Auckland — Early Childhood Education Qualified",
@@ -29,6 +30,15 @@ export default function EceNannyPage() {
           Find nannies with early childhood education (ECE) qualifications and registered teacher status. Bring center-quality learning frameworks straight into your home.
         </p>
       </div>
+
+      {/* Contextual hero image */}
+      <ImageBand
+        tags={["ece", "teacher", "specialist", "professional"]}
+        seed="ece-nanny-auckland"
+        aspect="aspect-[16/7]"
+        priority
+        className="mb-16"
+      />
 
       {/* Info Section about ECE Benefits */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16">

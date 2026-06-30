@@ -6,6 +6,7 @@ import {
   Shield, FileCheck, UserCheck, Lock, Eye, CheckCircle,
   AlertTriangle, MessageCircle, BadgeCheck, Star, Users, Info
 } from "lucide-react";
+import { ImageBand } from "@/components/ui/ImageBand";
 
 export const metadata: Metadata = {
   title: "Trust & Safety — Safe Childcare on NannyOra",
@@ -58,6 +59,15 @@ export default function TrustAndSafetyPage() {
           Your family&apos;s peace of mind is our foundation. Here is how we verify credentials, protect personal details, and foster a safe Auckland childcare community.
         </p>
       </div>
+
+      {/* Contextual image */}
+      <ImageBand
+        tags={["trust", "safety", "vetting", "verified"]}
+        seed="trust-and-safety"
+        aspect="aspect-[16/7]"
+        priority
+        className="mb-16"
+      />
 
       {/* Verification Levels */}
       <section className="mb-20">

@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { NannyCard } from "@/components/cards/NannyCard";
 import { getSampleNannies } from "@/lib/data/sample-nannies";
 import { Brain, Heart, Shield, ArrowRight, Sparkles, Award } from "lucide-react";
+import { ImageBand } from "@/components/ui/ImageBand";
 
 export const metadata: Metadata = {
   title: "Specialist Childcare Auckland — Sensory-Aware & Neurodiverse Nannies",
@@ -30,6 +31,15 @@ export default function SpecialistChildcarePage() {
           Connecting Auckland parents with nannies who have verified, active experience supporting neurodiverse children, sensory processing needs, and early childhood education.
         </p>
       </div>
+
+      {/* Contextual hero image */}
+      <ImageBand
+        tags={["specialist", "sensory", "ece", "care"]}
+        seed="specialist-childcare"
+        aspect="aspect-[16/7]"
+        priority
+        className="mb-16"
+      />
 
       {/* Specialist Segments Selection Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">

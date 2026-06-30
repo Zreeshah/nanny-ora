@@ -23,6 +23,11 @@ import { formatRate } from "@/lib/utils";
 import InteractiveHero from "@/components/home/InteractiveHero";
 import BentoFeatures from "@/components/home/BentoFeatures";
 import MarqueeTestimonials from "@/components/home/MarqueeTestimonials";
+import { ImageBand } from "@/components/ui/ImageBand";
+import { Reveal } from "@/components/ui/Reveal";
+import { pickImages } from "@/lib/images";
+
+const homeSensoryImage = pickImages({ tags: ["sensory", "neurodiverse", "specialist"], count: 1, seed: "home-sensory" })[0];
 
 export const metadata: Metadata = {
   title: "NannyOra — Trusted Nanny Care for Auckland Families",
@@ -142,6 +147,18 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ===== REAL CARE ACROSS AUCKLAND — PHOTO BAND ===== */}
+      <section className="py-4 md:py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ImageBand
+            tags={["find", "family", "professional", "care", "suburb"]}
+            seed="home-collage"
+            count={3}
+            aspect="aspect-[4/3]"
+          />
+        </div>
+      </section>
+
       {/* ===== SPECIALIST SENSORY-AWARE CHILDCARE ===== */}
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -149,8 +166,8 @@ export default function HomePage() {
             {/* Left — Image */}
             <div className="md:col-span-5 relative w-full aspect-[4/3] md:aspect-[5/6] rounded-3xl overflow-hidden shadow-lg border border-border/20">
               <Image
-                src="https://images.pexels.com/photos/3662667/pexels-photo-3662667.jpeg?auto=compress&cs=tinysrgb&w=800"
-                alt="Sensory-aware nanny playing with child on the floor"
+                src={homeSensoryImage.src}
+                alt={homeSensoryImage.alt}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 40vw"
@@ -353,7 +370,9 @@ export default function HomePage() {
               Questions families ask
             </h2>
           </div>
-          <Accordion items={faqItems} />
+          <Reveal>
+            <Accordion items={faqItems} />
+          </Reveal>
         </div>
       </section>
 

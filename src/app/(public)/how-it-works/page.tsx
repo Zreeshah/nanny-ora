@@ -6,6 +6,7 @@ import {
   FileText, Search, MessageCircle, Heart, ArrowRight,
   UserPlus, ClipboardCheck, Upload, CheckCircle, HelpCircle,
 } from "lucide-react";
+import { ImageBand } from "@/components/ui/ImageBand";
 
 export const metadata: Metadata = {
   title: "How NannyOra Works — Childcare Connected with Trust",
@@ -28,6 +29,15 @@ export default function HowItWorksPage() {
           Connecting Auckland families with specialist, ECE-qualified, and sensory-aware nannies through a high-trust process designed for safety and visual simplicity.
         </p>
       </div>
+
+      {/* Contextual image */}
+      <ImageBand
+        tags={["find", "family", "professional", "care"]}
+        seed="how-it-works"
+        aspect="aspect-[16/7]"
+        priority
+        className="mb-20"
+      />
 
       {/* For Parents Section */}
       <section className="mb-24 relative">

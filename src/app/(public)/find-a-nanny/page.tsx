@@ -14,6 +14,7 @@ import {
   EXPERIENCE_LEVELS,
 } from "@/lib/constants";
 import { Search, SlidersHorizontal, X } from "lucide-react";
+import { ImageBand } from "@/components/ui/ImageBand";
 
 export default function FindANannyPage() {
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -130,6 +131,14 @@ export default function FindANannyPage() {
           Browse verified, experienced nannies across Auckland suburbs.
         </p>
       </div>
+
+      <ImageBand
+        tags={["find", "family", "professional", "care"]}
+        seed="find-a-nanny"
+        aspect="aspect-[16/6]"
+        priority
+        className="mb-8"
+      />
 
       {/* Search & Filter Bar */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">

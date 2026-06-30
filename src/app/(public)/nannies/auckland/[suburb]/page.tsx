@@ -6,6 +6,7 @@ import { NannyCard } from "@/components/cards/NannyCard";
 import { getSampleNannies } from "@/lib/data/sample-nannies";
 import { SUBURB_SLUGS } from "@/lib/constants";
 import { ArrowRight } from "lucide-react";
+import { ImageBand } from "@/components/ui/ImageBand";
 
 export function generateStaticParams() {
   return Object.keys(SUBURB_SLUGS).map((slug) => ({ suburb: slug }));
@@ -46,6 +47,15 @@ export default async function SuburbNanniesPage({
           Browse verified nannies available in {suburbName} and surrounding Auckland suburbs.
         </p>
       </div>
+
+      {/* Suburb-matched contextual image */}
+      <ImageBand
+        tags={["suburb", suburb, "auckland", "find"]}
+        seed={`suburb-${suburb}`}
+        aspect="aspect-[16/7]"
+        priority
+        className="mb-12"
+      />
 
       {nannies.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">

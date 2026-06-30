@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Card } from "@/components/ui/Card";
 import { AUCKLAND_SUBURBS, CARE_TYPES } from "@/lib/constants";
 import { CheckCircle, Briefcase, Shield } from "lucide-react";
+import { ImageBand } from "@/components/ui/ImageBand";
 
 export default function PostAJobPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -82,6 +83,13 @@ export default function PostAJobPage() {
           Describe your family schedule and requirements to receive applications from verified Auckland nannies.
         </p>
       </div>
+
+      <ImageBand
+        tags={["find", "family", "hire", "care"]}
+        seed="post-a-job"
+        aspect="aspect-[16/6]"
+        className="mb-8"
+      />
 
       <Card className="rounded-3xl border-border/40 p-6 sm:p-8 bg-card shadow-sm">
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
