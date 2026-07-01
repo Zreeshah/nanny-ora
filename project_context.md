@@ -542,3 +542,30 @@ npm run dev      # starts at http://localhost:3000
 - **`lucide-react` v1.18.0** — unusual version pin (latest is v0.x); may have API differences
 - **Lint has ~574 errors** — mostly `@typescript-eslint/no-explicit-any` on `(session.user as any).role` patterns; not blocking builds
 - **SEO landing pages** (`/ece-nanny-auckland`, etc.) are statically rendered and don't pull from the database
+- **Logo tagline** — the tagline "Curated Care. Warm Hearts." is baked into `logo.png` as raster text (953×570px). At mobile header height (48px), it's physically ~4px tall and unreadable. Fix: CSS text tagline rendered below the logo on mobile only (`sm:hidden` span in Header/Footer). The baked-in raster tagline is still in the image but effectively invisible at small sizes.
+
+---
+
+## 16. Recent Changes (Post-Context-File)
+
+The following changes were made after the initial `project_context.md` was written (commit `861bf03`):
+
+### UI & Animation Overhaul
+- **Local image library** (`src/lib/images.ts`) — 34 contextual Auckland childcare photos in `public/images/`, with `pickImages()` deterministic seeded picker (cyrb53 hash + mulberry32 PRNG) for stable SSR/CSR image selection
+- **Animated UI components** (`src/components/ui/`) — `Reveal` (scroll-triggered fade/slide via IntersectionObserver), `ShinyText` (gradient-sheen text), `BorderBeam` (traveling border light), `ImageBand` (drop-in contextual image section). All pure CSS, no framer-motion.
+- **Homepage redesign** — `InteractiveHero` now uses layered photo collage + floating trust badges; new sections: `TrustStrip`, `TrustStandard` (7-layer safety timeline), `SpecialistExpertise` (8 specialist care cards), `LifestyleGallery` (masonry Pinterest-style), `DayInLife` (emotional storytelling). `MarqueeTestimonials` replaced infinite marquee with static 3-column grid + emotional headlines.
+- **Scroll animations** — `Reveal` + `ImageBand` added across all public pages (find-a-nanny, how-it-works, pricing, trust-and-safety, all SEO landing pages, apply-as-nanny, post-a-job, register-family)
+
+### Email System (`src/lib/email/`)
+- **Resend integration** — `sendEmail()` best-effort sender (no-ops without `RESEND_API_KEY` so dev/demo never breaks)
+- **`sendRefereeRequests()`** — auto-emails each referee a reference request when a nanny applies (wired into `applyAsNanny` server action)
+- **`escapeHtml()`** — XSS guard for user-supplied strings in email HTML
+- Added `resend` dependency to `package.json`
+
+### Logo Tagline Fix
+- Logo PNG has tagline baked in as raster text — unreadable at mobile sizes. CSS text tagline added below logo in Header and Footer, visible on mobile only (`sm:hidden` / `md:hidden`).
+
+### CSS Fixes
+- Base heading color rule moved into `@layer base` (fixes specificity war with Tailwind utility classes)
+- Added `border-beam` and `text-shimmer` keyframes for animation components
+- Added `prefers-reduced-motion` rules to freeze animations
