@@ -31,7 +31,7 @@ export default function BentoFeatures() {
       tag: "Specialist Care",
       color: "teal",
       href: "/sensory-aware-nanny-auckland",
-      className: "md:col-span-1 md:row-span-2 bg-gradient-to-br from-teal-50/25 via-transparent to-transparent flex flex-col justify-between",
+      className: "md:col-span-1 bg-gradient-to-br from-teal-50/25 via-transparent to-transparent",
     },
     {
       icon: Award,

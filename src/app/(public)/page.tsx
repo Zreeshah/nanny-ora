@@ -391,7 +391,7 @@ export default function HomePage() {
             <div className="absolute bottom-0 left-0 w-36 h-36 bg-white/5 rounded-full filter blur-lg pointer-events-none -translate-x-8 translate-y-8" />
             
             <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center">
-              <h2 className="font-heading text-3xl sm:text-4xl mb-4 leading-tight">
+              <h2 className="font-heading text-3xl sm:text-4xl mb-4 leading-tight text-white font-bold">
                 Ready to find calm, trusted care?
               </h2>
               <p className="text-white/80 text-sm sm:text-base mb-8 max-w-md">
