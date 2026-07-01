@@ -293,6 +293,17 @@ h1, h2, h3, h4 {
   100% { transform: translateX(-50%); }
 }
 
+/* Animated gradient sheen for headings (adapted from 21st.dev "Animated Shiny Text", pure CSS) */
+@keyframes text-shimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+/* Traveling light beam around a card border (adapted from 21st.dev / magic-ui "Border Beam", pure CSS) */
+@keyframes border-beam {
+  to { offset-distance: 100%; }
+}
+
 .mask-gradient {
   mask-image: linear-gradient(to right, transparent, white 10%, white 90%, transparent);
   -webkit-mask-image: linear-gradient(to right, transparent, white 10%, white 90%, transparent);

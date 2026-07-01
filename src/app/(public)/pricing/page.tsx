@@ -5,6 +5,8 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { CheckCircle, ArrowRight, Check } from "lucide-react";
 import { ImageBand } from "@/components/ui/ImageBand";
+import { ShinyText } from "@/components/ui/ShinyText";
+import { BorderBeam } from "@/components/ui/BorderBeam";
 
 export const metadata: Metadata = {
   title: "Pricing",
@@ -75,7 +77,7 @@ export default function PricingPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center mb-16">
-        <h1 className="font-heading text-4xl md:text-5xl text-foreground mb-4">Simple, Transparent Pricing</h1>
+        <h1 className="font-heading text-4xl md:text-5xl text-foreground mb-4">Simple, <ShinyText>Transparent Pricing</ShinyText></h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           NannyOra is free to use for families and nannies. Premium features are on the way.
         </p>
@@ -92,10 +94,11 @@ export default function PricingPage() {
         {plans.map((plan) => (
           <Card
             key={plan.name}
-            className={`flex flex-col relative border border-border/40 ${
+            className={`flex flex-col relative overflow-hidden border border-border/40 ${
               plan.highlighted ? "border-accent/50 shadow-md ring-4 ring-accent/5" : ""
             }`}
           >
+            {plan.highlighted && <BorderBeam duration={12} />}
             {plan.comingSoon && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                 <Badge variant="premium" size="md">Coming Soon</Badge>

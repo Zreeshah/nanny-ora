@@ -25,6 +25,8 @@ import BentoFeatures from "@/components/home/BentoFeatures";
 import MarqueeTestimonials from "@/components/home/MarqueeTestimonials";
 import { ImageBand } from "@/components/ui/ImageBand";
 import { Reveal } from "@/components/ui/Reveal";
+import { ShinyText } from "@/components/ui/ShinyText";
+import { BorderBeam } from "@/components/ui/BorderBeam";
 import { pickImages } from "@/lib/images";
 
 const homeSensoryImage = pickImages({ tags: ["sensory", "neurodiverse", "specialist"], count: 1, seed: "home-sensory" })[0];
@@ -112,7 +114,7 @@ export default function HomePage() {
               <span>Our Process</span>
             </div>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-foreground mb-4">
-              How NannyOra works
+              How <ShinyText>NannyOra</ShinyText> works
             </h2>
             <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
               Find qualified, specialist childcare in Auckland with eight simple, high-trust steps.
@@ -219,7 +221,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-foreground mb-4">
-              Featured Auckland nannies
+              Featured <ShinyText>Auckland nannies</ShinyText>
             </h2>
             <p className="text-muted-foreground text-sm sm:text-base">
               Meet some of the trusted, verified carers in our Auckland community.
@@ -227,8 +229,9 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredNannies.map((nanny) => (
-              <Card key={nanny.id} hover padding="none" className="overflow-hidden bg-card border border-border/40">
+            {featuredNannies.map((nanny, i) => (
+              <Card key={nanny.id} hover padding="none" className="relative overflow-hidden bg-card border border-border/40">
+                <BorderBeam duration={14} delay={i * 4} />
                 <div className="p-6">
                   <div className="flex items-start gap-4 mb-5">
                     {/* Circular profile photo */}
@@ -298,7 +301,8 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-8">
             {/* For families */}
-            <Card className="border-t-4 border-t-accent hover:border-accent/40 bg-card rounded-3xl p-6.5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300">
+            <Card className="relative overflow-hidden border-t-4 border-t-accent hover:border-accent/40 bg-card rounded-3xl p-6.5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300">
+              <BorderBeam duration={12} colorFrom="var(--accent)" colorTo="var(--accent-light)" />
               <div className="flex items-center gap-2.5 mb-5">
                 <div className="w-9 h-9 rounded-full bg-accent/10 flex items-center justify-center">
                   <Heart className="w-4.5 h-4.5 text-accent fill-accent" aria-hidden="true" />
@@ -329,7 +333,8 @@ export default function HomePage() {
             </Card>
 
             {/* For nannies */}
-            <Card className="border-t-4 border-t-primary hover:border-primary/40 bg-card rounded-3xl p-6.5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300">
+            <Card className="relative overflow-hidden border-t-4 border-t-primary hover:border-primary/40 bg-card rounded-3xl p-6.5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300">
+              <BorderBeam duration={12} colorFrom="var(--primary)" colorTo="var(--primary-light)" />
               <div className="flex items-center gap-2.5 mb-5">
                 <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
                   <Award className="w-4.5 h-4.5 text-primary fill-primary" aria-hidden="true" />
@@ -380,6 +385,7 @@ export default function HomePage() {
       <section className="py-12 md:py-16 bg-background">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-gradient-to-br from-primary via-primary-dark to-primary rounded-3xl p-10 md:p-14 text-center text-primary-foreground relative overflow-hidden shadow-xl">
+            <BorderBeam size={300} duration={10} colorFrom="rgba(255,255,255,0.9)" colorTo="var(--accent-light)" />
             {/* Soft decorative background circles */}
             <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full filter blur-xl pointer-events-none translate-x-12 -translate-y-12" />
             <div className="absolute bottom-0 left-0 w-36 h-36 bg-white/5 rounded-full filter blur-lg pointer-events-none -translate-x-8 translate-y-8" />

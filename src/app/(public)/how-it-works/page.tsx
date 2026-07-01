@@ -7,6 +7,7 @@ import {
   UserPlus, ClipboardCheck, Upload, CheckCircle, HelpCircle,
 } from "lucide-react";
 import { ImageBand } from "@/components/ui/ImageBand";
+import { ShinyText } from "@/components/ui/ShinyText";
 
 export const metadata: Metadata = {
   title: "How NannyOra Works — Childcare Connected with Trust",
@@ -23,7 +24,7 @@ export default function HowItWorksPage() {
           <span>Our Community Playbook</span>
         </div>
         <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl text-foreground mb-6 leading-tight">
-          How NannyOra works
+          How <ShinyText>NannyOra</ShinyText> works
         </h1>
         <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
           Connecting Auckland families with specialist, ECE-qualified, and sensory-aware nannies through a high-trust process designed for safety and visual simplicity.
@@ -46,7 +47,7 @@ export default function HowItWorksPage() {
             <span>For Parents</span>
           </span>
           <h2 className="font-heading text-3xl sm:text-4xl text-foreground mb-4">
-            Finding trusted care
+            Finding <ShinyText>trusted care</ShinyText>
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
             Follow our four-step process to discover local, verified Auckland nannies who match your family&apos;s specific needs.
@@ -126,7 +127,7 @@ export default function HowItWorksPage() {
             <span>For Nannies</span>
           </span>
           <h2 className="font-heading text-3xl sm:text-4xl text-foreground mb-4">
-            Joining our community
+            Joining our <ShinyText>community</ShinyText>
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
             Apply as a carer and highlight your qualifications, certifications, and experience to connect with local parents.

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { ShieldCheck, GraduationCap, Sparkles, Heart, Star, Users } from "lucide-react";
 import StatsTicker from "./StatsTicker";
+import { ShinyText } from "@/components/ui/ShinyText";
 
 export default function InteractiveHero() {
   const [mounted, setMounted] = useState(false);
@@ -56,7 +57,7 @@ export default function InteractiveHero() {
               }`}
             >
               Trusted nanny care <br />
-              for Auckland families
+              for <ShinyText>Auckland families</ShinyText>
             </h1>
 
             {/* Subtext */}

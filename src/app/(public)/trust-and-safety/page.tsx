@@ -7,6 +7,7 @@ import {
   AlertTriangle, MessageCircle, BadgeCheck, Star, Users, Info
 } from "lucide-react";
 import { ImageBand } from "@/components/ui/ImageBand";
+import { ShinyText } from "@/components/ui/ShinyText";
 
 export const metadata: Metadata = {
   title: "Trust & Safety — Safe Childcare on NannyOra",
@@ -53,7 +54,7 @@ export default function TrustAndSafetyPage() {
           <Shield className="w-7 h-7 text-primary" />
         </div>
         <h1 className="font-heading text-4xl md:text-5xl text-foreground mb-4">
-          Trust & safety
+          Trust &amp; <ShinyText>safety</ShinyText>
         </h1>
         <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
           Your family&apos;s peace of mind is our foundation. Here is how we verify credentials, protect personal details, and foster a safe Auckland childcare community.

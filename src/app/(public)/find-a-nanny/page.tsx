@@ -15,6 +15,7 @@ import {
 } from "@/lib/constants";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { ImageBand } from "@/components/ui/ImageBand";
+import { ShinyText } from "@/components/ui/ShinyText";
 
 export default function FindANannyPage() {
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -125,7 +126,7 @@ export default function FindANannyPage() {
       {/* Page Header */}
       <div className="mb-8">
         <h1 className="font-heading text-3xl md:text-4xl text-foreground mb-2">
-          Find a Nanny in Auckland
+          Find a Nanny in <ShinyText>Auckland</ShinyText>
         </h1>
         <p className="text-muted-foreground text-lg">
           Browse verified, experienced nannies across Auckland suburbs.
