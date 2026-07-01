@@ -130,11 +130,15 @@ p {
   font-size: var(--text-base);
 }
 
-h1, h2, h3, h4 {
-  font-family: var(--font-heading);
-  color: var(--foreground);
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+/* In @layer base so Tailwind color utilities (e.g. text-white on the navy CTA)
+   can override the default heading colour. Unlayered, this rule beat utilities. */
+@layer base {
+  h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+    color: var(--foreground);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
 }
 
 /* ============================================================
