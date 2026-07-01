@@ -1,34 +1,44 @@
-"use client";
+import { Star } from "lucide-react";
+import { getInitials } from "@/lib/utils";
+import { Reveal } from "@/components/ui/Reveal";
 
-import { Star, Quote } from "lucide-react";
-
+/**
+ * Elegant testimonial cards led by an emotional headline. Replaces the earlier
+ * repeating marquee — fewer, larger, calmer cards with a soft silhouette
+ * avatar, suburb, and child age. Tokens only.
+ */
 const testimonials = [
   {
-    quote: "Finding Emma was a blessing for our family. Her sensory-aware approach transformed our evenings with our autistic son. The level of calm she brings is incredible.",
+    headline: "Our evenings became peaceful again.",
+    quote: "Emma's sensory-aware approach transformed bedtime with our autistic son. The calm she brings is incredible.",
     author: "Liam & Sarah H.",
     location: "Remuera",
-    relation: "Parents of Leo (4)",
+    relation: "Parents of Leo, 4",
   },
   {
-    quote: "Aroha has ECE qualified learning background and brought centre-quality education straight into our living room. Our twins adore her, and we trust her completely.",
+    headline: "Centre-quality learning, at home.",
+    quote: "Aroha brought her ECE background straight into our living room. Our twins adore her and we trust her completely.",
     author: "Ngaire T.",
     location: "Ponsonby",
-    relation: "Mother of twins (3)",
+    relation: "Mother of twins, 3",
   },
   {
-    quote: "The police vetting and verification process on NannyOra gave us absolute peace of mind. We connected with Mia, and she has been amazing with our toddler.",
+    headline: "Absolute peace of mind.",
+    quote: "The police vetting and verification gave us total confidence. Mia has been amazing with our toddler.",
     author: "David & Jess M.",
     location: "Devonport",
-    relation: "Parents of Sophie (2)",
+    relation: "Parents of Sophie, 2",
   },
   {
-    quote: "Our child has ADHD and struggles with transitions. Our specialist nanny brought routines that just worked. It feels like a weight has been lifted from our shoulders.",
+    headline: "A weight lifted from our shoulders.",
+    quote: "Our son has ADHD and struggles with transitions. Our nanny brought routines that just worked.",
     author: "Rachel L.",
     location: "Mount Eden",
-    relation: "Mother of Mason (6)",
+    relation: "Mother of Mason, 6",
   },
   {
-    quote: "As a registered teacher, Sarah doesn't just watch our children — she extends their learning through play and structured activities. Highly recommend NannyOra!",
+    headline: "She extends their learning through play.",
+    quote: "As a registered teacher, Sarah doesn't just watch our kids — she grows them. Highly recommend.",
     author: "Matthew K.",
     location: "Epsom",
     relation: "Father of Oliver & Lily",
@@ -36,60 +46,48 @@ const testimonials = [
 ];
 
 export default function MarqueeTestimonials() {
-  // Double the list to create a seamless infinite scrolling loop
-  const scrollItems = [...testimonials, ...testimonials];
-
   return (
-    <section className="py-16 bg-gradient-to-b from-secondary/10 to-background border-t border-border/25 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 text-center">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-bold uppercase tracking-wider mb-3">
-          <Star className="w-3.5 h-3.5 fill-accent" />
-          <span>Trust & Connection</span>
+    <section className="py-16 md:py-24 bg-gradient-to-b from-secondary/10 to-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-xl mx-auto mb-14">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-bold uppercase tracking-wider mb-3">
+            <Star className="w-3.5 h-3.5 fill-accent" />
+            <span>Trust &amp; Connection</span>
+          </div>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-foreground">
+            Loved by Auckland families
+          </h2>
         </div>
-        <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-foreground">
-          Loved by Auckland families
-        </h2>
-        <p className="text-muted-foreground text-sm sm:text-base mt-3 max-w-xl mx-auto">
-          Hear from parents who found calm, trusted, and qualified specialist support for their children.
-        </p>
-      </div>
 
-      {/* Marquee Track Container */}
-      <div className="relative flex w-full overflow-x-hidden py-4 mask-gradient">
-        {/* Track 1 */}
-        <div className="flex gap-6 animate-[marquee_50s_linear_infinite] hover:[animation-play-state:paused] whitespace-nowrap min-w-full">
-          {scrollItems.map((item, index) => (
-            <div
-              key={index}
-              className="inline-block w-[350px] sm:w-[420px] bg-card border border-border/40 p-6 rounded-3xl shadow-sm hover:border-primary/20 hover:shadow-md transition-all duration-300 whitespace-normal flex-shrink-0"
-            >
-              <div className="flex items-center gap-1 text-amber-500 mb-3.5">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-current stroke-none" />
-                ))}
-              </div>
-              
-              <div className="relative mb-4">
-                <Quote className="absolute -top-2 -left-2 w-8 h-8 text-primary/5 pointer-events-none stroke-[3]" />
-                <p className="text-sm text-muted-foreground italic leading-relaxed pl-4 relative z-10">
-                  &ldquo;{item.quote}&rdquo;
-                </p>
-              </div>
-
-              <div className="border-t border-border/40 pt-3 flex items-center justify-between">
-                <div>
-                  <div className="text-sm font-bold text-foreground">{item.author}</div>
-                  <div className="text-[10px] text-muted-foreground mt-0.5">{item.relation}</div>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {testimonials.map((t, i) => (
+            <Reveal key={t.author} delay={(i % 3) * 80} direction="up">
+              <figure className="h-full flex flex-col bg-card rounded-3xl p-7 sm:p-8 shadow-sm hover:shadow-md transition-all duration-300">
+                <div className="flex items-center gap-1 text-accent mb-4">
+                  {[...Array(5)].map((_, s) => (
+                    <Star key={s} className="w-4 h-4 fill-current stroke-none" />
+                  ))}
                 </div>
-                <span className="text-[10px] font-bold text-primary bg-secondary px-2.5 py-1 rounded-full border border-border/20">
-                  {item.location}
-                </span>
-              </div>
-            </div>
+                <blockquote className="flex-1">
+                  <p className="font-heading text-xl sm:text-2xl text-foreground leading-snug mb-3">
+                    &ldquo;{t.headline}&rdquo;
+                  </p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{t.quote}</p>
+                </blockquote>
+                <figcaption className="flex items-center gap-3 mt-6 pt-5 border-t border-border/30">
+                  <span className="w-11 h-11 rounded-full bg-secondary text-primary font-heading font-bold text-sm flex items-center justify-center flex-shrink-0">
+                    {getInitials(t.author)}
+                  </span>
+                  <div className="min-w-0">
+                    <div className="text-sm font-bold text-foreground truncate">{t.author}</div>
+                    <div className="text-xs text-muted-foreground">{t.relation} · {t.location}</div>
+                  </div>
+                </figcaption>
+              </figure>
+            </Reveal>
           ))}
         </div>
       </div>
-
     </section>
   );
 }

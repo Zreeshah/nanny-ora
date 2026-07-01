@@ -6,10 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Accordion } from "@/components/ui/Accordion";
 import { Badge, VerificationBadge } from "@/components/ui/Badge";
 import {
-  Shield,
   Heart,
-  Star,
-  Users,
   Brain,
   GraduationCap,
   Award,
@@ -23,15 +20,18 @@ import { formatRate } from "@/lib/utils";
 import InteractiveHero from "@/components/home/InteractiveHero";
 import TrustStrip from "@/components/home/TrustStrip";
 import TrustStandard from "@/components/home/TrustStandard";
+import SpecialistExpertise from "@/components/home/SpecialistExpertise";
+import DayInLife from "@/components/home/DayInLife";
+import LifestyleGallery from "@/components/home/LifestyleGallery";
 import BentoFeatures from "@/components/home/BentoFeatures";
 import MarqueeTestimonials from "@/components/home/MarqueeTestimonials";
-import { ImageBand } from "@/components/ui/ImageBand";
 import { Reveal } from "@/components/ui/Reveal";
 import { ShinyText } from "@/components/ui/ShinyText";
 import { BorderBeam } from "@/components/ui/BorderBeam";
 import { pickImages } from "@/lib/images";
 
 const homeSensoryImage = pickImages({ tags: ["sensory", "neurodiverse", "specialist"], count: 1, seed: "home-sensory" })[0];
+const finalCtaImage = pickImages({ tags: ["family", "find", "trust", "care"], count: 1, seed: "home-final-cta" })[0];
 
 export const metadata: Metadata = {
   title: "NannyOra — Trusted Nanny Care for Auckland Families",
@@ -49,8 +49,9 @@ const featuredNannies = [
     yearsExperience: 8,
     bio: "Passionate early childhood educator with 8+ years caring for children of all ages.",
     verificationLevel: "VERIFIED" as const,
-    specialistTags: ["ECE Background", "Baby Experience"],
-    imageUrl: "https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop&crop=face",
+    specialistTags: ["ECE Teacher", "Newborn Care", "First Aid"],
+    whyLoved: "Creates calm, playful learning routines.",
+    imageUrl: "https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=600&h=750&fit=crop",
   },
   {
     id: "nanny-002",
@@ -60,8 +61,9 @@ const featuredNannies = [
     yearsExperience: 12,
     bio: "Registered teacher with specialist training in sensory-aware childcare.",
     verificationLevel: "SPECIALIST" as const,
-    specialistTags: ["Sensory-Aware", "Registered Teacher"],
-    imageUrl: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop&crop=face",
+    specialistTags: ["Sensory-Aware", "ADHD Support", "Registered Teacher"],
+    whyLoved: "Turns tough evenings into peaceful ones.",
+    imageUrl: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=600&h=750&fit=crop",
   },
   {
     id: "nanny-003",
@@ -71,8 +73,9 @@ const featuredNannies = [
     yearsExperience: 5,
     bio: "Warm nanny who loves outdoor activities and creative play. First aid certified.",
     verificationLevel: "PREMIUM_VETTED" as const,
-    specialistTags: ["First Aid", "After-School"],
-    imageUrl: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop&crop=face",
+    specialistTags: ["First Aid", "After-School", "Montessori"],
+    whyLoved: "Makes outdoor adventures the day's highlight.",
+    imageUrl: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600&h=750&fit=crop",
   },
 ];
 
@@ -114,6 +117,9 @@ export default function HomePage() {
       {/* ===== SIGNATURE 7-LAYER TRUST STANDARD ===== */}
       <TrustStandard />
 
+      {/* ===== SPECIALIST EXPERTISE ===== */}
+      <SpecialistExpertise />
+
       {/* ===== HOW NANNYORA WORKS ===== */}
       <section className="py-16 md:py-24 bg-secondary/35 border-y border-border/25">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -154,18 +160,6 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ===== REAL CARE ACROSS AUCKLAND — PHOTO BAND ===== */}
-      <section className="py-4 md:py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ImageBand
-            tags={["find", "family", "professional", "care", "suburb"]}
-            seed="home-collage"
-            count={3}
-            aspect="aspect-[4/3]"
-          />
         </div>
       </section>
 
@@ -238,41 +232,45 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {featuredNannies.map((nanny, i) => (
-              <Card key={nanny.id} hover padding="none" className="relative overflow-hidden bg-card border border-border/40">
+              <Card key={nanny.id} hover padding="none" className="relative overflow-hidden bg-card border border-border/40 flex flex-col">
                 <BorderBeam duration={14} delay={i * 4} />
-                <div className="p-6">
-                  <div className="flex items-start gap-4 mb-5">
-                    {/* Circular profile photo */}
-                    <div className="relative w-14 h-14 rounded-full overflow-hidden flex-shrink-0 border border-border bg-muted">
-                      <Image
-                        src={nanny.imageUrl}
-                        alt={nanny.name}
-                        fill
-                        className="object-cover"
-                        sizes="56px"
-                      />
-                    </div>
-                    <div className="min-w-0 pt-0.5">
-                      <h3 className="font-semibold text-foreground text-base tracking-tight">{nanny.name}</h3>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
-                        <MapPin className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
-                        <span>{nanny.suburb}</span>
-                      </div>
-                      <VerificationBadge level={nanny.verificationLevel} />
+                {/* Large candid photo */}
+                <div className="relative aspect-[4/5] w-full overflow-hidden">
+                  <Image
+                    src={nanny.imageUrl}
+                    alt={nanny.name}
+                    fill
+                    className="object-cover transition-transform duration-500 hover:scale-[1.03]"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/75 via-primary/10 to-transparent" />
+                  {/* Layered tags */}
+                  <div className="absolute top-3 left-3">
+                    <VerificationBadge level={nanny.verificationLevel} />
+                  </div>
+                  <div className="absolute top-3 right-3 bg-card/90 backdrop-blur text-primary text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
+                    {formatRate(nanny.hourlyRate)}
+                  </div>
+                  <div className="absolute bottom-3 left-4 right-4 text-white">
+                    <h3 className="font-heading text-xl font-bold leading-tight">{nanny.name}</h3>
+                    <div className="flex items-center gap-1.5 text-xs text-white/85 mt-0.5">
+                      <MapPin className="w-3.5 h-3.5" aria-hidden="true" />
+                      <span>{nanny.suburb}</span>
+                      <span className="opacity-60">·</span>
+                      <Clock className="w-3.5 h-3.5" aria-hidden="true" />
+                      <span>{nanny.yearsExperience}+ yrs</span>
                     </div>
                   </div>
+                </div>
 
-                  <div className="flex items-center justify-between text-xs mb-4 p-2.5 bg-secondary/30 rounded-xl border border-border/20">
-                    <span className="text-muted-foreground flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
-                      {nanny.yearsExperience}+ years exp
-                    </span>
-                    <span className="font-bold text-primary">{formatRate(nanny.hourlyRate)}</span>
+                {/* Body */}
+                <div className="p-5 flex flex-col flex-1">
+                  <div className="flex items-start gap-2 mb-4">
+                    <Heart className="w-4 h-4 text-accent fill-accent flex-shrink-0 mt-0.5" aria-hidden="true" />
+                    <p className="text-sm font-semibold text-foreground leading-snug">
+                      {nanny.whyLoved}
+                    </p>
                   </div>
-
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-5 min-h-[48px]">
-                    {nanny.bio}
-                  </p>
 
                   <div className="flex flex-wrap gap-1.5 mb-5">
                     {nanny.specialistTags.map((tag) => (
@@ -280,7 +278,7 @@ export default function HomePage() {
                     ))}
                   </div>
 
-                  <Link href={`/nannies/${nanny.id}`}>
+                  <Link href={`/nannies/${nanny.id}`} className="mt-auto">
                     <Button variant="outline" fullWidth size="sm" className="rounded-full">
                       View profile
                     </Button>
@@ -301,76 +299,78 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== TESTIMONIALS MARQUEE ===== */}
+      {/* ===== A DAY WITH A NANNYORA FAMILY ===== */}
+      <DayInLife />
+
+      {/* ===== LIFESTYLE GALLERY ===== */}
+      <LifestyleGallery />
+
+      {/* ===== TESTIMONIALS ===== */}
       <MarqueeTestimonials />
 
-      {/* ===== DUAL CTA — FOR FAMILIES / FOR NANNIES ===== */}
-      <section className="py-16 md:py-24 bg-gradient-to-b from-background to-secondary/15">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* For families */}
-            <Card className="relative overflow-hidden border-t-4 border-t-accent hover:border-accent/40 bg-card rounded-3xl p-6.5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300">
-              <BorderBeam duration={12} colorFrom="var(--accent)" colorTo="var(--accent-light)" />
-              <div className="flex items-center gap-2.5 mb-5">
-                <div className="w-9 h-9 rounded-full bg-accent/10 flex items-center justify-center">
-                  <Heart className="w-4.5 h-4.5 text-accent fill-accent" aria-hidden="true" />
-                </div>
-                <h3 className="font-heading text-xl font-bold text-foreground">For Auckland families</h3>
+      {/* ===== DUAL CTA — FOR FAMILIES / FOR NANNIES (asymmetric) ===== */}
+      <section className="py-16 md:py-24 bg-background">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-5 gap-6">
+            {/* For families — warm beige, larger */}
+            <div className="relative overflow-hidden md:col-span-3 bg-secondary rounded-[2rem] p-8 md:p-10 flex flex-col">
+              <BorderBeam duration={14} colorFrom="var(--accent)" colorTo="var(--accent-light)" />
+              <div className="w-11 h-11 rounded-2xl bg-accent/15 flex items-center justify-center mb-5">
+                <Heart className="w-5 h-5 text-accent fill-accent" aria-hidden="true" />
               </div>
-              <ul className="space-y-3 mb-6">
+              <span className="text-xs font-bold uppercase tracking-wider text-accent mb-2">For Auckland families</span>
+              <h3 className="font-heading text-2xl sm:text-3xl font-bold text-foreground mb-5 leading-tight max-w-sm">
+                Care that finally feels calm.
+              </h3>
+              <ul className="space-y-2.5 mb-8 max-w-sm">
                 {[
-                  "Search verified, local nannies by suburb",
-                  "Filter by specialist skills & ECE support",
-                  "View full profiles with check status",
-                  "Post a job and receive direct applications",
+                  "Verified, local nannies matched to your family",
+                  "Filter by specialist skills, ECE & sensory support",
+                  "Full profiles with every check clearly shown",
                 ].map((item) => (
-                  <li key={item} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                  <li key={item} className="flex items-start gap-2.5 text-sm text-foreground/75">
                     <Check className="w-4 h-4 text-accent flex-shrink-0 mt-0.5 stroke-[2.5]" aria-hidden="true" />
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
-              <div>
-                <Link href="/register-family">
-                  <Button variant="accent" size="md" className="rounded-full shadow-sm shadow-accent/10">
-                    Get started
-                    <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
-                  </Button>
-                </Link>
-              </div>
-            </Card>
+              <Link href="/register-family" className="mt-auto">
+                <Button variant="accent" size="lg" className="rounded-full shadow-sm shadow-accent/10">
+                  Find your nanny
+                  <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
+                </Button>
+              </Link>
+            </div>
 
-            {/* For nannies */}
-            <Card className="relative overflow-hidden border-t-4 border-t-primary hover:border-primary/40 bg-card rounded-3xl p-6.5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300">
-              <BorderBeam duration={12} colorFrom="var(--primary)" colorTo="var(--primary-light)" />
-              <div className="flex items-center gap-2.5 mb-5">
-                <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Award className="w-4.5 h-4.5 text-primary fill-primary" aria-hidden="true" />
-                </div>
-                <h3 className="font-heading text-xl font-bold text-foreground">For specialist nannies</h3>
+            {/* For nannies — muted sage, smaller */}
+            <div className="relative overflow-hidden md:col-span-2 bg-emerald-50/70 rounded-[2rem] p-8 md:p-10 flex flex-col">
+              <BorderBeam duration={14} colorFrom="var(--primary)" colorTo="var(--primary-light)" />
+              <div className="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center mb-5">
+                <Award className="w-5 h-5 text-primary fill-primary" aria-hidden="true" />
               </div>
-              <ul className="space-y-3 mb-6">
+              <span className="text-xs font-bold uppercase tracking-wider text-primary mb-2">For specialist nannies</span>
+              <h3 className="font-heading text-2xl sm:text-3xl font-bold text-foreground mb-5 leading-tight">
+                Do work you love.
+              </h3>
+              <ul className="space-y-2.5 mb-8">
                 {[
-                  "Create a verified professional carer profile",
-                  "Highlight ECE skills, training, & certifications",
-                  "Get matched with local Auckland families",
-                  "Set your own rates and availability schedules",
+                  "Build a verified professional profile",
+                  "Match with local families who value you",
+                  "Set your own rates & availability",
                 ].map((item) => (
-                  <li key={item} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                  <li key={item} className="flex items-start gap-2.5 text-sm text-foreground/75">
                     <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5 stroke-[2.5]" aria-hidden="true" />
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
-              <div>
-                <Link href="/apply-as-nanny">
-                  <Button variant="primary" size="md" className="rounded-full shadow-sm shadow-primary/10">
-                    Apply now
-                    <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
-                  </Button>
-                </Link>
-              </div>
-            </Card>
+              <Link href="/apply-as-nanny" className="mt-auto">
+                <Button variant="primary" size="lg" className="rounded-full shadow-sm shadow-primary/10">
+                  Apply now
+                  <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -386,31 +386,43 @@ export default function HomePage() {
           <Reveal>
             <Accordion items={faqItems} />
           </Reveal>
+          <div className="text-center mt-8">
+            <Link href="/how-it-works" className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary-light transition-colors">
+              More questions? See how NannyOra works
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* ===== FINAL CTA BANNER ===== */}
-      <section className="py-12 md:py-16 bg-background">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-br from-primary via-primary-dark to-primary rounded-3xl p-10 md:p-14 text-center text-primary-foreground relative overflow-hidden shadow-xl">
-            <BorderBeam size={300} duration={10} colorFrom="rgba(255,255,255,0.9)" colorTo="var(--accent-light)" />
-            {/* Soft decorative background circles */}
-            <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full filter blur-xl pointer-events-none translate-x-12 -translate-y-12" />
-            <div className="absolute bottom-0 left-0 w-36 h-36 bg-white/5 rounded-full filter blur-lg pointer-events-none -translate-x-8 translate-y-8" />
-            
-            <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center">
-              <h2 className="font-heading text-3xl sm:text-4xl mb-4 leading-tight text-white font-bold" style={{ color: "#FFFFFF" }}>
-                Ready to find calm, trusted care?
+      {/* ===== FINAL CTA — EMOTIONAL, WITH PHOTOGRAPHY ===== */}
+      <section className="py-12 md:py-20 bg-background">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative rounded-[2.5rem] overflow-hidden shadow-xl min-h-[380px] md:min-h-[440px] flex items-center">
+            {/* Emotional background photography */}
+            <Image
+              src={finalCtaImage.src}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="100vw"
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/92 via-primary-dark/88 to-primary/92" />
+            <BorderBeam size={340} duration={10} colorFrom="rgba(255,255,255,0.9)" colorTo="var(--accent-light)" />
+
+            <div className="relative z-10 max-w-2xl mx-auto text-center px-6 py-16 md:py-20 flex flex-col items-center">
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl mb-5 leading-[1.15] font-bold" style={{ color: "#FFFFFF" }}>
+                Find someone your children will genuinely love.
               </h2>
-              <p className="text-white/80 text-sm sm:text-base mb-8 max-w-md">
-                Join Auckland families who&apos;ve found their perfect specialist or ECE nanny through NannyOra.
+              <p className="text-white/85 text-sm sm:text-base mb-8 max-w-md">
+                Calm, trusted, specialist care — thoughtfully matched to your family across Auckland.
               </p>
               <Link href="/find-a-nanny">
                 <Button
                   size="lg"
                   className="bg-white text-primary hover:bg-white/95 hover:-translate-y-0.5 active:translate-y-0 shadow-lg font-semibold rounded-full px-8 py-3.5"
                 >
-                  Get started today
+                  Find your nanny
                 </Button>
               </Link>
             </div>
