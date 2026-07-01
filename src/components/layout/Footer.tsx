@@ -54,12 +54,15 @@ export function Footer() {
         <div className="border-t border-border/20 pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Logo */}
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col items-center md:items-start leading-none">
               <img
-                src="/logo.png"
-                alt="NannyOra - Curated Care. Warm Hearts."
-                className="h-16 md:h-20 w-auto rounded-md"
+                src="/logo-wordmark.png"
+                alt="NannyOra"
+                className="h-10 md:h-12 w-auto"
               />
+              <span className="mt-1.5 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.15em] text-primary/80">
+                Curated Care. Warm Hearts.
+              </span>
             </div>
 
             {/* Copyright */}

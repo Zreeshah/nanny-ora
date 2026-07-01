@@ -34,12 +34,15 @@ export function Header() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between py-3 md:py-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
+          <Link href="/" className="flex flex-col items-start leading-none group">
             <img
-              src="/logo.png"
-              alt="NannyOra - Curated Care. Warm Hearts."
-              className="h-14 md:h-20 w-auto rounded-md transition-transform duration-200 group-hover:scale-[1.02]"
+              src="/logo-wordmark.png"
+              alt="NannyOra"
+              className="h-9 md:h-12 w-auto transition-transform duration-200 group-hover:scale-[1.02]"
             />
+            <span className="mt-1 text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] text-primary/80 whitespace-nowrap">
+              Curated Care. Warm Hearts.
+            </span>
           </Link>
 
           {/* Desktop Nav */}
