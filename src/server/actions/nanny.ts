@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth/auth";
 import { nannyApplicationSchema, type NannyApplicationInput } from "@/lib/validations";
 import { supabaseServer, SUPABASE_BUCKET } from "@/lib/supabase/server";
+import { sendRefereeRequests } from "@/lib/email";
 import type { ActionResult } from "./auth";
 import bcrypt from "bcryptjs";
 
@@ -122,6 +123,12 @@ export async function applyAsNanny(
 
       return { userId: user.id, profileId: profile.id };
     });
+
+    // Auto-email referees a reference request. Best-effort: failure must not break the application.
+    if (data.refereeData && data.refereeData.length > 0) {
+      const { sent, failed } = await sendRefereeRequests(data.name, data.refereeData);
+      console.log(`Referee requests for ${data.email}: ${sent} sent, ${failed.length} failed`);
+    }
 
     return { success: true, data: result };
   } catch (error: any) {
