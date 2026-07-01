@@ -1,11 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { ShieldCheck, GraduationCap, Sparkles, Heart, Star, Users } from "lucide-react";
+import { ShieldCheck, GraduationCap, Heart, Star, Users, Brain, BadgeCheck } from "lucide-react";
 import StatsTicker from "./StatsTicker";
 import { ShinyText } from "@/components/ui/ShinyText";
+import { pickImages } from "@/lib/images";
+
+const heroImages = pickImages({
+  tags: ["care", "family", "trust", "professional"],
+  count: 2,
+  seed: "home-hero-collage",
+});
 
 export default function InteractiveHero() {
   const [mounted, setMounted] = useState(false);
@@ -37,7 +45,7 @@ export default function InteractiveHero() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10 w-full">
-        <div className="grid md:grid-cols-12 gap-12 items-center">
+        <div className="grid md:grid-cols-12 gap-12 md:gap-16 items-center">
           {/* Left Side: Staggered Content */}
           <div className="md:col-span-7 flex flex-col text-left">
             {/* Tagline */}
@@ -129,68 +137,77 @@ export default function InteractiveHero() {
             </div>
           </div>
 
-          {/* Right Side: Interactive Floating Cards Block */}
-          <div className="md:col-span-5 relative h-[380px] md:h-[450px] w-full flex items-center justify-center">
-            {/* Visual Center Circle (Mother-Child symbol) */}
-            <div 
-              className={`w-36 h-36 md:w-44 md:h-44 rounded-full bg-secondary border-2 border-border/30 flex items-center justify-center shadow-lg transition-all duration-1000 delay-200 ease-out z-10 ${
-                mounted ? "scale-100 opacity-100" : "scale-75 opacity-0"
+          {/* Right Side: Layered photo collage with floating trust badges */}
+          <div className="md:col-span-5 relative h-[440px] sm:h-[520px] md:h-[560px] w-full">
+            {/* Main portrait photo */}
+            <div
+              className={`absolute top-4 right-2 md:right-4 w-[66%] aspect-[4/5] rounded-[2rem] overflow-hidden shadow-xl ring-1 ring-white/60 rotate-[2deg] transition-all duration-1000 ease-out ${
+                mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
               }`}
             >
-              <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-primary/5 flex flex-col items-center justify-center text-center p-3">
-                <Heart className="w-8 h-8 text-primary animate-pulse stroke-[1.5]" />
-                <span className="font-heading text-xs text-foreground mt-2 font-bold leading-tight">Vetted & Safe</span>
-              </div>
+              <Image
+                src={heroImages[0].src}
+                alt={heroImages[0].alt}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 768px) 60vw, 30vw"
+              />
             </div>
 
-            {/* Floating Card 1: Vetting (Upper Left) */}
-            <div 
-              className={`absolute top-[5%] left-[5%] z-20 transition-all duration-1000 delay-[500ms] ease-out animate-float-slow ${
-                mounted ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
+            {/* Secondary square photo */}
+            <div
+              className={`absolute bottom-2 left-0 md:left-2 w-[50%] aspect-square rounded-[1.75rem] overflow-hidden shadow-lg ring-1 ring-white/60 -rotate-[3deg] transition-all duration-1000 delay-150 ease-out ${
+                mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
               }`}
             >
-              <div className="bg-card rounded-2xl border border-border/50 shadow-lg p-3.5 flex items-center gap-3 w-48 hover:shadow-xl hover:border-primary/20 transition-all cursor-default">
-                <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                  <ShieldCheck className="w-4.5 h-4.5" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-foreground">Police Vetted</h4>
-                  <p className="text-[10px] text-muted-foreground">100% Background checked</p>
-                </div>
-              </div>
+              <Image
+                src={heroImages[1].src}
+                alt={heroImages[1].alt}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 45vw, 24vw"
+              />
             </div>
 
-            {/* Floating Card 2: ECE (Middle Right) */}
-            <div 
-              className={`absolute top-[35%] right-[2%] z-20 transition-all duration-1000 delay-[600ms] ease-out animate-float-medium ${
-                mounted ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"
-              }`}
-            >
-              <div className="bg-card rounded-2xl border border-border/50 shadow-lg p-3.5 flex items-center gap-3 w-52 hover:shadow-xl hover:border-primary/20 transition-all cursor-default">
-                <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
-                  <GraduationCap className="w-4.5 h-4.5" />
-                </div>
+            {/* Floating badge: Police Checked */}
+            <div className={`absolute top-[9%] left-[1%] z-20 animate-float-slow transition-all duration-1000 delay-[500ms] ease-out ${mounted ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"}`}>
+              <div className="bg-card/95 backdrop-blur rounded-2xl shadow-lg px-3.5 py-2.5 flex items-center gap-2.5">
+                <span className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center"><ShieldCheck className="w-4.5 h-4.5" /></span>
                 <div>
-                  <h4 className="text-xs font-bold text-foreground">ECE Professionals</h4>
-                  <p className="text-[10px] text-muted-foreground">Qualified teachers & carers</p>
+                  <h4 className="text-xs font-bold text-foreground leading-none">Police Checked</h4>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">Children&apos;s Act 2014</p>
                 </div>
               </div>
             </div>
 
-            {/* Floating Card 3: Sensory Aware (Bottom Left) */}
-            <div 
-              className={`absolute bottom-[10%] left-[8%] z-20 transition-all duration-1000 delay-[700ms] ease-out animate-float-slow ${
-                mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-              }`}
-            >
-              <div className="bg-card rounded-2xl border border-border/50 shadow-lg p-3.5 flex items-center gap-3 w-52 hover:shadow-xl hover:border-primary/20 transition-all cursor-default">
-                <div className="w-8 h-8 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center">
-                  <Sparkles className="w-4.5 h-4.5" />
-                </div>
+            {/* Floating badge: ECE Qualified */}
+            <div className={`absolute top-[45%] right-[-3%] z-20 animate-float-medium transition-all duration-1000 delay-[640ms] ease-out ${mounted ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"}`}>
+              <div className="bg-card/95 backdrop-blur rounded-2xl shadow-lg px-3.5 py-2.5 flex items-center gap-2.5">
+                <span className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center"><GraduationCap className="w-4.5 h-4.5" /></span>
                 <div>
-                  <h4 className="text-xs font-bold text-foreground">Sensory-Aware</h4>
-                  <p className="text-[10px] text-muted-foreground">ADHD & Autism care trained</p>
+                  <h4 className="text-xs font-bold text-foreground leading-none">ECE Qualified</h4>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">Registered educators</p>
                 </div>
+              </div>
+            </div>
+
+            {/* Floating badge: ADHD-Aware */}
+            <div className={`absolute bottom-[7%] right-[12%] z-20 animate-float-slow transition-all duration-1000 delay-[760ms] ease-out ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+              <div className="bg-card/95 backdrop-blur rounded-2xl shadow-lg px-3.5 py-2.5 flex items-center gap-2.5">
+                <span className="w-8 h-8 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center"><Brain className="w-4.5 h-4.5" /></span>
+                <div>
+                  <h4 className="text-xs font-bold text-foreground leading-none">ADHD-Aware</h4>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">Sensory-trained care</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Floating pill: 7-Step Verified */}
+            <div className={`absolute top-[-1%] right-[24%] z-20 animate-float-medium transition-all duration-1000 delay-[880ms] ease-out ${mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-6"}`}>
+              <div className="bg-primary text-primary-foreground rounded-full shadow-lg px-3.5 py-1.5 flex items-center gap-1.5">
+                <BadgeCheck className="w-4 h-4" />
+                <span className="text-[11px] font-bold">7-Step Verified</span>
               </div>
             </div>
           </div>

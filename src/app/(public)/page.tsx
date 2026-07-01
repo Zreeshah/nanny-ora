@@ -21,6 +21,8 @@ import {
 } from "lucide-react";
 import { formatRate } from "@/lib/utils";
 import InteractiveHero from "@/components/home/InteractiveHero";
+import TrustStrip from "@/components/home/TrustStrip";
+import TrustStandard from "@/components/home/TrustStandard";
 import BentoFeatures from "@/components/home/BentoFeatures";
 import MarqueeTestimonials from "@/components/home/MarqueeTestimonials";
 import { ImageBand } from "@/components/ui/ImageBand";
@@ -103,8 +105,14 @@ export default function HomePage() {
       {/* ===== HERO SECTION ===== */}
       <InteractiveHero />
 
+      {/* ===== TRUSTED-BY REASSURANCE STRIP ===== */}
+      <TrustStrip />
+
       {/* ===== BENTO SPECIALIST CARE SECTION ===== */}
       <BentoFeatures />
+
+      {/* ===== SIGNATURE 7-LAYER TRUST STANDARD ===== */}
+      <TrustStandard />
 
       {/* ===== HOW NANNYORA WORKS ===== */}
       <section className="py-16 md:py-24 bg-secondary/35 border-y border-border/25">
