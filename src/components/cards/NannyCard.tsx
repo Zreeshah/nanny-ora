@@ -6,7 +6,7 @@ import { Badge, VerificationBadge, SpecialistTag } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { MapPin, Clock, Star } from "lucide-react";
 import { formatRate, truncate, getInitials } from "@/lib/utils";
-import { CARE_TYPES } from "@/lib/constants";
+import { CARE_TYPES, LANGUAGE_TAGS } from "@/lib/constants";
 import type { NannyProfilePublic } from "@/types";
 
 interface NannyCardProps {
@@ -93,6 +93,24 @@ export function NannyCard({ nanny, className }: NannyCardProps) {
             {nanny.specialistTags.length > 3 && (
               <Badge variant="outline" size="sm">+{nanny.specialistTags.length - 3} more</Badge>
             )}
+          </div>
+        )}
+
+        {/* Language Immersion Badges */}
+        {nanny.languages && nanny.languages.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-4">
+            {(nanny.languages as string[]).map((lang) => {
+              const tag = LANGUAGE_TAGS.find((l) => l.value === lang);
+              if (!tag) return null;
+              return (
+                <span
+                  key={lang}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-accent/10 text-accent text-[10px] font-bold border border-accent/20"
+                >
+                  {tag.short} {tag.label.replace(" Immersion", "").replace("Te Reo Māori", "")}
+                </span>
+              );
+            })}
           </div>
         )}
 

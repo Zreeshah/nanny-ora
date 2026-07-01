@@ -43,6 +43,7 @@ export interface NannyProfilePublic {
   availabilitySummary: string;
   availability: string[];
   specialistTags: SpecialistTagValue[];
+  languages: string[];
   verificationLevel: VerificationLevel;
   profileImageUrl?: string;
   createdAt: Date;

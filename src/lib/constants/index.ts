@@ -296,6 +296,35 @@ export const CHILD_AGE_RANGES = [
   { value: "teenager", label: "Teenager (12+)" },
 ] as const;
 
+// --- Auckland Regions (suburb → region mapping for filter sidebar) ---
+export const AUCKLAND_REGIONS = [
+  { value: "central", label: "Central Auckland" },
+  { value: "east", label: "East Auckland" },
+  { value: "north", label: "North Shore" },
+  { value: "west", label: "West Auckland" },
+  { value: "south", label: "South Auckland" },
+] as const;
+
+export const SUBURB_TO_REGION: Record<string, string> = {
+  Remuera: "central", Newmarket: "central", Epsom: "central", Parnell: "central",
+  "Mount Eden": "central", Ponsonby: "central", "Grey Lynn": "central",
+  "Herne Bay": "central", "Mt Albert": "central", Ellerslie: "central",
+  "Mission Bay": "east", "St Heliers": "east", Meadowbank: "east", Kohimarama: "east",
+  Devonport: "north", Takapuna: "north", Albany: "north", Birkenhead: "north",
+  Henderson: "west", Titirangi: "west",
+};
+
+// --- Language Immersion Tags (bilingual / immersion nannies) ---
+export const LANGUAGE_TAGS = [
+  { value: "mandarin", label: "Mandarin Immersion", short: "中文" },
+  { value: "cantonese", label: "Cantonese Immersion", short: "粵語" },
+  { value: "korean", label: "Korean Immersion", short: "한국어" },
+  { value: "japanese", label: "Japanese Immersion", short: "日本語" },
+  { value: "spanish", label: "Spanish Immersion", short: "Español" },
+  { value: "te_reo", label: "Te Reo Māori", short: "Te Reo" },
+] as const;
+export type LanguageTagValue = (typeof LANGUAGE_TAGS)[number]["value"];
+
 // --- Rate Range ---
 export const RATE_RANGE = {
   min: 20,

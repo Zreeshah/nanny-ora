@@ -569,3 +569,12 @@ The following changes were made after the initial `project_context.md` was writt
 - Base heading color rule moved into `@layer base` (fixes specificity war with Tailwind utility classes)
 - Added `border-beam` and `text-shimmer` keyframes for animation components
 - Added `prefers-reduced-motion` rules to freeze animations
+
+### Filter Sidebar + Language Immersion (find-a-nanny redesign)
+- **Sidebar layout** — moved filters from collapsible panel to sticky left sidebar (desktop) / slide-out drawer (mobile) on `/find-a-nanny`
+- **Multi-select filters** — care types, specialist tags, language tags, and age ranges changed from single-select dropdowns to checkbox pills (multi-select)
+- **Auckland regions** — new `AUCKLAND_REGIONS` + `SUBURB_TO_REGION` mapping in constants; filter by Central / East / North Shore / West / South
+- **Language immersion** — new `LANGUAGE_TAGS` constant (Mandarin, Cantonese, Korean, Japanese, Spanish, Te Reo Māori); new `languages: string[]` field on `NannyProfilePublic`; language immersion badges rendered on `NannyCard`
+- **Child age filter** — maps age ranges to existing specialist tags via heuristic (`AGE_TO_TAG` — newborn/infant/toddler→`baby_experience`, preschool→`ece_background`, school_age/teenager→`after_school_care`)
+- **Government funding note** — styled info box at bottom of sidebar: "Qualifying families can receive subsidies of up to $60+/week"
+- **Sample data** — added `languages` to all 10 sample nannies (Lily Chen→Mandarin, Grace Taylor→Korean, Hannah Patel→Te Reo Māori, Rachel Foster→Spanish, others→empty)
