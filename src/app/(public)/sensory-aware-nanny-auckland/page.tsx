@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { NannyCard } from "@/components/cards/NannyCard";
-import { getSampleNannies } from "@/lib/data/sample-nannies";
+import { getPublicNannies } from "@/lib/data/nannies";
 import { ArrowRight, Heart, Sparkles, Smile, ShieldAlert } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { ImageBand } from "@/components/ui/ImageBand";
@@ -12,8 +12,10 @@ export const metadata: Metadata = {
   description: "Find sensory-aware nannies in Auckland who create calm, structured environments for children with sensory processing needs. Verified on NannyOra.",
 };
 
-export default function SensoryAwareNannyPage() {
-  const nannies = getSampleNannies({ specialistTag: "sensory_aware" });
+export const revalidate = 300;
+
+export default async function SensoryAwareNannyPage() {
+  const nannies = await getPublicNannies({ specialistTag: "sensory_aware" });
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">

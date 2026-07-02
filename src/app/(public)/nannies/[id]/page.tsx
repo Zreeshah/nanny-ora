@@ -4,13 +4,16 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge, VerificationBadge, SpecialistTag } from "@/components/ui/Badge";
-import { getSampleNannyById, sampleNannies } from "@/lib/data/sample-nannies";
+import { sampleNannies } from "@/lib/data/sample-nannies";
+import { getPublicNannyById } from "@/lib/data/nannies";
 import { formatRate, getInitials } from "@/lib/utils";
 import { CARE_TYPES } from "@/lib/constants";
 import {
   MapPin, Clock, Shield, Car, Heart, GraduationCap,
   CheckCircle, Calendar, Star, ArrowLeft, Send,
 } from "lucide-react";
+
+export const revalidate = 300;
 
 export async function generateStaticParams() {
   return sampleNannies.map((n) => ({ id: n.id }));
@@ -22,7 +25,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const nanny = getSampleNannyById(id);
+  const nanny = await getPublicNannyById(id);
   if (!nanny) return { title: "Nanny Not Found" };
   return {
     title: `${nanny.name} — Nanny in ${nanny.suburb}`,
@@ -36,7 +39,7 @@ export default async function NannyProfilePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const nanny = getSampleNannyById(id);
+  const nanny = await getPublicNannyById(id);
   if (!nanny) notFound();
 
   const careLabels = nanny.careTypes

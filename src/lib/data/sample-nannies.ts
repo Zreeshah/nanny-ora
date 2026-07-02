@@ -239,15 +239,22 @@ export const sampleNannies: NannyProfilePublic[] = [
 /**
  * Get all sample nannies, optionally filtered.
  */
-export function getSampleNannies(filters?: {
+export type NannyFilters = {
   suburb?: string;
   verifiedOnly?: boolean;
   specialistTag?: string;
   careType?: string;
   maxRate?: number;
   minRate?: number;
-}): NannyProfilePublic[] {
-  let results = [...sampleNannies];
+};
+
+export function getSampleNannies(filters?: NannyFilters): NannyProfilePublic[] {
+  return filterNannies(sampleNannies, filters);
+}
+
+/** Apply directory filters to any nanny list (sample or DB-backed). */
+export function filterNannies(nannies: NannyProfilePublic[], filters?: NannyFilters): NannyProfilePublic[] {
+  let results = [...nannies];
 
   if (filters?.suburb) {
     results = results.filter(

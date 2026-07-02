@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { NannyCard } from "@/components/cards/NannyCard";
-import { getSampleNannies } from "@/lib/data/sample-nannies";
+import { getPublicNannies } from "@/lib/data/nannies";
 import { ArrowRight, GraduationCap, Star, BookOpen, Lightbulb } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { ImageBand } from "@/components/ui/ImageBand";
@@ -12,8 +12,10 @@ export const metadata: Metadata = {
   description: "Find ECE-qualified nannies and registered teachers in Auckland. Experienced early childhood educators providing enriching home-based care via NannyOra.",
 };
 
-export default function EceNannyPage() {
-  const nannies = getSampleNannies({ specialistTag: "ece_background" });
+export const revalidate = 300;
+
+export default async function EceNannyPage() {
+  const nannies = await getPublicNannies({ specialistTag: "ece_background" });
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">

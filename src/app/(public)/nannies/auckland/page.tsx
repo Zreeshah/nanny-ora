@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { NannyCard } from "@/components/cards/NannyCard";
-import { getSampleNannies } from "@/lib/data/sample-nannies";
+import { getPublicNannies } from "@/lib/data/nannies";
 import { SUBURB_SLUGS } from "@/lib/constants";
 import { ArrowRight, MapPin } from "lucide-react";
 import { ImageBand } from "@/components/ui/ImageBand";
@@ -14,8 +14,10 @@ export const metadata: Metadata = {
   description: "Find verified nannies across Auckland suburbs. Specialist care, ECE-qualified, and sensory-aware nannies available. Browse NannyOra's Auckland nanny directory.",
 };
 
-export default function AucklandNanniesPage() {
-  const nannies = getSampleNannies();
+export const revalidate = 300;
+
+export default async function AucklandNanniesPage() {
+  const nannies = await getPublicNannies();
   const suburbs = Object.entries(SUBURB_SLUGS).slice(0, 12);
 
   return (
