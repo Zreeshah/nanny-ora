@@ -308,6 +308,12 @@ p {
   to { offset-distance: 100%; }
 }
 
+/* Admin dashboard: bars/rings that draw in on load. transform-origin set per-element. */
+@keyframes grow-x {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
 .mask-gradient {
   mask-image: linear-gradient(to right, transparent, white 10%, white 90%, transparent);
   -webkit-mask-image: linear-gradient(to right, transparent, white 10%, white 90%, transparent);
