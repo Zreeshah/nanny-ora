@@ -14,7 +14,7 @@ const footerLinks = {
     { href: "/pricing", label: "Pricing" },
   ],
   "Trust & Safety": [
-    { href: "/trust-and-safety", label: "Our Verification Process" },
+    { href: "/verification-process", label: "Our Verification Process" },
     { href: "/trust-and-safety#guidelines", label: "Safety Guidelines" },
   ],
   "Specialist Care": [

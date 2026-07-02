@@ -1,5 +1,6 @@
+import Link from "next/link";
 import {
-  Fingerprint, Video, PhoneCall, ShieldCheck, GraduationCap, CalendarCheck, Heart, Sparkles,
+  Fingerprint, Video, PhoneCall, ShieldCheck, GraduationCap, CalendarCheck, Heart, Sparkles, ArrowRight,
 } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 
@@ -74,6 +75,13 @@ export default function TrustStandard() {
               );
             })}
           </ol>
+        </div>
+
+        <div className="text-center mt-12">
+          <Link href="/verification-process" className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary-light transition-colors">
+            See exactly how each check protects your family
+            <ArrowRight className="w-4 h-4" aria-hidden="true" />
+          </Link>
         </div>
       </div>
     </section>
