@@ -48,11 +48,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center gap-4">
-              <Link href="/admin" className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded bg-primary flex items-center justify-center">
-                  <span className="text-primary-foreground font-heading text-sm font-bold">N</span>
-                </div>
-                <span className="font-heading text-lg">Admin</span>
+              <Link href="/admin" className="flex items-center gap-2.5">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo-wordmark.png" alt="NannyOra" className="h-7 w-auto rounded-md bg-background px-1.5 py-1" />
+                <span className="text-[10px] font-bold uppercase tracking-wider text-white/60 border-l border-white/20 pl-2.5">Admin</span>
               </Link>
               <nav className="hidden sm:flex items-center gap-1">
                 {navItems.map((item) => (

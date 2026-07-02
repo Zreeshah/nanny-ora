@@ -5,8 +5,8 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
-import { formatDate } from "@/lib/utils";
-import { MessageCircle, User, ArrowRight } from "lucide-react";
+import { formatDate, getInitials } from "@/lib/utils";
+import { MessageCircle, ArrowRight } from "lucide-react";
 
 const sampleEnquiries = [
   { id: "enq-001", parentName: "Sarah K.", nannyName: "Emma Thompson", message: "Hi Emma, we're looking for a sensory-aware nanny for our 4-year-old. Would love to chat!", status: "NEW", createdAt: new Date("2025-01-12") },
@@ -36,9 +36,12 @@ export default function AdminEnquiriesPage() {
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="font-heading text-3xl text-foreground">Enquiry Management</h1>
-          <p className="text-muted-foreground mt-1">{enquiries.length} total enquiries</p>
+        <div className="flex items-center gap-3">
+          <span className="w-11 h-11 rounded-2xl bg-accent/10 text-accent flex items-center justify-center flex-shrink-0"><MessageCircle className="w-5 h-5" /></span>
+          <div>
+            <h1 className="font-heading text-3xl text-foreground">Parent enquiries</h1>
+            <p className="text-muted-foreground text-sm mt-0.5">{enquiries.length} total · {enquiries.filter((e) => e.status === "NEW").length} new</p>
+          </div>
         </div>
         <div className="w-48">
           <Select
@@ -57,21 +60,27 @@ export default function AdminEnquiriesPage() {
 
       <div className="space-y-3">
         {filtered.map((enquiry) => (
-          <Card key={enquiry.id}>
+          <Card key={enquiry.id} className="rounded-3xl border-border/40 hover:shadow-md transition-all">
             <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <User className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
-                  <span className="font-semibold text-foreground text-sm">{enquiry.parentName}</span>
-                  <ArrowRight className="w-3 h-3 text-muted-foreground" aria-hidden="true" />
-                  <span className="font-semibold text-foreground text-sm">{enquiry.nannyName}</span>
+              <div className="flex-1 min-w-0">
+                {/* Parent -> nanny match flow */}
+                <div className="flex items-center gap-2 mb-2.5">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-7 h-7 rounded-full bg-accent/15 text-accent text-[10px] font-bold flex items-center justify-center">{getInitials(enquiry.parentName)}</span>
+                    <span className="font-semibold text-foreground text-sm">{enquiry.parentName}</span>
+                  </span>
+                  <ArrowRight className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" aria-hidden="true" />
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-7 h-7 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center justify-center">{getInitials(enquiry.nannyName)}</span>
+                    <span className="font-semibold text-foreground text-sm truncate">{enquiry.nannyName}</span>
+                  </span>
                 </div>
-                <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{enquiry.message}</p>
+                <p className="text-sm text-muted-foreground line-clamp-2 mb-2 bg-secondary/25 rounded-2xl px-3.5 py-2.5">{enquiry.message}</p>
                 <span className="text-xs text-muted-foreground">{formatDate(enquiry.createdAt)}</span>
               </div>
 
               <div className="flex items-center gap-2 flex-shrink-0">
-                <Badge className={statusColors[enquiry.status] || ""} size="sm">
+                <Badge className={`${statusColors[enquiry.status] || ""} rounded-full`} size="sm">
                   {enquiry.status}
                 </Badge>
 

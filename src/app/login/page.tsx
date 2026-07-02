@@ -69,11 +69,10 @@ function LoginForm() {
   return (
     <div className="w-full max-w-md">
       <div className="text-center mb-8">
-        <Link href="/" className="inline-flex items-center gap-2.5 mb-6 group">
-          <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center shadow-md shadow-primary/10 transition-transform group-hover:scale-105">
-            <span className="text-primary-foreground font-heading text-sm font-bold">N</span>
-          </div>
-          <span className="font-heading text-xl text-foreground">NannyOra</span>
+        <Link href="/" className="inline-flex flex-col items-center gap-1 mb-6 group">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-wordmark.png" alt="NannyOra" className="h-11 w-auto transition-transform group-hover:scale-105" />
+          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-primary/80">Curated Care. Warm Hearts.</span>
         </Link>
         <h1 className="font-heading text-2xl md:text-3xl text-foreground mb-2">Welcome back</h1>
         <p className="text-sm text-muted-foreground">Sign in to your NannyOra account</p>

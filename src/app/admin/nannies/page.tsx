@@ -16,13 +16,15 @@ import {
   SAFETY_CHECK_STATUSES,
 } from "@/lib/constants";
 import type { VerificationLevel, SafetyCheckStatus, DocumentType } from "@/lib/constants";
-import { getInitials, formatRate } from "@/lib/utils";
+import { formatRate } from "@/lib/utils";
 import {
   MapPin, Eye, CheckCircle, XCircle, ChevronDown, ChevronUp,
   FileText, Shield, ThumbsUp, ThumbsDown, Loader2, Info, Mail, Phone,
   Download,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { pickImages } from "@/lib/images";
 import {
   getAdminNannies,
   updateNannyStatus,
@@ -60,6 +62,7 @@ interface MappedNanny {
   driverLicence: boolean;
   bio: string;
   refereeData: string;
+  image: string;
   // Safety checks
   identityVerified: string;
   workHistoryVerified: string;
@@ -100,6 +103,7 @@ export default function AdminNanniesPage() {
           driverLicence: n.driverLicence,
           bio: n.bio,
           refereeData: n.refereeData,
+          image: n.profileImageUrl || pickImages({ tags: ["professional", "care", "find"], seed: n.id })[0].src,
           identityVerified: n.identityVerified || "NOT_STARTED",
           workHistoryVerified: n.workHistoryVerified || "NOT_STARTED",
           proRegVerified: n.proRegVerified || "NOT_STARTED",
@@ -129,6 +133,7 @@ export default function AdminNanniesPage() {
           driverLicence: true,
           bio: n.bio,
           refereeData: "[]",
+          image: n.profileImageUrl || pickImages({ tags: ["professional", "care", "find"], seed: n.id })[0].src,
           identityVerified: "VERIFIED",
           workHistoryVerified: "VERIFIED",
           proRegVerified: "VERIFIED",
@@ -294,28 +299,45 @@ export default function AdminNanniesPage() {
         ) : (
           filtered.map((nanny) => {
             const isExpanded = expandedNannyId === nanny.id;
+            const checksDone = [
+              nanny.identityVerified, nanny.workHistoryVerified, nanny.proRegVerified,
+              nanny.refereeCheckStatus, nanny.policeVetStatus, nanny.interviewStatus, nanny.riskAssessmentStatus,
+            ].filter((s) => s === "VERIFIED").length;
             return (
-              <Card key={nanny.id} className="flex flex-col gap-4 overflow-hidden bg-card transition-all">
+              <Card key={nanny.id} className="flex flex-col gap-4 overflow-hidden bg-card rounded-3xl border-border/40 hover:shadow-md transition-all">
                 {/* Header row */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <span className="text-primary font-semibold text-sm">{getInitials(nanny.name)}</span>
-                    </div>
-                    <div className="min-w-0">
-                      <h3 className="font-semibold text-foreground truncate">{nanny.name}</h3>
+                  <div className="flex items-center gap-4 flex-1 min-w-0">
+                    <span className="relative w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-secondary">
+                      <Image src={nanny.image} alt={nanny.name} fill className="object-cover" sizes="64px" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-heading font-bold text-foreground truncate">{nanny.name}</h3>
+                        <VerificationBadge level={nanny.verificationLevel as VerificationLevel} />
+                      </div>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1 flex-wrap">
                         <span className="flex items-center gap-0.5"><MapPin className="w-3 h-3 text-primary" />{nanny.suburb}</span>
                         <span>·</span>
                         <span className="text-primary font-bold">{formatRate(nanny.hourlyRate)}</span>
                         <span>·</span>
-                        <span className="flex items-center gap-0.5"><Mail className="w-3 h-3" />{nanny.email}</span>
+                        <span className="flex items-center gap-0.5 truncate"><Mail className="w-3 h-3" />{nanny.email}</span>
                         {nanny.phone && (
                           <>
                             <span>·</span>
                             <span className="flex items-center gap-0.5"><Phone className="w-3 h-3" />{nanny.phone}</span>
                           </>
                         )}
+                      </div>
+                      {/* verification progress */}
+                      <div className="flex items-center gap-2 mt-2 max-w-xs">
+                        <div className="flex-1 h-1.5 rounded-full bg-secondary overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-accent origin-left animate-[grow-x_0.9s_cubic-bezier(0.16,1,0.3,1)_both]"
+                            style={{ width: `${(checksDone / 7) * 100}%` }}
+                          />
+                        </div>
+                        <span className="text-[10px] font-bold text-muted-foreground whitespace-nowrap">{checksDone}/7 checks</span>
                       </div>
                     </div>
                   </div>
