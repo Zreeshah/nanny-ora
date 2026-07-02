@@ -14,7 +14,8 @@ import {
   LANGUAGE_TAGS,
   CHILD_AGE_RANGES,
 } from "@/lib/constants";
-import { Search, SlidersHorizontal, X, Landmark } from "lucide-react";
+import { Search, SlidersHorizontal, X, LifeBuoy } from "lucide-react";
+import Link from "next/link";
 import { ImageBand } from "@/components/ui/ImageBand";
 import { ShinyText } from "@/components/ui/ShinyText";
 
@@ -304,17 +305,20 @@ export default function FindANannyPage() {
         </div>
       </FilterSection>
 
-      {/* Government Funding Note */}
+      {/* Childcare Support Options — kept soft & optional */}
       <div className="mt-4 rounded-2xl bg-primary/5 border border-primary/15 p-4">
         <div className="flex items-start gap-2.5">
           <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center">
-            <Landmark className="w-4 h-4" aria-hidden="true" />
+            <LifeBuoy className="w-4 h-4" aria-hidden="true" />
           </span>
           <div>
-            <h4 className="text-xs font-bold text-foreground mb-1">Government Funding</h4>
+            <h4 className="text-xs font-bold text-foreground mb-1">Childcare Support Options</h4>
             <p className="text-[11px] text-muted-foreground leading-relaxed">
-              Qualifying families can receive subsidies of up to <strong className="text-foreground">$60+/week</strong> toward their care costs.
-              Conditions apply based on household eligibility and safety criteria.
+              Some recurring or full-time care arrangements may qualify for additional support.
+              Eligibility is assessed privately by our team.{" "}
+              <Link href="/childcare-support" className="font-semibold text-primary hover:text-primary-light underline underline-offset-2">
+                Learn more
+              </Link>
             </p>
           </div>
         </div>

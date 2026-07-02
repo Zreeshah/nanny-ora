@@ -131,21 +131,17 @@ export default function HomePage() {
               How <ShinyText>NannyOra</ShinyText> works
             </h2>
             <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-              Find qualified, specialist childcare in Auckland with eight simple, high-trust steps.
+              Private nanny placement, made simple. Four calm steps — no unnecessary bureaucracy.
             </p>
           </div>
 
           {/* Steps Timeline Grid */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { title: "Create family profile", desc: "Share details about your children and schedules." },
-              { title: "Tell us what you need", desc: "Detail any specialist care, ECE, or school pick-ups." },
-              { title: "Browse local nannies", desc: "Filter checked profiles in your Auckland suburb." },
-              { title: "Review nanny profiles", desc: "See verification checks, experience levels, and rates." },
-              { title: "Send enquiries or post jobs", desc: "Connect directly or invite applicants to apply." },
-              { title: "Connect & meet", desc: "Conduct initial video chats or in-person coffee meets." },
-              { title: "Book a trial session", desc: "Run a short paid trial to verify children-nanny fit." },
-              { title: "Arrange ongoing care", desc: "Set schedules and rates directly with the carer." },
+              { title: "Share your childcare needs", desc: "Tell us about your family, schedule, and any specialist care." },
+              { title: "Get matched with verified nannies", desc: "We personally match you with agency-verified local nannies." },
+              { title: "Meet & confirm your caregiver", desc: "Chat, meet, and choose the nanny who feels right for your home." },
+              { title: "Begin care with ongoing support", desc: "Start care with continued support from the NannyOra team." },
             ].map((step, i) => (
               <div key={i} className="group relative bg-card border border-border/40 p-6 rounded-3xl hover:border-primary/20 hover:shadow-md transition-all duration-300">
                 <div className="absolute top-5 right-5 w-8 h-8 rounded-full bg-secondary text-primary font-bold text-xs flex items-center justify-center border border-border/25 group-hover:scale-105 transition-all">
@@ -160,6 +156,15 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+
+          {/* Optional support note — kept subtle, not a CTA */}
+          <p className="text-center text-xs text-muted-foreground/80 mt-10 max-w-xl mx-auto">
+            Some recurring care arrangements may qualify for additional support.{" "}
+            <Link href="/childcare-support" className="font-semibold text-primary/80 hover:text-primary underline underline-offset-2 transition-colors">
+              Explore childcare support options
+            </Link>
+            .
+          </p>
         </div>
       </section>
 

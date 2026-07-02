@@ -7,6 +7,7 @@ const footerLinks = {
     { href: "/register-family", label: "Register as a Family" },
     { href: "/post-a-job", label: "Post a Job" },
     { href: "/how-it-works", label: "How It Works" },
+    { href: "/childcare-support", label: "Childcare Support Options" },
   ],
   "For Nannies": [
     { href: "/apply-as-nanny", label: "Apply as a Nanny" },

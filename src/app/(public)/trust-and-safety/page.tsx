@@ -3,8 +3,8 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { VERIFICATION_LEVEL_LABELS } from "@/lib/constants";
 import {
-  Shield, FileCheck, UserCheck, Lock, Eye, CheckCircle,
-  AlertTriangle, MessageCircle, BadgeCheck, Star, Users, Info
+  Shield, FileCheck, UserCheck, Lock, Eye, CheckCircle, ClipboardCheck,
+  MessageCircle, BadgeCheck, Star, Users, Info
 } from "lucide-react";
 import { ImageBand } from "@/components/ui/ImageBand";
 import { ShinyText } from "@/components/ui/ShinyText";
@@ -117,7 +117,7 @@ export default function TrustAndSafetyPage() {
             { icon: BadgeCheck, title: "Specialist Qualifications", desc: "ECE certificates and teaching registrations are cross-checked with official boards." },
             { icon: Shield, title: "NZ Police Vetting", desc: "For premium and specialist levels, a clean, recent Police Vet check is verified." },
             { icon: CheckCircle, title: "First Aid & CPR", desc: "Current child-focused First Aid certifications are checked and verified." },
-            { icon: Eye, title: "Profile Inspections", desc: "Every biography, picture, and tag list is audited before going live." },
+            { icon: ClipboardCheck, title: "Thoughtfully Reviewed Profiles", desc: "Every biography, photo, and tag is carefully reviewed before a profile goes live." },
           ].map((item) => (
             <Card key={item.title} className="hover:border-primary/25 hover:shadow-sm transition-all rounded-2xl border-border/40">
               <div className="flex items-start gap-4">
@@ -149,7 +149,7 @@ export default function TrustAndSafetyPage() {
               {[
                 "Conduct a comprehensive video call or in-person coffee meet before hiring",
                 "Book a short paid trial session (e.g. 2–3 hours) to observe nanny-children interaction",
-                "Inspect original physical training certificates, first aid, or registrations on your first meet",
+                "Review original training certificates, first aid, or registrations together on your first meet",
                 "Contact references independently if your family requires specialized security assurances",
                 "Listen to your children's feedback and trust your parenting instincts"
               ].map((step, idx) => (
@@ -195,11 +195,11 @@ export default function TrustAndSafetyPage() {
       <section>
         <Card className="border-l-4 border-l-accent border-t border-r border-b border-accent/20 bg-accent/5 p-6 rounded-r-3xl rounded-l-none">
           <div className="flex gap-4">
-            <AlertTriangle className="w-6 h-6 text-accent flex-shrink-0 mt-0.5 stroke-[1.8]" aria-hidden="true" />
+            <Info className="w-6 h-6 text-accent flex-shrink-0 mt-0.5 stroke-[1.8]" aria-hidden="true" />
             <div>
               <h3 className="font-bold text-foreground text-sm mb-2">Platform notice</h3>
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                NannyOra is a platform connecting independent families and childcare professionals. While we audit uploaded credentials, we do not employ nannies, act as an agency, or guarantee safety outcomes. Families retain final hiring authority and are responsible for matching, tax, and employment declarations.
+                NannyOra is a platform connecting independent families and childcare professionals. While we carefully review uploaded credentials, we do not employ nannies, act as an agency, or guarantee safety outcomes. Families retain final hiring authority and are responsible for matching, tax, and employment declarations.
               </p>
             </div>
           </div>

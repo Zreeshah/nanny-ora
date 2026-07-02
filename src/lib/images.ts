@@ -25,7 +25,7 @@ export const SITE_IMAGES: SiteImage[] = [
   { src: "/images/professional-nanny-auckland.jpeg", alt: "Professional Auckland nanny with a child", tags: ["professional", "find", "care"] },
   { src: "/images/professional-nanny-available-auckland.jpeg", alt: "Available professional nanny in Auckland", tags: ["professional", "find", "care"] },
   { src: "/images/trusted-childcare-provider.jpeg", alt: "Trusted childcare provider holding a child", tags: ["trust", "find", "care"] },
-  { src: "/images/nanny-compliance-checks.jpeg", alt: "Nanny compliance and background checks", tags: ["trust", "safety", "vetting", "compliance"] },
+  { src: "/images/nanny-compliance-checks.jpeg", alt: "Nanny background checks and verification", tags: ["trust", "safety", "vetting", "compliance"] },
   { src: "/images/nanny-screening-auckland.jpeg", alt: "Nanny screening and verification process", tags: ["trust", "safety", "vetting", "screening"] },
   { src: "/images/nanny-with-first-aid-auckland.jpeg", alt: "First-aid certified nanny with a child", tags: ["trust", "safety", "first-aid", "care"] },
   { src: "/images/verified-nanny-auckland.jpeg", alt: "Verified Auckland nanny", tags: ["trust", "safety", "vetting", "verified"] },

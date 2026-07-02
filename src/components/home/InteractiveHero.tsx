@@ -55,7 +55,7 @@ export default function InteractiveHero() {
               }`}
             >
               <Heart className="w-3.5 h-3.5 fill-primary" />
-              <span>Nanny Care Perfected</span>
+              <span>Private Nanny Placement</span>
             </div>
 
             {/* Main Headline */}
@@ -74,7 +74,7 @@ export default function InteractiveHero() {
                 mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
               }`}
             >
-              Find qualified, highly vetted Auckland nannies. We specialize in ECE educators and supportive, sensory-aware care for neurodiverse children.
+              Premium, agency-verified nannies for flexible home-based care — matched privately to your family. Streamlined onboarding, ECE educators, and calm sensory-aware support, without the bureaucracy.
             </p>
 
             {/* Action Buttons */}

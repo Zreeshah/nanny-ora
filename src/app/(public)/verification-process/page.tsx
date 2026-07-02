@@ -117,7 +117,7 @@ export default function VerificationProcessPage() {
             <div className="font-heading text-lg sm:text-xl text-primary-foreground font-bold leading-tight">
               Children&apos;s Act 2014
             </div>
-            <div className="text-xs text-white/70 mt-1.5">Compliant vetting</div>
+            <div className="text-xs text-white/70 mt-1.5">Trusted vetting standard</div>
           </div>
         </div>
 
@@ -196,7 +196,7 @@ export default function VerificationProcessPage() {
             {[
               "Meet by video or coffee before hiring",
               "Book a short paid trial to watch the fit first-hand",
-              "Inspect original certificates on your first meet",
+              "Review original certificates together on your first meet",
               "Listen to your children and trust your instincts",
             ].map((item) => (
               <li key={item} className="flex items-start gap-2.5 text-sm text-foreground/75">
