@@ -7,10 +7,11 @@ import { useToast } from "@/components/ui/Toast";
 import { applyAsNanny } from "@/server/actions/nanny";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
+import { TagInput } from "@/components/ui/TagInput";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import {
-  AUCKLAND_SUBURBS, CARE_TYPES, SPECIALIST_TAGS,
+  CARE_TYPES, SPECIALIST_TAGS,
   AVAILABILITY_OPTIONS, SAFETY_CHECKS, DOCUMENT_TYPE_LABELS,
 } from "@/lib/constants";
 import type { DocumentType } from "@/lib/constants";
@@ -67,12 +68,6 @@ export default function ApplyAsNannyPage() {
   const [referees, setReferees] = useState<RefereeEntry[]>([
     { name: "", phone: "", email: "", relationship: "" },
   ]);
-
-  const handleToggleSuburb = (suburb: string) => {
-    setSelectedSuburbs(prev =>
-      prev.includes(suburb) ? prev.filter(s => s !== suburb) : [...prev, suburb]
-    );
-  };
 
   const handleToggleCareType = (type: string) => {
     setSelectedCareTypes(prev =>
@@ -303,47 +298,21 @@ export default function ApplyAsNannyPage() {
                 <Input name="name" label="Full Name" required placeholder="e.g. Sarah Mitchell" className="rounded-2xl" />
                 <Input name="email" label="Email Address" type="email" required placeholder="sarah@email.com" className="rounded-2xl" />
                 <Input name="phone" label="Phone Number" type="tel" required placeholder="021 123 4567" className="rounded-2xl" />
-                <Select
-                  name="suburb"
-                  label="Home Suburb"
-                  required
-                  options={AUCKLAND_SUBURBS.map((s) => ({ value: s, label: s }))}
-                  placeholder="Select suburb"
-                  className="rounded-2xl"
-                />
+                <Input name="suburb" label="Home Suburb" required placeholder="e.g. Remuera" className="rounded-2xl" />
                 <Input name="password" label="Choose Password" type="password" required placeholder="••••••••" className="rounded-2xl" />
                 <Input name="confirmPassword" label="Confirm Password" type="password" required placeholder="••••••••" className="rounded-2xl" />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-foreground mb-3 uppercase tracking-wide">
-                Suburbs You Cover <span className="text-destructive">*</span>
-              </label>
-              <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto p-2 bg-secondary/35 rounded-2xl border border-border/20">
-                {AUCKLAND_SUBURBS.map((s) => {
-                  const isSelected = selectedSuburbs.includes(s);
-                  return (
-                    <button
-                      type="button"
-                      key={s}
-                      onClick={() => handleToggleSuburb(s)}
-                      className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full border transition-all text-xs font-semibold cursor-pointer ${
-                        isSelected
-                          ? "bg-primary/5 border-primary text-primary font-bold shadow-sm"
-                          : "bg-white border-border hover:border-primary/30 text-muted-foreground"
-                      }`}
-                    >
-                      {isSelected && <Check className="w-3 h-3 stroke-[2.5]" />}
-                      <span>{s}</span>
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="text-[10px] text-muted-foreground mt-2">
-                Select all Auckland suburbs you are willing to travel to.
-              </p>
-              {/* Hidden Inputs */}
+              <TagInput
+                label="Suburbs You Cover"
+                required
+                placeholder="Type a suburb and press Enter..."
+                value={selectedSuburbs}
+                onChange={setSelectedSuburbs}
+                helperText="Add all Auckland suburbs you are willing to travel to."
+              />
               {selectedSuburbs.map(s => (
                 <input key={s} type="hidden" name="areasCovered" value={s} />
               ))}

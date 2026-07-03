@@ -37,11 +37,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center gap-4">
-              <Link href="/" className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded bg-primary flex items-center justify-center">
-                  <span className="text-primary-foreground font-heading text-sm font-bold">N</span>
-                </div>
-                <span className="font-heading text-lg text-foreground">NannyOra</span>
+              <Link href="/" className="flex items-center">
+                <img src="/logo-wordmark.png" alt="NannyOra" className="h-8 w-auto" />
               </Link>
 
               {role === "NANNY" && (

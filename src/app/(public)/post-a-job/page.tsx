@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import { Card } from "@/components/ui/Card";
-import { AUCKLAND_SUBURBS, CARE_TYPES } from "@/lib/constants";
+import { CARE_TYPES } from "@/lib/constants";
 import { CheckCircle, Briefcase, Shield } from "lucide-react";
 import { ImageBand } from "@/components/ui/ImageBand";
 
@@ -102,15 +102,7 @@ export default function PostAJobPage() {
               <Input name="title" label="Job Title" required error={errors.title} placeholder="e.g. After-school nanny for two children" className="rounded-2xl" />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Select
-                  name="suburb"
-                  label="Suburb"
-                  required
-                  error={errors.suburb}
-                  options={AUCKLAND_SUBURBS.map((s) => ({ value: s, label: s }))}
-                  placeholder="Select suburb"
-                  className="rounded-2xl"
-                />
+                <Input name="suburb" label="Suburb" required error={errors.suburb} placeholder="e.g. Remuera" className="rounded-2xl" />
                 <Select
                   name="careType"
                   label="Care Type Required"

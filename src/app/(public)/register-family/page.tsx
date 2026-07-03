@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import { Card } from "@/components/ui/Card";
-import { AUCKLAND_SUBURBS, CARE_TYPES, CHILD_AGE_RANGES } from "@/lib/constants";
+import { CARE_TYPES, CHILD_AGE_RANGES } from "@/lib/constants";
 import { CheckCircle, Heart, Shield, Check } from "lucide-react";
 import { ImageBand } from "@/components/ui/ImageBand";
 
@@ -123,15 +123,7 @@ export default function RegisterFamilyPage() {
               <Input name="name" label="Your Name" required error={errors.name} placeholder="e.g. Sarah" className="rounded-2xl" />
               <Input name="email" label="Email Address" type="email" required error={errors.email} placeholder="sarah@email.com" className="rounded-2xl" />
               <Input name="phone" label="Phone Number" type="tel" required error={errors.phone} placeholder="021 123 4567" className="rounded-2xl" />
-              <Select
-                name="suburb"
-                label="Your Suburb"
-                required
-                options={AUCKLAND_SUBURBS.map((s) => ({ value: s, label: s }))}
-                placeholder="Select suburb"
-                error={errors.suburb}
-                className="rounded-2xl"
-              />
+              <Input name="suburb" label="Your Suburb" required placeholder="e.g. Remuera" error={errors.suburb} className="rounded-2xl" />
             </div>
           </div>
 

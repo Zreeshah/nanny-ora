@@ -8,8 +8,8 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { useToast } from "@/components/ui/Toast";
+import { TagInput } from "@/components/ui/TagInput";
 import {
-  AUCKLAND_SUBURBS,
   CARE_TYPES,
   SPECIALIST_TAGS,
   AVAILABILITY_OPTIONS,
@@ -269,13 +269,12 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
             placeholder="e.g. 021 555 1234"
             disabled={isPending}
           />
-          <Select
+          <Input
             label="Home Suburb"
             value={suburb}
             onChange={(e) => setSuburb(e.target.value)}
             disabled={isPending}
-            placeholder="Select your home suburb"
-            options={AUCKLAND_SUBURBS.map((sub) => ({ value: sub, label: sub }))}
+            placeholder="e.g. Remuera"
           />
         </div>
       </Card>
@@ -356,32 +355,15 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
           Areas Covered & Availability
         </h2>
 
-        {/* Suburbs Multi-Select */}
-        <div>
-          <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
-            Service Areas (Select all suburbs you cover)
-          </label>
-          <div className="flex flex-wrap gap-1.5 p-3 bg-muted/40 rounded-2xl border border-border/50 max-h-48 overflow-y-auto">
-            {AUCKLAND_SUBURBS.map((sub) => {
-              const active = areasCovered.includes(sub);
-              return (
-                <button
-                  key={sub}
-                  type="button"
-                  onClick={() => toggleItem(areasCovered, setAreasCovered, sub)}
-                  disabled={isPending}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all cursor-pointer ${
-                    active
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-card text-muted-foreground border-border hover:border-muted-foreground"
-                  }`}
-                >
-                  {sub}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        {/* Service Areas — free-text tag input */}
+        <TagInput
+          label="Service Areas"
+          placeholder="Type a suburb and press Enter..."
+          value={areasCovered}
+          onChange={setAreasCovered}
+          disabled={isPending}
+          helperText="Add all suburbs you cover."
+        />
 
         {/* Care Types Multi-Select */}
         <div>
