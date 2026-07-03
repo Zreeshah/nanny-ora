@@ -6,7 +6,6 @@ import type { NannyProfilePublic } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import {
-  AUCKLAND_SUBURBS,
   AUCKLAND_REGIONS,
   SUBURB_TO_REGION,
   CARE_TYPES,
@@ -71,9 +70,11 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
     }
 
     if (suburb) {
+      const q = suburb.toLowerCase();
       results = results.filter(
         (n) =>
-          n.suburb === suburb || n.areasCovered.includes(suburb)
+          n.suburb.toLowerCase().includes(q) ||
+          n.areasCovered.some((a) => a.toLowerCase().includes(q))
       );
     }
 
@@ -223,16 +224,13 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
             />
           ))}
         </div>
-        <select
+        <input
+          type="text"
           value={suburb}
           onChange={(e) => setSuburb(e.target.value)}
-          className="w-full px-3 py-2 rounded-xl border border-border/70 bg-card text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all cursor-pointer"
-        >
-          <option value="">All suburbs</option>
-          {AUCKLAND_SUBURBS.map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select>
+          placeholder="Type a suburb..."
+          className="w-full px-3 py-2 rounded-xl border border-border/70 bg-card text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all"
+        />
       </FilterSection>
 
       <FilterSection title="Specialization">
