@@ -236,9 +236,9 @@ export const SAFETY_CHECKS = [
     key: "policeVetStatus" as const,
     number: 5,
     title: "Police Vet",
-    description: "Obtain a satisfactory New Zealand Police Vet check.",
+    description: "NannyOra obtains its own NZ Police Vet under the Children's Act 2014. Each service must obtain its own report — police vets from other employers or services cannot be shared or reused.",
     documentType: "POLICE_VET" as DocumentType,
-    nannyUploadable: true,
+    nannyUploadable: false,
   },
   {
     key: "interviewStatus" as const,
