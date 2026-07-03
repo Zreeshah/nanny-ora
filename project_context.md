@@ -135,8 +135,11 @@ nannyora/
 │   ├── seed.ts                # Seeds demo admin/nanny/parent + sample data
 │   └── dev.db                 # Local SQLite (gitignored, legacy)
 ├── public/
-│   ├── logo.png               # Branding logo with tagline
+│   ├── logo-wordmark.png      # Clean wordmark logo (no baked-in tagline)
+│   ├── logo.png               # Legacy logo with baked-in tagline (unused)
+│   ├── logo.jpg               # Legacy logo variant
 │   └── logo-circle.jpg        # Circular brand badge
+│   └── images/                # 34 contextual Auckland childcare photos (tagged library)
 ├── src/
 │   ├── proxy.ts               # Route guard middleware (role-based access control)
 │   ├── types/
@@ -151,11 +154,14 @@ nannyora/
 │   │   │   ├── page.tsx       # Homepage (SERVER)
 │   │   │   ├── apply-as-nanny/page.tsx    # Nanny application form (CLIENT, 844 lines)
 │   │   │   ├── register-family/page.tsx   # Parent registration (CLIENT)
-│   │   │   ├── find-a-nanny/page.tsx      # Nanny directory + filters (CLIENT)
+│   │   │   ├── find-a-nanny/page.tsx             # Nanny directory wrapper (SERVER, 16 lines, metadata + revalidate=300)
+│   │   │   ├── find-a-nanny/FindANannyClient.tsx # Filter sidebar + results grid (CLIENT, 448 lines)
 │   │   │   ├── post-a-job/page.tsx        # Job posting form (CLIENT)
 │   │   │   ├── pricing/page.tsx           # Pricing (SERVER)
 │   │   │   ├── how-it-works/page.tsx      # How it works (SERVER)
 │   │   │   ├── trust-and-safety/page.tsx  # Trust & safety (SERVER)
+│   │   │   ├── verification-process/page.tsx  # Detailed 7-layer verification process (SERVER, 232 lines)
+│   │   │   ├── childcare-support/page.tsx    # Childcare support options info page (SERVER, 81 lines)
 │   │   │   ├── nannies/[id]/page.tsx      # Nanny detail (SERVER)
 │   │   │   ├── nannies/auckland/page.tsx  # SEO listing (SERVER)
 │   │   │   ├── nannies/auckland/[suburb]/page.tsx  # Dynamic suburb SEO (SERVER)
@@ -164,11 +170,11 @@ nannyora/
 │   │   │   ├── sensory-aware-nanny-auckland/page.tsx   # SEO landing (SERVER)
 │   │   │   └── specialist-childcare-auckland/page.tsx  # SEO landing (SERVER)
 │   │   ├── admin/             # Admin area (role-guarded)
-│   │   │   ├── layout.tsx     # Admin shell with sidebar (CLIENT)
-│   │   │   ├── page.tsx       # Dashboard stats (SERVER)
-│   │   │   ├── nannies/page.tsx  # Nanny moderation (CLIENT, 497 lines)
-│   │   │   ├── jobs/page.tsx     # Job management (CLIENT)
-│   │   │   └── enquiries/page.tsx # Enquiry management (CLIENT)
+│   │   │   ├── layout.tsx     # Admin shell with dark header + logo-wordmark (CLIENT)
+│   │   │   ├── page.tsx       # Warm operations-center dashboard with KPIs, funnel, activity feed (SERVER, 346 lines)
+│   │   │   ├── nannies/page.tsx  # Nanny moderation — warm card design (CLIENT, 519 lines)
+│   │   │   ├── jobs/page.tsx     # Job management — warm card design (CLIENT)
+│   │   │   └── enquiries/page.tsx # Enquiry management — parent→nanny flow (CLIENT)
 │   │   └── dashboard/         # User dashboards (role-guarded)
 │   │       ├── layout.tsx     # Shared dashboard shell (CLIENT)
 │   │       ├── nanny/page.tsx # Nanny dashboard (CLIENT)
@@ -179,17 +185,20 @@ nannyora/
 │   │   ├── providers/Providers.tsx   # SessionProvider + ToastProvider
 │   │   ├── layout/                   # Header, Footer, MobileBottomNav
 │   │   ├── cards/NannyCard.tsx       # Nanny listing card
-│   │   ├── home/                     # InteractiveHero, BentoFeatures, MarqueeTestimonials, StatsTicker
-│   │   └── ui/                       # Button, Input, Select, Textarea, Card, Badge (+VerificationBadge), Accordion, EmptyState, LoadingSpinner, Toast (+useToast hook)
+│   │   ├── home/                     # InteractiveHero, BentoFeatures, MarqueeTestimonials, StatsTicker, TrustStrip, TrustStandard, SpecialistExpertise, DayInLife, LifestyleGallery
+│   │   └── ui/                       # Button, Input, Select, Textarea, Card, Badge (+VerificationBadge), Accordion, EmptyState, LoadingSpinner, Toast (+useToast hook), Reveal, ShinyText, BorderBeam, ImageBand
 │   ├── lib/
 │   │   ├── utils.ts                  # cn(), formatRate(), getInitials()
-│   │   ├── constants/index.ts        # All enums, lists, options (care types, suburbs, safety checks, etc.)
+│   │   ├── constants/index.ts        # All enums, lists, options (care types, suburbs, safety checks, regions, language tags, etc.)
 │   │   ├── validations/index.ts      # Zod schemas (login, register, parentIntake, nannyApplication, jobPost, enquiry, referee)
 │   │   ├── auth/auth.ts             # NextAuth config
 │   │   ├── db/prisma.ts             # Prisma client singleton
 │   │   ├── supabase/browser.ts      # Browser Supabase client (anon key)
 │   │   ├── supabase/server.ts       # Server Supabase client (service role key)
-│   │   └── data/sample-nannies.ts   # Dev sample data (6 mock nannies)
+│   │   ├── email/                    # Resend email integration (sendEmail, sendRefereeRequests, escapeHtml)
+│   │   ├── images.ts                # Tagged local image library + pickImages() deterministic seeded picker
+│   │   ├── data/sample-nannies.ts   # Dev sample data (10 mock nannies + filterNannies)
+│   │   └── data/nannies.ts          # DB-backed public nanny directory (getPublicNannies, getPublicNannyById) — falls back to sample data
 │   └── server/actions/              # Server Actions (all use "use server")
 │       ├── auth.ts                  # registerUser
 │       ├── nanny.ts                 # applyAsNanny, updateNannyProfile, uploadNannyDocument, deleteNannyDocument, getNannyDocuments
@@ -542,7 +551,7 @@ npm run dev      # starts at http://localhost:3000
 - **`lucide-react` v1.18.0** — unusual version pin (latest is v0.x); may have API differences
 - **Lint has ~574 errors** — mostly `@typescript-eslint/no-explicit-any` on `(session.user as any).role` patterns; not blocking builds
 - **SEO landing pages** (`/ece-nanny-auckland`, etc.) are statically rendered and don't pull from the database
-- **Logo tagline** — the tagline "Curated Care. Warm Hearts." is baked into `logo.png` as raster text (953×570px). At mobile header height (48px), it's physically ~4px tall and unreadable. Fix: CSS text tagline rendered below the logo on mobile only (`sm:hidden` span in Header/Footer). The baked-in raster tagline is still in the image but effectively invisible at small sizes.
+- **Logo tagline** — the tagline "Curated Care. Warm Hearts." is now rendered as CSS text below the `logo-wordmark.png` wordmark in Header, Footer, login page, and admin header. The old `logo.png` (with baked-in raster tagline) is retired but still in `public/`.
 
 ---
 
@@ -562,12 +571,15 @@ The following changes were made after the initial `project_context.md` was writt
 - **`escapeHtml()`** — XSS guard for user-supplied strings in email HTML
 - Added `resend` dependency to `package.json`
 
-### Logo Tagline Fix
-- Logo PNG has tagline baked in as raster text — unreadable at mobile sizes. CSS text tagline added below logo in Header and Footer, visible on mobile only (`sm:hidden` / `md:hidden`).
+### New Logo (`logo-wordmark.png`)
+- Clean wordmark logo without baked-in tagline — replaces old `logo.png` everywhere (Header, Footer, login page, admin header)
+- Tagline "Curated Care. Warm Hearts." rendered as crisp CSS text below the wordmark
+- Old `logo.png` retained in `public/` but no longer referenced
 
 ### CSS Fixes
 - Base heading color rule moved into `@layer base` (fixes specificity war with Tailwind utility classes)
 - Added `border-beam` and `text-shimmer` keyframes for animation components
+- Added `grow-x` keyframe for admin dashboard bar animations
 - Added `prefers-reduced-motion` rules to freeze animations
 
 ### Filter Sidebar + Language Immersion (find-a-nanny redesign)
@@ -576,5 +588,36 @@ The following changes were made after the initial `project_context.md` was writt
 - **Auckland regions** — new `AUCKLAND_REGIONS` + `SUBURB_TO_REGION` mapping in constants; filter by Central / East / North Shore / West / South
 - **Language immersion** — new `LANGUAGE_TAGS` constant (Mandarin, Cantonese, Korean, Japanese, Spanish, Te Reo Māori); new `languages: string[]` field on `NannyProfilePublic`; language immersion badges rendered on `NannyCard`
 - **Child age filter** — maps age ranges to existing specialist tags via heuristic (`AGE_TO_TAG` — newborn/infant/toddler→`baby_experience`, preschool→`ece_background`, school_age/teenager→`after_school_care`)
-- **Government funding note** — styled info box at bottom of sidebar: "Qualifying families can receive subsidies of up to $60+/week"
+- **Childcare support note** — replaced government funding note with softer "Childcare Support Options" info box linking to `/childcare-support`
 - **Sample data** — added `languages` to all 10 sample nannies (Lily Chen→Mandarin, Grace Taylor→Korean, Hannah Patel→Te Reo Māori, Rachel Foster→Spanish, others→empty)
+
+### DB-Backed Nanny Directory (`src/lib/data/nannies.ts`)
+- **New data layer** — `getPublicNannies()` queries Prisma for APPROVED/VERIFIED/SPECIALIST nannies, falls back to sample data when DB is empty or unreachable
+- **`getPublicNannyById()`** — single nanny lookup, DB first then sample data fallback
+- **`toPublic()`** — maps Prisma `NannyProfile` row → `NannyProfilePublic` type (parses JSON string arrays)
+- **`languages: []`** hardcoded with `ponytail:` comment — no `languages` column in DB schema yet
+- **`find-a-nanny/page.tsx`** refactored from single client component to server/client split: `page.tsx` (SERVER, 16 lines, metadata + `revalidate = 300`) fetches data, passes to `FindANannyClient.tsx` (CLIENT, 448 lines) for filter UI
+- **`sample-nannies.ts`** refactored — `NannyFilters` type extracted and exported, `filterNannies()` extracted as reusable function (works on any nanny list, not just samples)
+
+### New Public Pages
+- **`/verification-process`** (232 lines, SERVER) — detailed 7-layer verification process page with trust metrics, process-at-a-glance diagram, detailed "what / why it matters / how you're protected" cards for each check, "your role matters too" section, and CTA
+- **`/childcare-support`** (81 lines, SERVER) — soft informational page about childcare support options (not a subsidy CTA). Concierge-style guidance: "we quietly assess eligibility for you"
+- **Homepage "How it works"** simplified from 8 steps → 4 calm steps ("Share your needs → Get matched → Meet & confirm → Begin care")
+- **Homepage hero copy** changed from "Nanny Care Perfected" → "Private Nanny Placement"; subtext rewritten to emphasize premium/agency-verified/matched privately
+- **`TrustStandard` component** now links to `/verification-process` page
+- **Footer** added "Childcare Support Options" link; "Our Verification Process" link now points to `/verification-process`
+
+### Admin Dashboard Redesign
+- **`admin/page.tsx`** (346 lines) — warm "operations center" dashboard: live KPI cards with `StatsTicker` + inline SVG sparklines + completion rings; 7-step verification funnel with animated bars and drop-off counts; recent applications grid with progress bars; live activity feed; review queue cards. Uses `getAdminStats()` for live data; funnel/recent/activity use representative data.
+- **`admin/layout.tsx`** — dark header using `logo-wordmark.png`, "Admin" label badge
+- **`admin/nannies/page.tsx`** (519 lines) — warm card design with image fallbacks via `pickImages()` when no profile image
+- **`admin/jobs/page.tsx`** — warm card design with Briefcase icons, colored status badges
+- **`admin/enquiries/page.tsx`** — parent→nanny flow visualization with avatar initials and arrow
+
+### Police Vetting Authorization
+- Required checkbox on Step 4 of nanny application with full Children's Act 2014 authorization text
+- Two new DB fields on `NannyProfile`: `policeVetAuthorized` (Boolean), `policeVetAuthorizedAt` (DateTime?)
+- Form submission blocked until authorization is given
+
+### Care Types Expansion
+- Added 3 new care types: `maternity_newborn` (Maternity & Newborn Care / 月嫂), `night_nanny` (Night Nanny / Overnight Care), `inclusive_neurodiverse` (Inclusive & Neurodiverse Care)
