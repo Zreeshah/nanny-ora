@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth/auth";
 import { supabaseServer, SUPABASE_BUCKET } from "@/lib/supabase/server";
+import { sendVerificationUpdate } from "@/lib/email";
 import type { ActionResult } from "./auth";
 
 // Helper to check admin access
@@ -26,6 +27,7 @@ export async function updateNannyStatus(
   try {
     const profile = await prisma.nannyProfile.findUnique({
       where: { id: nannyProfileId },
+      include: { user: { select: { name: true, email: true } } },
     });
     if (!profile) return { success: false, error: "Nanny profile not found." };
 
@@ -33,6 +35,9 @@ export async function updateNannyStatus(
       where: { id: nannyProfileId },
       data: { adminStatus },
     });
+
+    // Best-effort: tell the nanny their status changed.
+    await sendVerificationUpdate(profile.user.name, profile.user.email, adminStatus);
 
     return { success: true };
   } catch (error) {
@@ -49,10 +54,14 @@ export async function updateVerificationLevel(
   if (authErr) return authErr;
 
   try {
-    await prisma.nannyProfile.update({
+    const updated = await prisma.nannyProfile.update({
       where: { id: nannyProfileId },
       data: { verificationLevel },
+      include: { user: { select: { name: true, email: true } } },
     });
+
+    // Best-effort: tell the nanny their verification level changed.
+    await sendVerificationUpdate(updated.user.name, updated.user.email, verificationLevel);
 
     return { success: true };
   } catch (error) {

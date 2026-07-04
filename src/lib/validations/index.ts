@@ -3,33 +3,12 @@
 // ============================================================
 
 import { z } from "zod";
-import { CARE_TYPES, SPECIALIST_TAGS, AUCKLAND_SUBURBS } from "@/lib/constants";
+import { CARE_TYPES, SPECIALIST_TAGS } from "@/lib/constants";
 
 const careTypeValues = CARE_TYPES.map((c) => c.value) as [string, ...string[]];
 const specialistTagValues = SPECIALIST_TAGS.map((s) => s.value) as [string, ...string[]];
-const suburbValues = AUCKLAND_SUBURBS as unknown as [string, ...string[]];
 
-// --- Auth Schemas ---
-export const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-export type LoginInput = z.infer<typeof loginSchema>;
 
-export const registerSchema = z
-  .object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    email: z.string().email("Please enter a valid email address"),
-    phone: z.string().optional(),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string(),
-    role: z.enum(["PARENT", "NANNY"]),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
-export type RegisterInput = z.infer<typeof registerSchema>;
 
 // --- Parent Intake Schema ---
 export const parentIntakeSchema = z.object({
@@ -73,6 +52,8 @@ export const nannyApplicationSchema = z.object({
   bio: z.string().min(20, "Please write at least a short bio (20 characters)"),
   availability: z.array(z.string()).min(1, "Select at least one availability slot"),
   specialistTags: z.array(z.enum(specialistTagValues)).optional().default([]),
+  languages: z.array(z.string()).optional().default([]),
+  availabilitySummary: z.string().optional().default(""),
   // Referee data for safety check #4
   refereeData: z.array(refereeSchema).optional().default([]),
 });

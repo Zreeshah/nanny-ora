@@ -19,10 +19,6 @@ export function formatRate(rate: number): string {
 /**
  * Generate a suburb slug from a suburb name.
  */
-export function toSuburbSlug(suburb: string): string {
-  return suburb.toLowerCase().replace(/\s+/g, "-");
-}
-
 /**
  * Truncate text to a max length with ellipsis.
  */

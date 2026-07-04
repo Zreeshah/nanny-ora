@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth/auth";
 import { enquirySchema, type EnquiryInput } from "@/lib/validations";
+import { sendEnquiryReceipt, notifyAdminNewEnquiry, sendEnquiryStatusUpdate } from "@/lib/email";
 import type { ActionResult } from "./auth";
 
 export async function createEnquiry(input: EnquiryInput): Promise<ActionResult> {
@@ -22,6 +23,7 @@ export async function createEnquiry(input: EnquiryInput): Promise<ActionResult> 
     // Verify nanny profile exists
     const nanny = await prisma.nannyProfile.findUnique({
       where: { id: nannyId },
+      include: { user: { select: { name: true } } },
     });
     if (!nanny) {
       return { success: false, error: "Nanny profile not found." };
@@ -35,6 +37,12 @@ export async function createEnquiry(input: EnquiryInput): Promise<ActionResult> 
         status: "NEW",
       },
     });
+
+    // Best-effort: confirm to the parent and notify admin.
+    const parentName = session.user.name || "there";
+    const nannyName = nanny.user.name;
+    if (session.user.email) await sendEnquiryReceipt(parentName, session.user.email, nannyName);
+    await notifyAdminNewEnquiry(parentName, nannyName, message);
 
     return { success: true, data: { enquiryId: enquiry.id } };
   } catch (error) {
@@ -53,10 +61,19 @@ export async function updateEnquiryStatus(
       return { success: false, error: "Unauthorised" };
     }
 
-    await prisma.enquiry.update({
+    const updated = await prisma.enquiry.update({
       where: { id: enquiryId },
       data: { status },
+      include: {
+        parent: { select: { name: true, email: true } },
+        nanny: { include: { user: { select: { name: true } } } },
+      },
     });
+
+    // Best-effort: notify the parent of the admin's update.
+    if (updated.parent.email) {
+      await sendEnquiryStatusUpdate(updated.parent.name, updated.parent.email, updated.nanny.user.name, status);
+    }
 
     return { success: true };
   } catch (error) {

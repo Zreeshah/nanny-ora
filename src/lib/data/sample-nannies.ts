@@ -248,10 +248,6 @@ export type NannyFilters = {
   minRate?: number;
 };
 
-export function getSampleNannies(filters?: NannyFilters): NannyProfilePublic[] {
-  return filterNannies(sampleNannies, filters);
-}
-
 /** Apply directory filters to any nanny list (sample or DB-backed). */
 export function filterNannies(nannies: NannyProfilePublic[], filters?: NannyFilters): NannyProfilePublic[] {
   let results = [...nannies];
@@ -290,9 +286,3 @@ export function filterNannies(nannies: NannyProfilePublic[], filters?: NannyFilt
   return results;
 }
 
-/**
- * Get a single sample nanny by ID.
- */
-export function getSampleNannyById(id: string): NannyProfilePublic | undefined {
-  return sampleNannies.find((n) => n.id === id);
-}

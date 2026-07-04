@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth/auth";
 import { jobPostSchema, type JobPostInput } from "@/lib/validations";
+import { notifyAdminNewJob, sendJobStatusUpdate } from "@/lib/email";
 import type { ActionResult } from "./auth";
 
 export async function createJobPost(input: JobPostInput): Promise<ActionResult> {
@@ -38,6 +39,9 @@ export async function createJobPost(input: JobPostInput): Promise<ActionResult> 
       },
     });
 
+    // Best-effort: tell admin a job is awaiting review.
+    await notifyAdminNewJob(session.user.name || "A family", data.title, data.suburb);
+
     return { success: true, data: { jobId: job.id } };
   } catch (error) {
     console.error("Create job error:", error);
@@ -55,7 +59,10 @@ export async function updateJobStatus(
       return { success: false, error: "Unauthorised" };
     }
 
-    const job = await prisma.jobPost.findUnique({ where: { id: jobId } });
+    const job = await prisma.jobPost.findUnique({
+      where: { id: jobId },
+      include: { parent: { select: { name: true, email: true } } },
+    });
     if (!job) {
       return { success: false, error: "Job not found" };
     }
@@ -64,6 +71,9 @@ export async function updateJobStatus(
       where: { id: jobId },
       data: { status },
     });
+
+    // Best-effort: tell the parent their job post status changed.
+    await sendJobStatusUpdate(job.parent.name, job.parent.email, job.title, status);
 
     return { success: true };
   } catch (error) {

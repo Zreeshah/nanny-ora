@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth/auth";
 import { nannyApplicationSchema, type NannyApplicationInput } from "@/lib/validations";
 import { supabaseServer, SUPABASE_BUCKET } from "@/lib/supabase/server";
-import { sendRefereeRequests } from "@/lib/email";
+import { sendRefereeRequests, sendNannyWelcome, notifyAdminNewNanny } from "@/lib/email";
 import type { ActionResult } from "./auth";
 import bcrypt from "bcryptjs";
 
@@ -100,6 +100,8 @@ export async function applyAsNanny(
           bio: data.bio,
           availability: JSON.stringify(data.availability),
           specialistTags: JSON.stringify(data.specialistTags || []),
+          languages: JSON.stringify(data.languages || []),
+          availabilitySummary: data.availabilitySummary || "",
           refereeData: JSON.stringify(data.refereeData || []),
           verificationLevel: "LISTED",
           adminStatus: "SUBMITTED",
@@ -124,7 +126,11 @@ export async function applyAsNanny(
       return { userId: user.id, profileId: profile.id };
     });
 
-    // Auto-email referees a reference request. Best-effort: failure must not break the application.
+    // Best-effort lifecycle emails — none may break the application.
+    await sendNannyWelcome(data.name, data.email);
+    await notifyAdminNewNanny(data.name, data.email);
+
+    // Auto-email referees a reference request.
     if (data.refereeData && data.refereeData.length > 0) {
       const { sent, failed } = await sendRefereeRequests(data.name, data.refereeData);
       console.log(`Referee requests for ${data.email}: ${sent} sent, ${failed.length} failed`);
@@ -184,6 +190,8 @@ export async function updateNannyProfile(
           bio: updates.bio || "",
           availability: JSON.stringify(updates.availability || []),
           specialistTags: JSON.stringify(updates.specialistTags || []),
+          languages: JSON.stringify(updates.languages || []),
+          availabilitySummary: updates.availabilitySummary || "",
           refereeData: JSON.stringify(updates.refereeData || []),
         },
         update: {
@@ -200,6 +208,8 @@ export async function updateNannyProfile(
           ...(updates.bio !== undefined && { bio: updates.bio }),
           ...(updates.availability && { availability: JSON.stringify(updates.availability) }),
           ...(updates.specialistTags && { specialistTags: JSON.stringify(updates.specialistTags) }),
+          ...(updates.languages && { languages: JSON.stringify(updates.languages) }),
+          ...(updates.availabilitySummary !== undefined && { availabilitySummary: updates.availabilitySummary }),
           ...(updates.refereeData !== undefined && { refereeData: JSON.stringify(updates.refereeData) }),
         },
       });
@@ -328,7 +338,14 @@ export async function deleteNannyDocument(
   }
 }
 
-export async function getNannyDocuments(): Promise<ActionResult> {
+// --- Profile Photo ---
+
+const PHOTO_BUCKET = "nanny-photos"; // public bucket; vetting docs stay in the private one
+const PHOTO_MAX_BYTES = 5 * 1024 * 1024;
+const PHOTO_TYPES: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
+
+/** Upload/replace the nanny's public profile photo. Live immediately — admin recourse is suspending the profile. */
+export async function uploadProfilePhoto(file: File): Promise<ActionResult> {
   try {
     const session = await auth();
     const userId = session?.user?.id;
@@ -336,22 +353,31 @@ export async function getNannyDocuments(): Promise<ActionResult> {
       return { success: false, error: "Unauthorised" };
     }
 
-    const profile = await prisma.nannyProfile.findUnique({
-      where: { userId },
-      select: { id: true },
-    });
-    if (!profile) {
-      return { success: true, data: [] };
+    const ext = PHOTO_TYPES[file.type];
+    if (!ext) return { success: false, error: "Please upload a JPG, PNG, or WebP image." };
+    if (file.size > PHOTO_MAX_BYTES) return { success: false, error: "Photo must be under 5MB." };
+
+    const profile = await prisma.nannyProfile.findUnique({ where: { userId }, select: { id: true } });
+    if (!profile) return { success: false, error: "Complete your profile first." };
+
+    const path = `photos/${userId}.${ext}`;
+    const arrayBuffer = await file.arrayBuffer();
+    const { error: upErr } = await supabaseServer.storage
+      .from(PHOTO_BUCKET)
+      .upload(path, arrayBuffer, { upsert: true, contentType: file.type });
+    if (upErr) {
+      console.error("Photo upload error:", upErr);
+      return { success: false, error: `Upload failed: ${upErr.message}` };
     }
 
-    const documents = await prisma.nannyDocument.findMany({
-      where: { nannyProfileId: profile.id },
-      orderBy: { createdAt: "desc" },
-    });
+    const { data } = supabaseServer.storage.from(PHOTO_BUCKET).getPublicUrl(path);
+    // cache-bust so a replaced photo shows immediately despite the stable path
+    const url = `${data.publicUrl}?v=${Date.now()}`;
+    await prisma.nannyProfile.update({ where: { id: profile.id }, data: { profileImageUrl: url } });
 
-    return { success: true, data: documents };
+    return { success: true, data: { url } };
   } catch (error) {
-    console.error("Get nanny documents error:", error);
-    return { success: false, error: "Something went wrong." };
+    console.error("uploadProfilePhoto error:", error);
+    return { success: false, error: "Something went wrong. Please try again." };
   }
 }

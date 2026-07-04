@@ -11,7 +11,7 @@ import { TagInput } from "@/components/ui/TagInput";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import {
-  CARE_TYPES, SPECIALIST_TAGS,
+  CARE_TYPES, SPECIALIST_TAGS, LANGUAGE_TAGS,
   AVAILABILITY_OPTIONS, SAFETY_CHECKS, DOCUMENT_TYPE_LABELS,
 } from "@/lib/constants";
 import type { DocumentType } from "@/lib/constants";
@@ -51,6 +51,8 @@ export default function ApplyAsNannyPage() {
   const [selectedCareTypes, setSelectedCareTypes] = useState<string[]>([]);
   const [selectedAvailability, setSelectedAvailability] = useState<string[]>([]);
   const [selectedSpecialistTags, setSelectedSpecialistTags] = useState<string[]>([]);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
+  const [availabilitySummaryText, setAvailabilitySummaryText] = useState("");
 
   // Toggles for checkboxes
   const [eceExp, setEceExp] = useState(false);
@@ -83,6 +85,12 @@ export default function ApplyAsNannyPage() {
 
   const handleToggleSpecialistTag = (tag: string) => {
     setSelectedSpecialistTags(prev =>
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    );
+  };
+
+  const handleToggleLanguage = (tag: string) => {
+    setSelectedLanguages(prev =>
       prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
     );
   };
@@ -197,6 +205,8 @@ export default function ApplyAsNannyPage() {
         bio,
         availability: selectedAvailability,
         specialistTags: selectedSpecialistTags,
+        languages: selectedLanguages,
+        availabilitySummary: availabilitySummaryText,
         refereeData: referees.filter(r => r.name.trim()),
         password,
         documents: documentsList,
@@ -481,6 +491,40 @@ export default function ApplyAsNannyPage() {
                 <input key={t} type="hidden" name="specialistTags" value={t} />
               ))}
             </div>
+
+            {/* Language immersion tags */}
+            <div>
+              <label className="block text-xs font-bold text-foreground mb-2.5 uppercase tracking-wide">Languages (optional)</label>
+              <div className="flex flex-wrap gap-2">
+                {LANGUAGE_TAGS.map((tag) => {
+                  const isSelected = selectedLanguages.includes(tag.value);
+                  return (
+                    <button
+                      type="button"
+                      key={tag.value}
+                      onClick={() => handleToggleLanguage(tag.value)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all text-[10px] font-bold uppercase tracking-wider cursor-pointer ${
+                        isSelected
+                          ? "bg-accent/10 border-accent text-accent"
+                          : "bg-white border-border hover:border-accent/40 text-muted-foreground"
+                      }`}
+                    >
+                      <span>{tag.short} {tag.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Availability summary */}
+            <Input
+              label="Availability summary (optional)"
+              placeholder="e.g. Mon–Fri, 8am–3pm"
+              value={availabilitySummaryText}
+              onChange={(e) => setAvailabilitySummaryText(e.target.value)}
+              helperText="A one-line schedule shown on your public profile."
+              className="rounded-2xl"
+            />
 
             <div className="flex justify-between pt-4">
               <Button type="button" variant="ghost" className="rounded-full" onClick={() => setStep(1)}>Back</Button>

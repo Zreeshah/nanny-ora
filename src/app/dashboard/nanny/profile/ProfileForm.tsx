@@ -13,12 +13,13 @@ import {
   CARE_TYPES,
   SPECIALIST_TAGS,
   AVAILABILITY_OPTIONS,
+  LANGUAGE_TAGS,
   SAFETY_CHECKS,
   DOCUMENT_TYPE_LABELS,
   SAFETY_CHECK_STATUS_LABELS,
 } from "@/lib/constants";
 import type { DocumentType, SafetyCheckStatus } from "@/lib/constants";
-import { updateNannyProfile, uploadNannyDocument, deleteNannyDocument } from "@/server/actions/nanny";
+import { updateNannyProfile, uploadNannyDocument, deleteNannyDocument, uploadProfilePhoto } from "@/server/actions/nanny";
 import {
   Check, Save, Loader2, Award, Heart, Shield,
   Upload, CheckCircle, Clock, XCircle, FileText,
@@ -79,6 +80,9 @@ interface ProfileFormProps {
     bio: string;
     availability: string[];
     specialistTags: string[];
+    languages: string[];
+    availabilitySummary: string;
+    profileImageUrl: string;
     refereeData: string[];
   };
   safetyChecks: Record<string, string>;
@@ -109,6 +113,23 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
   const [careTypes, setCareTypes] = useState<string[]>(initialData.careTypes);
   const [availability, setAvailability] = useState<string[]>(initialData.availability);
   const [specialistTags, setSpecialistTags] = useState<string[]>(initialData.specialistTags);
+  const [languages, setLanguages] = useState<string[]>(initialData.languages);
+  const [availabilitySummary, setAvailabilitySummary] = useState(initialData.availabilitySummary);
+  const [photoUrl, setPhotoUrl] = useState(initialData.profileImageUrl);
+  const [photoUploading, setPhotoUploading] = useState(false);
+
+  const handlePhotoChange = async (file: File | null) => {
+    if (!file) return;
+    setPhotoUploading(true);
+    const res = await uploadProfilePhoto(file);
+    setPhotoUploading(false);
+    if (res.success && res.data?.url) {
+      setPhotoUrl(res.data.url);
+      toast("Profile photo updated!", "success");
+    } else {
+      toast(res.error || "Photo upload failed", "error");
+    }
+  };
 
   // Referee data
   const [referees, setReferees] = useState<RefereeEntry[]>(() => {
@@ -223,6 +244,8 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
         careTypes,
         availability,
         specialistTags,
+        languages,
+        availabilitySummary,
         refereeData: referees.filter(r => r.name.trim()) as any,
       });
 
@@ -246,6 +269,34 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
           <ShieldCheckIcon className="w-5 h-5 text-primary" />
           Personal Details
         </h2>
+
+        {/* Profile photo */}
+        <div className="flex items-center gap-4">
+          {photoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element -- fresh signed-ish URL with cache-bust; next/image caching fights the ?v= param
+            <img src={photoUrl} alt="Profile photo" className="w-20 h-20 rounded-full object-cover ring-2 ring-primary/10" />
+          ) : (
+            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xl">
+              {name.split(" ").map((p) => p[0]).join("").slice(0, 2).toUpperCase()}
+            </div>
+          )}
+          <div>
+            <label className="inline-block">
+              <span className={`px-4 py-2 rounded-full border border-border text-xs font-semibold cursor-pointer hover:bg-secondary/60 transition-colors ${photoUploading ? "opacity-50 pointer-events-none" : ""}`}>
+                {photoUploading ? "Uploading…" : photoUrl ? "Replace photo" : "Upload photo"}
+              </span>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                disabled={photoUploading}
+                onChange={(e) => handlePhotoChange(e.target.files?.[0] ?? null)}
+              />
+            </label>
+            <p className="text-[10px] text-muted-foreground mt-1.5">JPG, PNG or WebP, max 5MB. Shown on your public profile immediately.</p>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             label="Full Name"
@@ -421,6 +472,34 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
           </div>
         </div>
 
+        {/* Languages */}
+        <div>
+          <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+            Languages
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {LANGUAGE_TAGS.map((tag) => {
+              const active = languages.includes(tag.value);
+              return (
+                <button
+                  key={tag.value}
+                  type="button"
+                  onClick={() => toggleItem(languages, setLanguages, tag.value)}
+                  disabled={isPending}
+                  className={`px-3 py-2 rounded-2xl text-xs font-semibold border transition-all cursor-pointer flex items-center gap-1.5 ${
+                    active
+                      ? "bg-accent/10 text-accent border-accent/30 font-bold"
+                      : "bg-card text-muted-foreground border-border hover:border-muted-foreground"
+                  }`}
+                >
+                  {active && <Check className="w-3.5 h-3.5 stroke-[2.5]" />}
+                  {tag.short} {tag.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Availability */}
         <div>
           <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
@@ -447,6 +526,15 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
             })}
           </div>
         </div>
+
+        <Input
+          label="Availability summary"
+          placeholder="e.g. Mon–Fri, 8am–3pm"
+          value={availabilitySummary}
+          onChange={(e) => setAvailabilitySummary(e.target.value)}
+          helperText="One-line schedule shown on your public profile."
+          disabled={isPending}
+        />
       </Card>
 
       {/* 4. Bio Section */}

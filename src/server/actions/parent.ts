@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth/auth";
 import { parentIntakeSchema, type ParentIntakeInput } from "@/lib/validations";
+import { sendParentWelcome, notifyAdminNewParent } from "@/lib/email";
 import type { ActionResult } from "./auth";
 import bcrypt from "bcryptjs";
 
@@ -51,6 +52,10 @@ export async function registerParent(input: ParentIntakeInput & { password: stri
       return { userId: user.id, profileId: profile.id };
     });
 
+    // Best-effort welcome + admin notification.
+    await sendParentWelcome(name, email);
+    await notifyAdminNewParent(name, email);
+
     return { success: true, data: result };
   } catch (error) {
     console.error("Register parent error:", error);
@@ -90,5 +95,33 @@ export async function updateParentProfile(data: Partial<ParentIntakeInput>): Pro
   } catch (error) {
     console.error("Update parent profile error:", error);
     return { success: false, error: "Something went wrong. Please try again." };
+  }
+}
+
+/** Current parent's profile for the edit form. */
+export async function getMyParentProfile(): Promise<ActionResult> {
+  try {
+    const session = await auth();
+    if (!session?.user?.id || (session.user as any).role !== "PARENT") {
+      return { success: false, error: "Unauthorised" };
+    }
+    const profile = await prisma.parentProfile.findUnique({ where: { userId: session.user.id } });
+    if (!profile) return { success: true, data: null };
+    const parse = (v: string) => { try { const p = JSON.parse(v); return Array.isArray(p) ? p : []; } catch { return []; } };
+    return {
+      success: true,
+      data: {
+        suburb: profile.suburb,
+        childAgeRange: parse(profile.childAgeRange),
+        careTypeNeeded: parse(profile.careTypeNeeded),
+        preferredDays: profile.preferredDays,
+        startDate: profile.startDate || "",
+        specialistNeeds: profile.specialistNeeds,
+        notes: profile.notes,
+      },
+    };
+  } catch (error) {
+    console.error("getMyParentProfile error:", error);
+    return { success: false, error: "Failed to load profile." };
   }
 }

@@ -7,14 +7,16 @@ import { Button } from "@/components/ui/Button";
 import { MapPin, Clock, Star } from "lucide-react";
 import { formatRate, truncate, getInitials } from "@/lib/utils";
 import { CARE_TYPES, LANGUAGE_TAGS } from "@/lib/constants";
+import { FavouriteButton } from "./FavouriteButton";
 import type { NannyProfilePublic } from "@/types";
 
 interface NannyCardProps {
   nanny: NannyProfilePublic;
   className?: string;
+  favourited?: boolean;
 }
 
-export function NannyCard({ nanny, className }: NannyCardProps) {
+export function NannyCard({ nanny, className, favourited }: NannyCardProps) {
   const careTypeLabels = nanny.careTypes
     .map((ct) => CARE_TYPES.find((c) => c.value === ct)?.label)
     .filter(Boolean)
@@ -62,8 +64,9 @@ export function NannyCard({ nanny, className }: NannyCardProps) {
             </div>
           </div>
 
-          {/* Rate */}
-          <div className="text-right flex-shrink-0">
+          {/* Rate + Save */}
+          <div className="flex flex-col items-end gap-2 flex-shrink-0">
+            <FavouriteButton nannyId={nanny.id} initial={favourited} />
             <span className="text-lg font-bold text-primary">{formatRate(nanny.hourlyRate)}</span>
           </div>
         </div>

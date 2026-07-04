@@ -40,7 +40,7 @@ function toPublic(row: NannyProfile & { user: { name: string } }): NannyProfileP
     availabilitySummary: row.availabilitySummary,
     availability: parseJsonArray(row.availability),
     specialistTags: parseJsonArray(row.specialistTags) as NannyProfilePublic["specialistTags"],
-    languages: [], // ponytail: no languages column in DB yet — add to schema when real nannies need it
+    languages: parseJsonArray(row.languages),
     verificationLevel: row.verificationLevel as NannyProfilePublic["verificationLevel"],
     profileImageUrl: row.profileImageUrl ?? undefined,
     createdAt: row.createdAt,

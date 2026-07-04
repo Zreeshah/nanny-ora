@@ -1,17 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import { Card } from "@/components/ui/Card";
 import { CARE_TYPES, CHILD_AGE_RANGES } from "@/lib/constants";
-import { CheckCircle, Heart, Shield, Check } from "lucide-react";
+import { Heart, Shield, Check } from "lucide-react";
 import { ImageBand } from "@/components/ui/ImageBand";
+import { registerParent } from "@/server/actions/parent";
 
 export default function RegisterFamilyPage() {
-  const [submitted, setSubmitted] = useState(false);
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   
@@ -45,7 +48,12 @@ export default function RegisterFamilyPage() {
     if (!data.email) newErrors.email = "Email is required";
     if (!data.phone) newErrors.phone = "Phone is required";
     if (!data.suburb) newErrors.suburb = "Please select a suburb";
-    
+
+    const password = String(data.password || "");
+    const confirmPassword = String(data.confirmPassword || "");
+    if (password.length < 6) newErrors.password = "Password must be at least 6 characters";
+    else if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match";
+
     if (selectedAges.length === 0) {
       newErrors.childAges = "Select at least one child age range";
     }
@@ -56,7 +64,7 @@ export default function RegisterFamilyPage() {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       setIsLoading(false);
-      
+
       // Auto-focus first error field
       const firstErrorKey = Object.keys(newErrors)[0];
       const element = document.getElementsByName(firstErrorKey)[0];
@@ -66,30 +74,31 @@ export default function RegisterFamilyPage() {
       return;
     }
 
-    // Simulate submission
-    await new Promise((resolve) => setTimeout(resolve, 1200));
-    setIsLoading(false);
-    setSubmitted(true);
-  };
+    const res = await registerParent({
+      name: String(data.name),
+      email: String(data.email),
+      phone: String(data.phone),
+      suburb: String(data.suburb),
+      childAgeRange: selectedAges,
+      careTypeNeeded: selectedCareTypes,
+      preferredDays: String(data.preferredDays || ""),
+      startDate: data.startDate ? String(data.startDate) : undefined,
+      specialistNeeds: String(data.specialistNeeds || ""),
+      notes: String(data.notes || ""),
+      password,
+    });
 
-  if (submitted) {
-    return (
-      <div className="max-w-2xl mx-auto px-4 py-20 text-center animate-fade-in">
-        <div className="w-16 h-16 rounded-full bg-emerald-50 text-badge-verified flex items-center justify-center mx-auto mb-6 border border-emerald-100">
-          <CheckCircle className="w-8 h-8 stroke-[1.8]" />
-        </div>
-        <h1 className="font-heading text-3xl sm:text-4xl text-foreground mb-4">
-          Thanks for registering!
-        </h1>
-        <p className="text-sm sm:text-base text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
-          Your profile has been created successfully. We&apos;ll notify you when matching Auckland nannies are available.
-        </p>
-        <Button variant="primary" size="lg" className="rounded-full" onClick={() => (window.location.href = "/find-a-nanny")}>
-          Browse Auckland Nannies
-        </Button>
-      </div>
-    );
-  }
+    if (!res.success) {
+      setErrors({ form: res.error || "Something went wrong. Please try again." });
+      setIsLoading(false);
+      return;
+    }
+
+    // Auto-login the new family, then send them where they intended to go.
+    await signIn("credentials", { email: String(data.email), password, redirect: false });
+    const nannyId = new URLSearchParams(window.location.search).get("nanny");
+    router.push(nannyId ? `/nannies/${nannyId}` : "/dashboard/parent");
+  };
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -124,6 +133,8 @@ export default function RegisterFamilyPage() {
               <Input name="email" label="Email Address" type="email" required error={errors.email} placeholder="sarah@email.com" className="rounded-2xl" />
               <Input name="phone" label="Phone Number" type="tel" required error={errors.phone} placeholder="021 123 4567" className="rounded-2xl" />
               <Input name="suburb" label="Your Suburb" required placeholder="e.g. Remuera" error={errors.suburb} className="rounded-2xl" />
+              <Input name="password" label="Password" type="password" required error={errors.password} placeholder="At least 6 characters" className="rounded-2xl" />
+              <Input name="confirmPassword" label="Confirm Password" type="password" required error={errors.confirmPassword} placeholder="Re-enter password" className="rounded-2xl" />
             </div>
           </div>
 
@@ -245,8 +256,11 @@ export default function RegisterFamilyPage() {
           </div>
 
           <div className="pt-4">
+            {errors.form && (
+              <p className="mb-4 text-sm text-destructive text-center" role="alert">{errors.form}</p>
+            )}
             <Button type="submit" variant="accent" size="lg" fullWidth isLoading={isLoading} className="rounded-full shadow-md shadow-accent/10">
-              Submit Registration
+              Create Account & Submit
             </Button>
             <div className="flex items-center justify-center gap-1.5 mt-4 text-[10px] text-muted-foreground text-center">
               <Shield className="w-3.5 h-3.5 text-primary" />

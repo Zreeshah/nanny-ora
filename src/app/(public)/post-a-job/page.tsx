@@ -1,16 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import { Card } from "@/components/ui/Card";
 import { CARE_TYPES } from "@/lib/constants";
-import { CheckCircle, Briefcase, Shield } from "lucide-react";
+import { CheckCircle, Briefcase, Shield, LogIn } from "lucide-react";
 import { ImageBand } from "@/components/ui/ImageBand";
+import { createJobPost } from "@/server/actions/job";
+import type { JobPostInput } from "@/lib/validations";
 
 export default function PostAJobPage() {
+  const { status } = useSession();
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -49,11 +54,51 @@ export default function PostAJobPage() {
       return;
     }
 
-    // Simulate submission
-    await new Promise((r) => setTimeout(r, 1200));
+    const res = await createJobPost({
+      title: String(data.title),
+      suburb: String(data.suburb),
+      careType: String(data.careType) as JobPostInput["careType"],
+      daysRequired: String(data.daysRequired),
+      childCount: Number(data.childCount),
+      childAges: String(data.childAges),
+      startDate: String(data.startDate),
+      hourlyBudget: Number(data.hourlyBudget),
+      specialistSupport: String(data.specialistSupport || ""),
+      description: String(data.description),
+      contactEmail: String(data.contactEmail),
+      contactPhone: data.contactPhone ? String(data.contactPhone) : undefined,
+    });
     setIsLoading(false);
+
+    if (!res.success) {
+      setErrors({ form: res.error || "Something went wrong. Please try again." });
+      return;
+    }
     setSubmitted(true);
   };
+
+  // Posting a job requires an account (the post is tied to the family).
+  if (status === "unauthenticated") {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-20 text-center animate-fade-in">
+        <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6 border border-primary/20">
+          <LogIn className="w-8 h-8 text-primary stroke-[1.8]" />
+        </div>
+        <h1 className="font-heading text-3xl sm:text-4xl text-foreground mb-4">Sign in to post a job</h1>
+        <p className="text-sm sm:text-base text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
+          Create a free family account (or sign in) to post a childcare job. Your post stays tied to your account so you can manage applications.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Link href="/register-family">
+            <Button variant="accent" size="lg" className="rounded-full px-8">Create family account</Button>
+          </Link>
+          <Link href="/login">
+            <Button variant="outline" size="lg" className="rounded-full px-8">Sign in</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   if (submitted) {
     return (
@@ -177,6 +222,9 @@ export default function PostAJobPage() {
           </div>
 
           <div className="pt-4">
+            {errors.form && (
+              <p className="mb-4 text-sm text-destructive text-center" role="alert">{errors.form}</p>
+            )}
             <Button type="submit" variant="accent" size="lg" fullWidth isLoading={isLoading} className="rounded-full shadow-md shadow-accent/10">
               Post Childcare Job
             </Button>

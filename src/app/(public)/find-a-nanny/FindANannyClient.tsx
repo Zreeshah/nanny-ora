@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { NannyCard } from "@/components/cards/NannyCard";
+import { getFavouriteIds } from "@/server/actions/engagement";
 import type { NannyProfilePublic } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -31,6 +32,14 @@ const AGE_TO_TAG: Record<string, string> = {
 
 export default function FindANannyClient({ allNannies }: { allNannies: NannyProfilePublic[] }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [favIds, setFavIds] = useState<Set<string>>(new Set());
+
+  // Hydrate the current family's saved nannies so hearts show the right state.
+  useEffect(() => {
+    getFavouriteIds().then((r) => {
+      if (r.success && Array.isArray(r.data)) setFavIds(new Set(r.data));
+    }).catch(() => {});
+  }, []);
 
   const [search, setSearch] = useState("");
   const [careTypes, setCareTypes] = useState<string[]>([]);
@@ -422,7 +431,7 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
           {filteredNannies.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 stagger-children">
               {filteredNannies.map((nanny) => (
-                <NannyCard key={nanny.id} nanny={nanny} />
+                <NannyCard key={nanny.id} nanny={nanny} favourited={favIds.has(nanny.id)} />
               ))}
             </div>
           ) : (

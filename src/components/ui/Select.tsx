@@ -1,4 +1,4 @@
-import { forwardRef, type SelectHTMLAttributes } from "react";
+import { forwardRef, useId, type SelectHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
@@ -10,7 +10,8 @@ export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
 
 const Select = forwardRef<HTMLSelectElement, SelectProps>(
   ({ className, label, error, options, placeholder, id, ...props }, ref) => {
-    const selectId = id || label?.toLowerCase().replace(/\s+/g, "-");
+    const reactId = useId();
+    const selectId = id || reactId;
 
     return (
       <div className="space-y-1.5">

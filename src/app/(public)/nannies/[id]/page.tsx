@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge, VerificationBadge, SpecialistTag } from "@/components/ui/Badge";
 import { sampleNannies } from "@/lib/data/sample-nannies";
 import { getPublicNannyById } from "@/lib/data/nannies";
 import { formatRate, getInitials } from "@/lib/utils";
-import { CARE_TYPES } from "@/lib/constants";
+import { CARE_TYPES, LANGUAGE_TAGS } from "@/lib/constants";
+import EnquiryForm from "./EnquiryForm";
+import ViewTracker from "./ViewTracker";
 import {
   MapPin, Clock, Shield, Car, Heart, GraduationCap,
-  CheckCircle, Calendar, Star, ArrowLeft, Send,
+  CheckCircle, Calendar, Star, ArrowLeft,
 } from "lucide-react";
 
 export const revalidate = 300;
@@ -48,6 +49,7 @@ export default async function NannyProfilePage({
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <ViewTracker nannyId={nanny.id} />
       {/* Back Link */}
       <Link
         href="/find-a-nanny"
@@ -173,6 +175,24 @@ export default async function NannyProfilePage({
             </Card>
           )}
 
+          {/* Languages */}
+          {nanny.languages && nanny.languages.length > 0 && (
+            <Card>
+              <h2 className="font-heading text-xl text-foreground mb-4">Languages</h2>
+              <div className="flex flex-wrap gap-2">
+                {(nanny.languages as string[]).map((lang) => {
+                  const tag = LANGUAGE_TAGS.find((l) => l.value === lang);
+                  if (!tag) return null;
+                  return (
+                    <span key={lang} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-bold border border-accent/20">
+                      {tag.short} {tag.label}
+                    </span>
+                  );
+                })}
+              </div>
+            </Card>
+          )}
+
           {/* Care Types */}
           <Card>
             <h2 className="font-heading text-xl text-foreground mb-4">Care Types Offered</h2>
@@ -202,18 +222,7 @@ export default async function NannyProfilePage({
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Enquiry CTA */}
-          <Card className="sticky top-24 border-l-4 border-l-accent">
-            <h3 className="font-semibold text-foreground mb-2">Interested in {nanny.name.split(" ")[0]}?</h3>
-            <p className="text-xs text-muted-foreground mb-4">
-              Send an enquiry to connect with this nanny. All messages are private.
-            </p>
-            <Link href={`/register-family?nanny=${nanny.id}`}>
-              <Button variant="accent" fullWidth className="rounded-full shadow-lg">
-                <Send className="w-4 h-4 mr-2" aria-hidden="true" />
-                Send Enquiry
-              </Button>
-            </Link>
-          </Card>
+          <EnquiryForm nannyId={nanny.id} firstName={nanny.name.split(" ")[0]} />
 
           {/* Availability */}
           <Card>

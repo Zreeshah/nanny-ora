@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.pexels.com",
       },
+      {
+        protocol: "https",
+        hostname: "**.supabase.co", // nanny profile photos (nanny-photos public bucket)
+      },
     ],
   },
   turbopack: {

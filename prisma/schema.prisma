@@ -31,6 +31,8 @@ model User {
   jobPosts       JobPost[]
   enquiriesSent  Enquiry[]      @relation("EnquiriesSent")
   reviewsGiven   Review[]       @relation("ReviewsGiven")
+  favourites     Favourite[]    @relation("FavouritesByParent")
+  profileViews   ProfileView[]  @relation("ViewsByUser")
 
   @@map("users")
 }
@@ -78,6 +80,7 @@ model NannyProfile {
   availabilitySummary    String   @default("")
   availability           String   @default("[]") // JSON array stored as string
   specialistTags         String   @default("[]") // JSON array stored as string
+  languages              String   @default("[]") // JSON array stored as string (LANGUAGE_TAGS values)
   verificationLevel      String   @default("LISTED") // LISTED, VERIFIED, PREMIUM_VETTED, SPECIALIST
   adminStatus            String   @default("SUBMITTED") // DRAFT, SUBMITTED, UNDER_REVIEW, APPROVED, VERIFIED, SPECIALIST, SUSPENDED, ARCHIVED
   profileImageUrl        String?
@@ -105,6 +108,8 @@ model NannyProfile {
   documents       NannyDocument[]
   enquiriesReceived Enquiry[]      @relation("EnquiriesReceived")
   reviewsReceived   Review[]       @relation("ReviewsReceived")
+  favouritedBy      Favourite[]    @relation("FavouritesOfNanny")
+  views             ProfileView[]  @relation("ViewsOfNanny")
 
   @@map("nanny_profiles")
 }
@@ -200,4 +205,33 @@ model SkillTag {
   category String @default("general") // general, specialist, qualification
 
   @@map("skill_tags")
+}
+
+// ============================================================
+// Favourites (parents saving nannies) + Profile Views tracking
+// ============================================================
+
+model Favourite {
+  id        String       @id @default(cuid())
+  parentId  String
+  parent    User         @relation("FavouritesByParent", fields: [parentId], references: [id], onDelete: Cascade)
+  nannyId   String
+  nanny     NannyProfile @relation("FavouritesOfNanny", fields: [nannyId], references: [id], onDelete: Cascade)
+  createdAt DateTime     @default(now())
+
+  @@unique([parentId, nannyId])
+  @@map("favourites")
+}
+
+model ProfileView {
+  id        String       @id @default(cuid())
+  nannyId   String
+  nanny     NannyProfile @relation("ViewsOfNanny", fields: [nannyId], references: [id], onDelete: Cascade)
+  viewerId  String?
+  viewer    User?        @relation("ViewsByUser", fields: [viewerId], references: [id], onDelete: SetNull)
+  createdAt DateTime     @default(now())
+
+  @@index([nannyId])
+  @@index([viewerId])
+  @@map("profile_views")
 }

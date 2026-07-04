@@ -71,6 +71,9 @@ export default async function NannyProfilePage() {
     bio: profile?.bio || "",
     availability: parseJsonArray(profile?.availability),
     specialistTags: parseJsonArray(profile?.specialistTags),
+    languages: parseJsonArray(profile?.languages),
+    availabilitySummary: profile?.availabilitySummary || "",
+    profileImageUrl: profile?.profileImageUrl || "",
     refereeData: parseJsonArray(profile?.refereeData),
   };
 

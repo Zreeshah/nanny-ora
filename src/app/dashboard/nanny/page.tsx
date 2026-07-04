@@ -1,10 +1,14 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui/Card";
 import { Badge, VerificationBadge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
+import { formatDate } from "@/lib/utils";
+import { CARE_TYPES } from "@/lib/constants";
+import { getNannyDashboard } from "@/server/actions/engagement";
 import {
   MessageCircle, Briefcase, Clock, Star, Eye, MapPin,
   CheckCircle, Shield, Award, Calendar, TrendingUp,
@@ -14,6 +18,23 @@ import {
 export default function NannyDashboard() {
   const { data: session } = useSession();
   const userName = session?.user?.name?.split(" ")[0] || "Nanny";
+  const [dash, setDash] = useState<any>(null);
+
+  useEffect(() => {
+    getNannyDashboard().then((r) => { if (r.success) setDash(r.data); }).catch(() => {});
+  }, []);
+
+  const completionPct = dash ? Math.round((dash.verifiedChecks / dash.totalChecks) * 100) : 0;
+  // "…" while loading — zeros would read as real data
+  const stats = [
+    { label: "Profile Views", value: dash ? dash.profileViews : "…", icon: Eye, color: "text-primary", trend: "All time", bg: "bg-primary/5" },
+    { label: "New Enquiries", value: dash ? dash.newEnquiries : "…", icon: MessageCircle, color: "text-accent", trend: `${dash?.newEnquiries ?? 0} awaiting`, bg: "bg-accent/5" },
+    { label: "Matching Jobs", value: dash ? dash.matchingJobs : "…", icon: Briefcase, color: "text-blue-600", trend: "Approved & live", bg: "bg-blue-50" },
+    { label: "Rating", value: dash?.reviewCount ? dash.avgRating : "—", icon: Star, color: "text-amber-500", trend: dash?.reviewCount ? `${dash.reviewCount} reviews` : "No reviews yet", bg: "bg-amber-50" },
+  ];
+  const recentEnquiries: any[] = dash?.recentEnquiries ?? [];
+  const recentJobs: any[] = dash?.recentJobs ?? [];
+  const checks: { name: string; status: string }[] = dash?.checks ?? [];
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -40,12 +61,7 @@ export default function NannyDashboard() {
 
       {/* Stats Cards Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: "Profile Views", value: "47", icon: Eye, color: "text-primary", trend: "+12 this week", bg: "bg-primary/5" },
-          { label: "New Enquiries", value: "3", icon: MessageCircle, color: "text-accent", trend: "2 unread", bg: "bg-accent/5" },
-          { label: "Matching Jobs", value: "5", icon: Briefcase, color: "text-blue-600", trend: "Active list", bg: "bg-blue-50" },
-          { label: "Rating", value: "4.9", icon: Star, color: "text-amber-500", trend: "12 reviews", bg: "bg-amber-50" },
-        ].map((stat) => (
+        {stats.map((stat) => (
           <Card key={stat.label} className="rounded-2xl border-border/40 p-5 bg-card">
             <div className="flex items-start justify-between mb-3">
               <div className={`w-10 h-10 rounded-xl ${stat.bg} flex items-center justify-center`}>
@@ -75,13 +91,12 @@ export default function NannyDashboard() {
               </Link>
             </div>
             <div className="space-y-3">
-              {[
-                { name: "Sarah K.", suburb: "Remuera", message: "Hi Emma, we're looking for a sensory-aware nanny for our 4-year-old child...", time: "2 hours ago", status: "NEW" },
-                { name: "James W.", suburb: "Ponsonby", message: "Hi there, would you be available for some after-school care starting next month?", time: "1 day ago", status: "NEW" },
-                { name: "Lisa M.", suburb: "Grey Lynn", message: "We absolutely loved your profile and experience! Can we arrange a video interview?", time: "3 days ago", status: "CONTACTED" },
-              ].map((enquiry, i) => (
+              {recentEnquiries.length === 0 && (
+                <p className="text-sm text-muted-foreground py-6 text-center">No enquiries yet — they&apos;ll appear here as families reach out.</p>
+              )}
+              {recentEnquiries.map((enquiry) => (
                 <div
-                  key={i}
+                  key={enquiry.id}
                   className="flex items-start gap-4 p-4 rounded-2xl border border-border hover:bg-muted/50 bg-card transition-colors"
                 >
                   <div className="w-10 h-10 rounded-full bg-accent/10 text-accent font-bold flex items-center justify-center flex-shrink-0 text-sm">
@@ -90,10 +105,6 @@ export default function NannyDashboard() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap mb-1">
                       <span className="font-bold text-foreground text-sm leading-none">{enquiry.name}</span>
-                      <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                        <MapPin className="w-3 h-3 text-primary" />
-                        <span>{enquiry.suburb}</span>
-                      </div>
                       {enquiry.status === "NEW" && (
                         <span className="w-1.5 h-1.5 rounded-full bg-accent ml-auto flex-shrink-0" />
                       )}
@@ -101,7 +112,7 @@ export default function NannyDashboard() {
                     <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed truncate mb-2">
                       &ldquo;{enquiry.message}&rdquo;
                     </p>
-                    <span className="text-[10px] text-muted-foreground">{enquiry.time}</span>
+                    <span className="text-[10px] text-muted-foreground">{formatDate(enquiry.createdAt)}</span>
                   </div>
                 </div>
               ))}
@@ -117,13 +128,12 @@ export default function NannyDashboard() {
               </h2>
             </div>
             <div className="space-y-3">
-              {[
-                { title: "Sensory-aware nanny for 4-year-old child", suburb: "Remuera", rate: "$40/hr", days: "Mon–Fri", tags: ["Specialist", "Sensory"] },
-                { title: "ECE nanny for active toddler", suburb: "Ponsonby", rate: "$38/hr", days: "Mon, Wed, Fri", tags: ["ECE", "Baby Exp"] },
-                { title: "After-school care for two school children", suburb: "Grey Lynn", rate: "$32/hr", days: "Mon–Fri 3–6pm", tags: ["After School"] },
-              ].map((job, i) => (
+              {recentJobs.length === 0 && (
+                <p className="text-sm text-muted-foreground py-6 text-center">No live job posts right now — new family jobs will appear here once approved.</p>
+              )}
+              {recentJobs.map((job) => (
                 <div
-                  key={i}
+                  key={job.id}
                   className="p-4 rounded-2xl border border-border hover:border-primary/20 bg-card transition-all"
                 >
                   <div className="flex items-start justify-between gap-3 mb-2">
@@ -132,20 +142,20 @@ export default function NannyDashboard() {
                       <div className="flex flex-wrap items-center gap-2 mt-1.5 text-[10px] text-muted-foreground font-semibold">
                         <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5 text-primary" />{job.suburb}</span>
                         <span>·</span>
-                        <span className="text-primary font-bold">{job.rate}</span>
+                        <span className="text-primary font-bold">${job.hourlyBudget}/hr</span>
                         <span>·</span>
-                        <span className="flex items-center gap-1"><Calendar className="w-3 h-3 text-primary" />{job.days}</span>
+                        <span className="flex items-center gap-1"><Calendar className="w-3 h-3 text-primary" />{job.daysRequired}</span>
                       </div>
                     </div>
-                    <Button variant="ghost" size="sm" className="text-xs font-bold text-primary rounded-full">Apply</Button>
                   </div>
                   <div className="flex flex-wrap gap-1 mt-2.5">
-                    {job.tags.map((tag) => (
-                      <Badge key={tag} variant="specialist" size="sm" className="rounded-full text-[9px] font-bold">{tag}</Badge>
-                    ))}
+                    <Badge variant="specialist" size="sm" className="rounded-full text-[9px] font-bold">
+                      {CARE_TYPES.find((c) => c.value === job.careType)?.label ?? job.careType}
+                    </Badge>
                   </div>
                 </div>
               ))}
+              {/* ponytail: no job-application system yet — jobs are informational; contact happens via the agency (Phase 2: apply button) */}
             </div>
           </Card>
         </div>
@@ -161,15 +171,15 @@ export default function NannyDashboard() {
             <div className="space-y-3.5 text-xs text-muted-foreground">
               <div className="flex items-center justify-between">
                 <span>Verification Badge</span>
-                <VerificationBadge level="SPECIALIST" />
+                <VerificationBadge level={(dash?.verificationLevel ?? "LISTED") as any} />
               </div>
               <div className="flex items-center justify-between">
-                <span>Approval Status</span>
-                <Badge variant="verified" size="sm" className="px-2 py-0.5 text-[9px] font-bold rounded-full uppercase tracking-wider">Approved</Badge>
+                <span>Verified Checks</span>
+                <Badge variant="verified" size="sm" className="px-2 py-0.5 text-[9px] font-bold rounded-full uppercase tracking-wider">{dash?.verifiedChecks ?? 0} / {dash?.totalChecks ?? 7}</Badge>
               </div>
               <div className="flex items-center justify-between">
                 <span>Completion Percentage</span>
-                <span className="font-bold text-badge-verified">100%</span>
+                <span className="font-bold text-badge-verified">{completionPct}%</span>
               </div>
             </div>
 
@@ -190,15 +200,8 @@ export default function NannyDashboard() {
             </h3>
             <p className="text-[10px] text-muted-foreground mb-4">7 checks required for full verification</p>
             <div className="space-y-3 text-xs text-muted-foreground">
-              {[
-                { name: "Verify Identity", status: "NOT_STARTED" },
-                { name: "Work History", status: "NOT_STARTED" },
-                { name: "Professional Registration", status: "NOT_STARTED" },
-                { name: "Referee Checks", status: "NOT_STARTED" },
-                { name: "Police Vet", status: "NOT_STARTED" },
-                { name: "Interview", status: "NOT_STARTED" },
-                { name: "Risk Assessment", status: "NOT_STARTED" },
-              ].map((check) => (
+              {checks.length === 0 && <p className="text-xs text-muted-foreground">Loading checks…</p>}
+              {checks.map((check) => (
                 <div key={check.name} className="flex items-center justify-between">
                   <span className="text-foreground">{check.name}</span>
                   {check.status === "VERIFIED" && (
@@ -247,11 +250,15 @@ export default function NannyDashboard() {
               Current Availability
             </h3>
             <p className="text-xs text-muted-foreground mb-4">
-              Listed as: Flexible Schedule — Contact parent for calendar specifics.
+              {dash?.availabilitySummary
+                ? `Listed as: ${dash.availabilitySummary}`
+                : "No availability summary set yet — add one so families know your schedule."}
             </p>
-            <Button variant="ghost" size="sm" fullWidth className="rounded-full">
-              Update Schedule
-            </Button>
+            <Link href="/dashboard/nanny/profile">
+              <Button variant="ghost" size="sm" fullWidth className="rounded-full">
+                Update Schedule
+              </Button>
+            </Link>
           </Card>
         </div>
       </div>

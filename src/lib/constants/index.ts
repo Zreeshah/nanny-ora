@@ -2,14 +2,6 @@
 // NannyOra — Shared Constants
 // ============================================================
 
-// --- User Roles ---
-export const USER_ROLES = {
-  PARENT: "PARENT",
-  NANNY: "NANNY",
-  ADMIN: "ADMIN",
-} as const;
-export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
-
 // --- Verification Levels ---
 export const VERIFICATION_LEVELS = {
   LISTED: "LISTED",
@@ -59,26 +51,6 @@ export const NANNY_STATUS_LABELS: Record<NannyAdminStatus, string> = {
   ARCHIVED: "Archived",
 };
 
-// --- Job Post Statuses ---
-export const JOB_POST_STATUSES = {
-  PENDING: "PENDING",
-  APPROVED: "APPROVED",
-  CLOSED: "CLOSED",
-  REJECTED: "REJECTED",
-} as const;
-export type JobPostStatus =
-  (typeof JOB_POST_STATUSES)[keyof typeof JOB_POST_STATUSES];
-
-// --- Enquiry Statuses ---
-export const ENQUIRY_STATUSES = {
-  NEW: "NEW",
-  CONTACTED: "CONTACTED",
-  MATCHED: "MATCHED",
-  CLOSED: "CLOSED",
-} as const;
-export type EnquiryStatus =
-  (typeof ENQUIRY_STATUSES)[keyof typeof ENQUIRY_STATUSES];
-
 // --- Care Types ---
 export const CARE_TYPES = [
   { value: "casual_babysitting", label: "Casual Babysitting" },
@@ -107,30 +79,6 @@ export const SPECIALIST_TAGS = [
   { value: "after_school_care", label: "After-School Care" },
 ] as const;
 export type SpecialistTagValue = (typeof SPECIALIST_TAGS)[number]["value"];
-
-// --- Auckland Suburbs ---
-export const AUCKLAND_SUBURBS = [
-  "Remuera",
-  "Mount Eden",
-  "Ponsonby",
-  "Grey Lynn",
-  "Devonport",
-  "Takapuna",
-  "Newmarket",
-  "Epsom",
-  "Albany",
-  "Henderson",
-  "Parnell",
-  "Herne Bay",
-  "Mission Bay",
-  "St Heliers",
-  "Meadowbank",
-  "Kohimarama",
-  "Ellerslie",
-  "Mt Albert",
-  "Titirangi",
-  "Birkenhead",
-] as const;
 
 // Suburb slug mapping for SEO pages
 export const SUBURB_SLUGS: Record<string, string> = {
@@ -258,22 +206,6 @@ export const SAFETY_CHECKS = [
   },
 ] as const;
 
-// --- Document Review Statuses ---
-export const DOCUMENT_REVIEW_STATUSES = {
-  PENDING: "PENDING",
-  APPROVED: "APPROVED",
-  REJECTED: "REJECTED",
-} as const;
-
-// --- Experience Levels ---
-export const EXPERIENCE_LEVELS = [
-  { value: "0-1", label: "Less than 1 year" },
-  { value: "1-3", label: "1–3 years" },
-  { value: "3-5", label: "3–5 years" },
-  { value: "5-10", label: "5–10 years" },
-  { value: "10+", label: "10+ years" },
-] as const;
-
 // --- Availability Options ---
 export const AVAILABILITY_OPTIONS = [
   { value: "weekday_morning", label: "Weekday Mornings" },
@@ -325,10 +257,3 @@ export const LANGUAGE_TAGS = [
 ] as const;
 export type LanguageTagValue = (typeof LANGUAGE_TAGS)[number]["value"];
 
-// --- Rate Range ---
-export const RATE_RANGE = {
-  min: 20,
-  max: 80,
-  step: 5,
-  currency: "NZD",
-} as const;

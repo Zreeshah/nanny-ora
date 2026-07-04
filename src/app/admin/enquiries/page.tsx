@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
 import { formatDate, getInitials } from "@/lib/utils";
 import { MessageCircle, ArrowRight } from "lucide-react";
+import { getEnquiries, updateEnquiryStatus } from "@/server/actions/enquiry";
 
-const sampleEnquiries = [
+type EnquiryRow = { id: string; parentName: string; nannyName: string; message: string; status: string; createdAt: Date };
+
+const sampleEnquiries: EnquiryRow[] = [
   { id: "enq-001", parentName: "Sarah K.", nannyName: "Emma Thompson", message: "Hi Emma, we're looking for a sensory-aware nanny for our 4-year-old. Would love to chat!", status: "NEW", createdAt: new Date("2025-01-12") },
   { id: "enq-002", parentName: "James W.", nannyName: "Sarah Mitchell", message: "Hi Sarah, would you be available for after-school care in Remuera 3 days a week?", status: "CONTACTED", createdAt: new Date("2025-01-10") },
   { id: "enq-003", parentName: "Lisa M.", nannyName: "Aroha Williams", message: "We need a nanny with early intervention experience for our son. Are you available?", status: "NEW", createdAt: new Date("2025-01-11") },
@@ -24,13 +27,37 @@ const statusColors: Record<string, string> = {
 };
 
 export default function AdminEnquiriesPage() {
-  const [enquiries, setEnquiries] = useState(sampleEnquiries);
+  const [enquiries, setEnquiries] = useState<EnquiryRow[]>(sampleEnquiries);
   const [statusFilter, setStatusFilter] = useState("");
+  const [, startTransition] = useTransition();
+
+  // Load real enquiries; keep sample data as fallback for demo mode.
+  useEffect(() => {
+    getEnquiries()
+      .then((res) => {
+        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+          setEnquiries(
+            res.data.map((e: any) => ({
+              id: e.id,
+              parentName: e.parent?.name ?? "Unknown",
+              nannyName: e.nanny?.user?.name ?? "Unknown",
+              message: e.message,
+              status: e.status,
+              createdAt: new Date(e.createdAt),
+            }))
+          );
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const filtered = statusFilter ? enquiries.filter((e) => e.status === statusFilter) : enquiries;
 
-  const updateStatus = (id: string, status: string) => {
-    setEnquiries((prev) => prev.map((e) => (e.id === id ? { ...e, status } : e)));
+  const updateStatus = (id: string, status: "CONTACTED" | "MATCHED" | "CLOSED") => {
+    setEnquiries((prev) => prev.map((e) => (e.id === id ? { ...e, status } : e))); // optimistic
+    startTransition(() => {
+      updateEnquiryStatus(id, status);
+    });
   };
 
   return (

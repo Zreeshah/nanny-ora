@@ -1,14 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
 import { MapPin, Calendar, CheckCircle, XCircle, Briefcase } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { CARE_TYPES } from "@/lib/constants";
+import { getJobPosts, updateJobStatus } from "@/server/actions/job";
 
-const sampleJobs = [
+type JobRow = { id: string; title: string; suburb: string; careType: string; status: string; createdAt: Date; parentName: string };
+
+const sampleJobs: JobRow[] = [
   { id: "job-001", title: "After-school nanny for two children", suburb: "Remuera", careType: "After-School Care", status: "PENDING", createdAt: new Date("2025-01-10"), parentName: "James W." },
   { id: "job-002", title: "Weekend babysitter needed", suburb: "Ponsonby", careType: "Weekend Care", status: "APPROVED", createdAt: new Date("2025-01-08"), parentName: "Lisa M." },
   { id: "job-003", title: "Full-time nanny for infant", suburb: "Epsom", careType: "Recurring Nanny Care", status: "PENDING", createdAt: new Date("2025-01-12"), parentName: "Tom S." },
@@ -24,13 +28,38 @@ const statusColors: Record<string, string> = {
 };
 
 export default function AdminJobsPage() {
-  const [jobs, setJobs] = useState(sampleJobs);
+  const [jobs, setJobs] = useState<JobRow[]>(sampleJobs);
   const [statusFilter, setStatusFilter] = useState("");
+  const [, startTransition] = useTransition();
+
+  // Load real job posts; keep sample data as fallback for demo mode.
+  useEffect(() => {
+    getJobPosts()
+      .then((res) => {
+        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+          setJobs(
+            res.data.map((j: any) => ({
+              id: j.id,
+              title: j.title,
+              suburb: j.suburb,
+              careType: CARE_TYPES.find((c) => c.value === j.careType)?.label ?? j.careType,
+              status: j.status,
+              createdAt: new Date(j.createdAt),
+              parentName: j.parent?.name ?? "Unknown",
+            }))
+          );
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const filtered = statusFilter ? jobs.filter((j) => j.status === statusFilter) : jobs;
 
-  const updateStatus = (id: string, status: string) => {
-    setJobs((prev) => prev.map((j) => (j.id === id ? { ...j, status } : j)));
+  const updateStatus = (id: string, status: "APPROVED" | "REJECTED" | "CLOSED") => {
+    setJobs((prev) => prev.map((j) => (j.id === id ? { ...j, status } : j))); // optimistic
+    startTransition(() => {
+      updateJobStatus(id, status);
+    });
   };
 
   return (
