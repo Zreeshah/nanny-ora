@@ -344,7 +344,7 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
       </div>
 
       <ImageBand
-        tags={["find", "family", "professional", "care"]}
+        tags={["find-a-nanny-band"]}
         seed="find-a-nanny"
         aspect="aspect-[16/6]"
         priority

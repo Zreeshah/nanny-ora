@@ -30,7 +30,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           id={selectId}
           className={cn(
-            "w-full rounded-2xl border border-border/70 bg-card px-4 py-3 text-base text-foreground",
+            "w-full rounded-2xl border border-border/70 bg-card pl-4 pr-10 py-3 text-base text-foreground",
             "transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] appearance-none",
             "hover:border-primary/40",
             "focus:outline-none focus:ring-4 focus:ring-ring/8 focus:border-primary",

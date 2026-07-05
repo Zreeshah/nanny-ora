@@ -385,13 +385,13 @@ export default function AdminNanniesPage() {
                                 <p className="font-bold text-foreground text-xs">{check.number}. {check.title}</p>
                                 <p className="text-[10px] text-muted-foreground truncate max-w-xs">{check.description}</p>
                               </div>
-                              <div className="w-28 flex-shrink-0">
+                              <div className="w-36 flex-shrink-0">
                                 <Select
                                   options={Object.entries(SAFETY_CHECK_STATUS_LABELS).map(([value, label]) => ({ value, label }))}
                                   value={status}
                                   onChange={(e) => handleSafetyCheckStatusChange(nanny.id, check.key, e.target.value as SafetyCheckStatus)}
                                   disabled={isPending}
-                                  className="h-8 py-0.5 text-xs rounded-xl"
+                                  className="h-8 py-0.5 pl-3 pr-8 text-xs rounded-xl"
                                 />
                               </div>
                             </div>
