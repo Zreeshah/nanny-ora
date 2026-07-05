@@ -23,6 +23,9 @@ model User {
   phone         String?
   role          String    @default("PARENT") // PARENT, NANNY, ADMIN
   image         String?
+  // Password reset (single active token; SHA-256 hash only, never the raw token)
+  resetTokenHash   String?
+  resetTokenExpiry DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

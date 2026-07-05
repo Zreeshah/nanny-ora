@@ -104,6 +104,12 @@ function LoginForm() {
             autoComplete="current-password"
           />
 
+          <div className="text-right">
+            <Link href="/forgot-password" className="text-xs font-semibold text-primary hover:text-primary-light transition-colors">
+              Forgot password?
+            </Link>
+          </div>
+
           <Button type="submit" variant="primary" fullWidth size="lg" isLoading={isLoading} className="rounded-full shadow-lg mt-2">
             Sign In
           </Button>

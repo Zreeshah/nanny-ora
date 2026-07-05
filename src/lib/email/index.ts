@@ -186,3 +186,12 @@ export function sendJobStatusUpdate(parentName: string, parentEmail: string, job
 export function notifyAdminNewJob(parentName: string, title: string, suburb: string): Promise<boolean> {
   return notifyAdmin("New job post awaiting review", "New job post", `<p><strong>${escapeHtml(parentName)}</strong> posted <strong>${escapeHtml(title)}</strong> (${escapeHtml(suburb)}) — pending review.</p>`, { label: "Review jobs", href: `${SITE_URL}/admin/jobs` });
 }
+
+/** Password reset link. Token is single-use, expires in 1 hour. */
+export function sendPasswordReset(name: string, email: string, resetUrl: string): Promise<boolean> {
+  const body = `<p>Hi ${escapeHtml(name)},</p>
+    <p>We received a request to reset your NannyOra password. Click the button below to choose a new one.
+    This link expires in <strong>1 hour</strong> and can be used once.</p>
+    <p style="color:#5B6D80;font-size:13px">If you didn't request this, you can safely ignore this email — your password is unchanged.</p>`;
+  return sendEmail({ to: email, subject: "Reset your NannyOra password", html: emailShell("Reset your password", body, { label: "Choose a new password", href: resetUrl }) });
+}
