@@ -73,8 +73,8 @@ postinstall       → prisma generate
 | `EMAIL_FROM_VERIFICATION` | Server-only | Vetting team sender (default: `NannyOra Vetting <verification@nannyora.co.nz>`) |
 | `EMAIL_FROM_ADMIN` | Server-only | Admin sender (default: `NannyOra <admin@nannyora.co.nz>`) |
 | `ADMIN_EMAIL` | Server-only | Comma-separated admin notification recipients (default: `admin@nannyora.co.nz,nannyora.agency@gmail.com`) |
-| `ADMIN_BACKUP_EMAIL` | Server-only | Backup admin email — emergency access without DB (default: `admin@nannyora.co.nz`) |
-| `ADMIN_BACKUP_PASSWORD` | Server-only | Backup admin password — emergency access without DB (default: `Nanny0ra!SecureAdmin#2024`) |
+| `ADMIN_BACKUP_EMAIL` | Server-only | Backup admin email — emergency access without DB (no default; unset = disabled) |
+| `ADMIN_BACKUP_PASSWORD` | Server-only | Backup admin password — emergency access without DB (no default; unset = disabled) |
 
 ### Vercel Production Env Vars
 Set on Vercel project `nanny-ora` for the Production environment:
@@ -121,13 +121,14 @@ Handled by NextAuth.js v5 in `src/lib/auth/auth.ts`:
 - **Sign-in page:** `/login`
 - **Token/Session callbacks:** expose `user.id` and `user.role` to client/server
 
-### Demo Mode
-The `authorize()` function has a fallback for password `"demo1234"`:
-1. Tries DB lookup by email first → returns real user if found
-2. Falls back to hardcoded demo accounts if DB is unreachable:
-   - `admin@nannyora.co.nz` → id "demo-admin", role ADMIN
-   - `emma@nannyora.co.nz` → id "demo-nanny", role NANNY
-   - `parent@nannyora.co.nz` → id "demo-parent", role PARENT
+### Demo Accounts & Emergency Access
+There is **no universal password bypass** (the old `demo1234` fallback was removed in `073ba85`).
+- The three demo accounts (admin@/emma@/parent@nannyora.co.nz, password `demo1234`) are ordinary
+  **seeded DB users** with bcrypt hashes — they authenticate through the normal DB path and
+  require the database to be reachable.
+- **Emergency backup admin** (works without DB) exists ONLY when both `ADMIN_BACKUP_EMAIL` and
+  `ADMIN_BACKUP_PASSWORD` env vars are set — fail closed, no hardcoded default in code.
+  Credentials live in Vercel env vars / local `.env`, never in the repo.
 
 All Prisma errors in `authorize()` are caught → returns `null` → login fails gracefully (no crash when DB is down).
 
@@ -557,11 +558,10 @@ The global rule `h1, h2, h3, h4 { color: var(--foreground) }` in `globals.css` o
 ## 12. Accounts
 
 ### Backup Admin Account (env-backed, no DB required)
-| Email | Password |
-|---|---|
-| `admin@nannyora.co.nz` | `Nanny0ra!SecureAdmin#2024` |
+Credentials are **not documented here by design** — they live only in `ADMIN_BACKUP_EMAIL` /
+`ADMIN_BACKUP_PASSWORD` (Vercel production env + local `.env`).
 
-Emergency admin access — works without a database. Credentials overridable via `ADMIN_BACKUP_EMAIL` and `ADMIN_BACKUP_PASSWORD` env vars. This is the only auth bypass; the old `demo1234` universal password was removed.
+Emergency admin access — works without a database. Enabled only when `ADMIN_BACKUP_EMAIL` and `ADMIN_BACKUP_PASSWORD` env vars are both set (fail closed, no hardcoded default). This is the only auth bypass; the old `demo1234` universal password was removed.
 
 ### DB-Seeded Demo Accounts (require database)
 | Role | Email | Password |
@@ -761,6 +761,6 @@ Comprehensive read-only audit across 7 vulnerability classes, followed by fixes:
 - **View inflation (LPDOS)** — `recordProfileView` now has 30s in-memory throttle per `nannyId` + nannyId existence check.
 
 **Backup admin credentials:**
-- Email: `admin@nannyora.co.nz` / Password: `Nanny0ra!SecureAdmin#2024`
-- Change via env vars: `ADMIN_BACKUP_EMAIL`, `ADMIN_BACKUP_PASSWORD`
+- Set via env vars only: `ADMIN_BACKUP_EMAIL`, `ADMIN_BACKUP_PASSWORD` (Vercel prod + local `.env`)
+- No default in code — if the vars are unset, the backup account does not exist (fail closed)
 - Works without DB; all other accounts require bcrypt-verified DB lookups

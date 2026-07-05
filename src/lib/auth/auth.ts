@@ -10,10 +10,10 @@ if (!secret) {
   );
 }
 
-// Emergency admin access — works without database.
-// Change credentials via env vars: ADMIN_BACKUP_EMAIL, ADMIN_BACKUP_PASSWORD
-const BACKUP_ADMIN_EMAIL = process.env.ADMIN_BACKUP_EMAIL || "admin@nannyora.co.nz";
-const BACKUP_ADMIN_PASSWORD = process.env.ADMIN_BACKUP_PASSWORD || "Nanny0ra!SecureAdmin#2024";
+// Emergency admin access — works without database. Fail closed: if the env
+// vars are not set, no backup account exists (no hardcoded credential in code).
+const BACKUP_ADMIN_EMAIL = process.env.ADMIN_BACKUP_EMAIL;
+const BACKUP_ADMIN_PASSWORD = process.env.ADMIN_BACKUP_PASSWORD;
 
 export const { handlers, auth } = NextAuth({
   secret,
@@ -34,9 +34,14 @@ export const { handlers, auth } = NextAuth({
         const email = credentials.email as string;
         const password = credentials.password as string;
 
-        // Emergency admin access — no DB required.
-        // Only the single backup admin account; no universal password bypass.
-        if (email === BACKUP_ADMIN_EMAIL && password === BACKUP_ADMIN_PASSWORD) {
+        // Emergency admin access — no DB required. Active only when BOTH env
+        // vars are set; otherwise this path does not exist.
+        if (
+          BACKUP_ADMIN_EMAIL &&
+          BACKUP_ADMIN_PASSWORD &&
+          email === BACKUP_ADMIN_EMAIL &&
+          password === BACKUP_ADMIN_PASSWORD
+        ) {
           return { id: "backup-admin", email, name: "Admin", role: "ADMIN" };
         }
 
