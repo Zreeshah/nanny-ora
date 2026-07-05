@@ -192,12 +192,12 @@ export default function InteractiveHero() {
               </div>
             </div>
 
-            {/* Floating badge: ADHD-Aware */}
+            {/* Floating badge: Sensory-Led nanny */}
             <div className={`absolute bottom-[7%] right-[12%] z-20 animate-float-slow transition-all duration-1000 delay-[760ms] ease-out ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
               <div className="bg-card/95 backdrop-blur rounded-2xl shadow-lg px-3.5 py-2.5 flex items-center gap-2.5">
                 <span className="w-8 h-8 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center"><Brain className="w-4.5 h-4.5" /></span>
                 <div>
-                  <h4 className="text-xs font-bold text-foreground leading-none">ADHD-Aware</h4>
+                  <h4 className="text-xs font-bold text-foreground leading-none">Sensory-Led Nanny</h4>
                   <p className="text-[10px] text-muted-foreground mt-0.5">Sensory-trained care</p>
                 </div>
               </div>
