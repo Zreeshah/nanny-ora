@@ -73,12 +73,17 @@ postinstall       → prisma generate
 | `EMAIL_FROM_VERIFICATION` | Server-only | Vetting team sender (default: `NannyOra Vetting <verification@nannyora.co.nz>`) |
 | `EMAIL_FROM_ADMIN` | Server-only | Admin sender (default: `NannyOra <admin@nannyora.co.nz>`) |
 | `ADMIN_EMAIL` | Server-only | Comma-separated admin notification recipients (default: `admin@nannyora.co.nz,nannyora.agency@gmail.com`) |
+| `ADMIN_BACKUP_EMAIL` | Server-only | Backup admin email — emergency access without DB (default: `admin@nannyora.co.nz`) |
+| `ADMIN_BACKUP_PASSWORD` | Server-only | Backup admin password — emergency access without DB (default: `Nanny0ra!SecureAdmin#2024`) |
 
 ### Vercel Production Env Vars
 Set on Vercel project `nanny-ora` for the Production environment:
 - `DATABASE_URL`, `DIRECT_URL`, `AUTH_SECRET`, `AUTH_TRUST_HOST`
 - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
 - `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_FROM_VERIFICATION`, `EMAIL_FROM_ADMIN`, `ADMIN_EMAIL`
+- `ADMIN_BACKUP_EMAIL`, `ADMIN_BACKUP_PASSWORD`
+
+> **`AUTH_SECRET` is required** — `auth.ts` throws on startup if unset. No hardcoded fallback.
 
 > The Vercel-Supabase integration also auto-provisions `POSTGRES_*` and `SUPABASE_*` vars — these are largely unused by the codebase. The app reads only the vars listed above.
 
@@ -400,15 +405,17 @@ All server actions use `"use server"` directive and return `ActionResult` type:
 type ActionResult = { success: boolean; error?: string; data?: any };
 ```
 
-### Auth (`src/server/actions/auth.ts`)
+### Auth (`src/lib/auth/auth.ts`)
 Exports only the `ActionResult` type. `registerUser` was deleted — signups now flow through `registerParent` and `applyAsNanny`.
+
+**NextAuth config:** JWT session with `maxAge: 7 days`. `AUTH_SECRET` is required (throws on startup if unset — no hardcoded fallback). Emergency backup admin account works without DB (credentials via `ADMIN_BACKUP_EMAIL` / `ADMIN_BACKUP_PASSWORD` env vars). The old `demo1234` universal password bypass was removed.
 
 ### Nanny (`src/server/actions/nanny.ts`)
 | Function | Auth | Description |
 |---|---|---|
-| `applyAsNanny(input)` | Public | Validates, checks existing email, hashes password, uploads docs to Supabase Storage, transactionally creates User + NannyProfile + NannyDocuments. Stores police vet authorization. Sends welcome + admin notification emails. |
+| `applyAsNanny(input)` | Public | Validates, checks existing email, hashes password, validates doc files (5MB max, PDF/JPG/PNG/WebP), uploads docs to Supabase Storage, transactionally creates User + NannyProfile + NannyDocuments. Stores police vet authorization. Sends welcome + admin notification emails. |
 | `updateNannyProfile(updates)` | NANNY | Transactionally updates User (name/phone) + upserts NannyProfile |
-| `uploadNannyDocument(documentType, file)` | NANNY | Uploads File to Storage, creates NannyDocument, auto-updates safety check status |
+| `uploadNannyDocument(documentType, file)` | NANNY | Validates file (5MB max, PDF/JPG/PNG/WebP), uploads File to Storage, creates NannyDocument, auto-updates safety check status |
 | `deleteNannyDocument(documentId)` | NANNY | Verifies ownership, deletes PENDING docs only (DB record, not Storage file) |
 | `getNannyDocuments()` | NANNY | Returns all documents for logged-in nanny |
 | `uploadProfilePhoto(file)` | NANNY | Uploads/replaces profile photo to public `nanny-photos` bucket. Validates type (JPG/PNG/WebP) + 5MB max. Cache-bust on replace |
@@ -425,24 +432,24 @@ Exports only the `ActionResult` type. `registerUser` was deleted — signups now
 |---|---|---|
 | `createJobPost(input)` | Logged in (any role) | Creates JobPost (PENDING), emails admin |
 | `updateJobStatus(jobId, status)` | ADMIN | Updates status, emails parent |
-| `getJobPosts(filters?)` | Public | Returns job posts with optional filters |
+| `getJobPosts(filters?)` | ADMIN | Returns job posts with optional filters. `take: 50` limit. Includes parent email PII. |
 
 ### Enquiry (`src/server/actions/enquiry.ts`)
 | Function | Auth | Description |
 |---|---|---|
 | `createEnquiry(input)` | Logged in (any role) | Zod validates, creates Enquiry (status NEW), emails parent receipt + notifies admin |
 | `updateEnquiryStatus(enquiryId, status)` | ADMIN | Updates status, emails parent |
-| `getEnquiries(filters?)` | Public | Returns enquiries with optional filters |
+| `getEnquiries(filters?)` | ADMIN | Returns enquiries with optional filters. `take: 50` limit. Includes parent name + email PII. |
 
 ### Engagement (`src/server/actions/engagement.ts`) (NEW)
 | Function | Auth | Description |
 |---|---|---|
 | `toggleFavourite(nannyId)` | PARENT | Saves/unsaves a nanny. Returns `{ favourited: boolean }` |
 | `getFavouriteIds()` | Soft (returns `[]` if no session) | Returns parent's saved nanny IDs for heart UI hydration |
-| `recordProfileView(nannyId)` | None (anonymous OK) | Best-effort view tracking. Demo accounts stored as null viewerId |
+| `recordProfileView(nannyId)` | None (anonymous OK) | Best-effort view tracking. 30s throttle per nannyId (in-memory). NannyId existence check. Demo + backup admin IDs stored as null viewerId |
 | `getNannyDashboard()` | Soft | Aggregates: profile views, new/recent enquiries, matching jobs, 7 safety checks, verification level, review count + avg rating |
-| `getParentDashboard()` | Soft | Aggregates: enquiries sent, active jobs, carers viewed, saved nannies, recommended nannies, family profile |
-| `getMyNannyEnquiries()` | NANNY | All enquiries received by the nanny, including parent name + email |
+| `getParentDashboard()` | Soft | Aggregates: enquiries sent, active jobs, carers viewed, saved nannies (`take: 50`), recommended nannies, family profile |
+| `getMyNannyEnquiries()` | NANNY | All enquiries received by the nanny, including parent name + email. `take: 50` limit |
 
 ### Admin (`src/server/actions/admin.ts`)
 | Function | Auth | Description |
@@ -452,7 +459,7 @@ Exports only the `ActionResult` type. `registerUser` was deleted — signups now
 | `reviewDocument(documentId, reviewStatus)` | ADMIN | Approves/rejects document, stamps `reviewedAt` + `reviewedBy` |
 | `updateSafetyCheckStatus(nannyProfileId, checkField, status)` | ADMIN | Updates one of the 7 safety check fields |
 | `getAdminStats()` | ADMIN | Returns dashboard counts |
-| `getAdminNannies(filters?)` | ADMIN | Returns all nanny profiles with user + documents |
+| `getAdminNannies(filters?)` | ADMIN | Returns all nanny profiles with user + documents. `take: 100` limit |
 | `getDocumentDownloadUrl(documentId)` | ADMIN | Generates 5-minute signed Storage URL |
 
 ---
@@ -547,15 +554,22 @@ The global rule `h1, h2, h3, h4 { color: var(--foreground) }` in `globals.css` o
 
 ---
 
-## 12. Demo Accounts
+## 12. Accounts
 
+### Backup Admin Account (env-backed, no DB required)
+| Email | Password |
+|---|---|
+| `admin@nannyora.co.nz` | `Nanny0ra!SecureAdmin#2024` |
+
+Emergency admin access — works without a database. Credentials overridable via `ADMIN_BACKUP_EMAIL` and `ADMIN_BACKUP_PASSWORD` env vars. This is the only auth bypass; the old `demo1234` universal password was removed.
+
+### DB-Seeded Demo Accounts (require database)
 | Role | Email | Password |
 |---|---|---|
-| Admin | `admin@nannyora.co.nz` | `demo1234` |
 | Nanny | `emma@nannyora.co.nz` | `demo1234` |
 | Parent | `parent@nannyora.co.nz` | `demo1234` |
 
-These are seeded by `prisma/seed.ts` and also hardcoded as fallbacks in the auth `authorize()` function for when the database is unreachable.
+Seeded by `prisma/seed.ts` with proper bcrypt hashes. These accounts require the database to be reachable — they use standard bcrypt password comparison, no bypass. The admin seed account (`admin@nannyora.co.nz`) also exists in the DB but the env-backed backup above takes priority if the DB is down.
 
 ---
 
@@ -595,12 +609,16 @@ npm run dev      # starts at http://localhost:3000
 4. **Private storage bucket** — Vetting documents are private; admin downloads use 5-minute signed URLs generated server-side
 5. **7-step safety vetting** — Structured workflow mapping document types to check status fields; steps 6-7 are admin-only
 6. **Police vetting authorization** — Required consent checkbox (Children's Act 2014) on the nanny application; stored with timestamp for compliance
-7. **Demo mode fallback** — Auth gracefully degrades when database is unreachable using hardcoded demo accounts
+7. **Backup admin access** — Env-backed emergency admin account (`ADMIN_BACKUP_EMAIL` / `ADMIN_BACKUP_PASSWORD`) works without a DB. The old `demo1234` universal password bypass was removed. All other accounts require bcrypt-verified DB lookups.
 8. **Route protection** — `src/proxy.ts` middleware guards `/admin/*` and `/dashboard/*` by role using JWT token inspection
 9. **Lifecycle email system** — 10 transactional email templates via Resend, triggered after DB writes (welcome, verification updates, enquiry/job status, admin notifications). No-ops without `RESEND_API_KEY`. Branded `emailShell()` wrapper, three sender identities
-10. **Profile view tracking** — Anonymous `ProfileView` records created on nanny profile visits via invisible `ViewTracker` client component. Demo account IDs stored as null to avoid FK errors
+10. **Profile view tracking** — Anonymous `ProfileView` records created on nanny profile visits via invisible `ViewTracker` client component. Demo + backup admin IDs stored as null to avoid FK errors
 11. **Favourites system** — Parents save nannies via `Favourite` model with unique `[parentId, nannyId]` constraint. `FavouriteButton` uses optimistic UI with revert. Hidden for non-PARENT roles
 12. **Dashboard data aggregation** — `getNannyDashboard()` and `getParentDashboard()` in `engagement.ts` aggregate live DB data (views, enquiries, jobs, checks, favourites, recommendations) into single server-action calls consumed by client dashboards
+13. **JWT expiry** — Session `maxAge: 7 days` (was 30-day NextAuth default). `AUTH_SECRET` required — throws on startup if unset, no hardcoded fallback
+14. **Bounded queries** — All `findMany` calls have `take` limits (50-100) to prevent LPDOS from unbounded result sets
+15. **File upload validation** — `applyAsNanny` and `uploadNannyDocument` validate file size (5MB max) + type (PDF/JPG/PNG/WebP) before uploading to Storage
+16. **View rate limiting** — `recordProfileView` has a 30s in-memory throttle per `nannyId` + nannyId existence check to prevent view count inflation
 
 ---
 
@@ -610,9 +628,8 @@ npm run dev      # starts at http://localhost:3000
 - **`deleteNannyDocument`** removes the DB record but does NOT delete the file from Supabase Storage (orphaned files accumulate)
 - **`uploadProfilePhoto`** with extension change leaves the old file orphaned in Storage
 - **Post-commit email bug** — `applyAsNanny`, `registerParent`, `createEnquiry`, `createJobPost`, and admin status updates all `await` emails after the DB write. If email throws, client sees failure but the DB mutation already committed. Should use per-send try/catch or `Promise.allSettled`
-- **Unauthenticated `getEnquiries` / `getJobPosts`** — both return parent name + email PII with no auth gate or ownership scoping
 - **`createEnquiry` / `createJobPost`** accept any logged-in role (should be PARENT-only); `contactEmail` comes from input, not session (spoofable)
-- **`recordProfileView`** has no `nannyId` existence check or rate limiting — view counts are inflatable by repeated calls
+- **View throttle is in-memory** — `recordProfileView`'s 30s throttle won't survive restarts or work across serverless instances. Upgrade to Redis/Upstash if view inflation becomes a problem
 - **`Review` model** exists in schema but is unused (placeholder for Phase 2)
 - **`SkillTag` model** exists in schema but is unused (specialist tags are hardcoded in constants, not DB-driven)
 - **No messaging system** — enquiries are one-shot messages, not threaded conversations
@@ -724,3 +741,26 @@ The following changes were made after the initial `project_context.md` was writt
   - New dep: `server-only ^0.0.1` (guarantees email code never ships to browser)
   - New script: `npm test` — runs `tsx src/lib/email/escape.test.ts src/lib/images.test.ts`
   - `src/types/index.ts` now re-exports types from `@prisma/client` instead of defining its own interfaces
+
+### Security Audit + Fixes (commit `073ba85`)
+Comprehensive read-only audit across 7 vulnerability classes, followed by fixes:
+
+**Audit results (clean — no changes needed):**
+- **SSTI** — No `dangerouslySetInnerHTML`, `eval()`, or `new Function()` anywhere. Email templates use `escapeHtml()` on all user input.
+- **ReDoS** — All regexes are linear (char classes, simple anchors). No catastrophic backtracking.
+- **SQL Injection** — All DB access via Prisma parameterized queries. Zero `$queryRaw` / `$executeRaw` calls.
+- **Clipboard Attack** — No clipboard API usage anywhere in the codebase.
+
+**Fixes applied:**
+- **Secret key leak (CRITICAL)** — Removed hardcoded `"nannyora-dev-secret-change-in-production"` JWT fallback from `auth.ts` + `proxy.ts`. `AUTH_SECRET` now required — throws on startup if unset.
+- **Demo backdoor (CRITICAL)** — Removed `demo1234` universal password bypass (worked for any email). Replaced with env-backed backup admin account only (`ADMIN_BACKUP_EMAIL` / `ADMIN_BACKUP_PASSWORD`).
+- **JWT expiry (Replay)** — Set `maxAge: 7 days` (was 30-day NextAuth default).
+- **Unauthenticated PII endpoints (LPDOS/Replay)** — `getEnquiries` + `getJobPosts` now require ADMIN auth (were public, returned parent name + email).
+- **Unbounded queries (LPDOS)** — Added `take: 50-100` to all `findMany` calls: `getEnquiries`, `getJobPosts`, `getAdminNannies`, `getMyNannyEnquiries`, `getPublicNannies`, `getFavouriteIds`, `getParentDashboard` favourites.
+- **File upload validation (LPDOS)** — `applyAsNanny` + `uploadNannyDocument` now validate file size (5MB max) + type (PDF/JPG/PNG/WebP) before uploading.
+- **View inflation (LPDOS)** — `recordProfileView` now has 30s in-memory throttle per `nannyId` + nannyId existence check.
+
+**Backup admin credentials:**
+- Email: `admin@nannyora.co.nz` / Password: `Nanny0ra!SecureAdmin#2024`
+- Change via env vars: `ADMIN_BACKUP_EMAIL`, `ADMIN_BACKUP_PASSWORD`
+- Works without DB; all other accounts require bcrypt-verified DB lookups
