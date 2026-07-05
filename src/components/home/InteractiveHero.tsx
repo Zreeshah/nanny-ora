@@ -7,13 +7,11 @@ import { Button } from "@/components/ui/Button";
 import { ShieldCheck, GraduationCap, Heart, Star, Users, Brain, BadgeCheck } from "lucide-react";
 import StatsTicker from "./StatsTicker";
 import { ShinyText } from "@/components/ui/ShinyText";
-import { pickImages } from "@/lib/images";
-
-const heroImages = pickImages({
-  tags: ["care", "family", "trust", "professional"],
-  count: 2,
-  seed: "home-hero-collage",
-});
+// Curated hero collage: nanny reading with a toddler (main) + sensory-led group play (square).
+const heroImages = [
+  { src: "/images/hero-nanny-reading.jpeg", alt: "Nanny reading a picture book with a toddler on her lap" },
+  { src: "/images/hero-sensory-play.jpeg", alt: "Nanny leading a sensory water-play activity with young children" },
+];
 
 export default function InteractiveHero() {
   const [mounted, setMounted] = useState(false);
