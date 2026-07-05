@@ -10,7 +10,7 @@
     "postinstall": "prisma generate",
     "db:push": "prisma db push --skip-generate",
     "db:seed": "tsx prisma/seed.ts",
-    "test": "tsx src/lib/email/escape.test.ts && tsx src/lib/images.test.ts"
+    "test": "tsx src/lib/email/escape.test.ts && tsx src/lib/images.test.ts && tsx src/lib/moderation.test.ts && tsx src/lib/sms/normalise.test.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

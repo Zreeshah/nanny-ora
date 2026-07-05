@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 import { useState, useEffect, useTransition } from "react";
 import { Card } from "@/components/ui/Card";
@@ -103,7 +104,12 @@ export default function AdminEnquiriesPage() {
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground line-clamp-2 mb-2 bg-secondary/25 rounded-2xl px-3.5 py-2.5">{enquiry.message}</p>
-                <span className="text-xs text-muted-foreground">{formatDate(enquiry.createdAt)}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-muted-foreground">{formatDate(enquiry.createdAt)}</span>
+                  <Link href={`/admin/enquiries/${enquiry.id}`} className="text-xs font-bold text-primary hover:text-primary-light transition-colors">
+                    View conversation →
+                  </Link>
+                </div>
               </div>
 
               <div className="flex items-center gap-2 flex-shrink-0">

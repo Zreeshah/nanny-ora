@@ -36,6 +36,7 @@ model User {
   reviewsGiven   Review[]       @relation("ReviewsGiven")
   favourites     Favourite[]    @relation("FavouritesByParent")
   profileViews   ProfileView[]  @relation("ViewsByUser")
+  messagesSent   Message[]      @relation("MessagesSent")
 
   @@map("users")
 }
@@ -173,12 +174,31 @@ model Enquiry {
   parent    User     @relation("EnquiriesSent", fields: [parentId], references: [id], onDelete: Cascade)
   nannyId   String
   nanny     NannyProfile @relation("EnquiriesReceived", fields: [nannyId], references: [id], onDelete: Cascade)
-  message   String
+  message   String       // the parent's first message (seed of the conversation thread)
   status    String   @default("NEW") // NEW, CONTACTED, MATCHED, CLOSED
+  messages  Message[]
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt // bumped on each new message → "last activity"
 
   @@map("enquiries")
+}
+
+// ============================================================
+// Messages (two-way chat within an Enquiry thread)
+// ============================================================
+
+model Message {
+  id        String   @id @default(cuid())
+  enquiryId String
+  enquiry   Enquiry  @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
+  senderId  String
+  sender    User     @relation("MessagesSent", fields: [senderId], references: [id], onDelete: Cascade)
+  body      String
+  flagged   Boolean  @default(false) // contains contact info (email/phone)
+  createdAt DateTime @default(now())
+
+  @@index([enquiryId])
+  @@map("messages")
 }
 
 // ============================================================

@@ -11,7 +11,7 @@ import { CARE_TYPES, CHILD_AGE_RANGES } from "@/lib/constants";
 import { getParentDashboard } from "@/server/actions/engagement";
 import {
   MessageCircle, Briefcase, Search, Heart, Eye, MapPin,
-  CheckCircle, Clock, Calendar, ArrowRight, Star,
+  CheckCircle, Calendar, ArrowRight, Star,
   FileText, Bell, Users, Send, PlusCircle, Sparkles
 } from "lucide-react";
 
@@ -130,10 +130,9 @@ export default function ParentDashboard() {
                       &ldquo;{enquiry.message}&rdquo;
                     </p>
                     <div className="flex items-center justify-between mt-3 pt-3 border-t border-border/30">
-                      <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5 text-primary" />
-                        {formatDate(enquiry.createdAt)}
-                      </span>
+                      <Link href={`/dashboard/parent/messages/${enquiry.id}`} className="text-[10px] font-bold text-primary hover:text-primary-light transition-colors flex items-center gap-1">
+                        <MessageCircle className="w-3.5 h-3.5" /> Open chat
+                      </Link>
                       <Badge variant="premium" size="sm" className="px-2 py-0.5 rounded-full font-bold uppercase tracking-wider text-[9px]">
                         {enquiry.status === "NEW" ? "Awaiting Reply" : enquiry.status}
                       </Badge>

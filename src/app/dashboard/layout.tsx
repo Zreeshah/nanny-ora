@@ -50,7 +50,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     My Profile
                   </Link>
                   <Link href="/dashboard/nanny/enquiries" className="px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg transition-colors">
-                    Enquiries
+                    Messages
                   </Link>
                 </nav>
               )}
@@ -65,6 +65,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   </Link>
                   <Link href="/post-a-job" className="px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg transition-colors">
                     Post a Job
+                  </Link>
+                  <Link href="/dashboard/parent/messages" className="px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg transition-colors">
+                    Messages
                   </Link>
                 </nav>
               )}
@@ -100,7 +103,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <nav className="sm:hidden bg-card border-b border-border px-4 py-2 flex gap-1 overflow-x-auto">
           <Link href="/dashboard/nanny" className="px-3 py-1.5 text-sm text-muted-foreground rounded-lg whitespace-nowrap">Dashboard</Link>
           <Link href="/dashboard/nanny/profile" className="px-3 py-1.5 text-sm text-muted-foreground rounded-lg whitespace-nowrap">My Profile</Link>
-          <Link href="/dashboard/nanny/enquiries" className="px-3 py-1.5 text-sm text-muted-foreground rounded-lg whitespace-nowrap">Enquiries</Link>
+          <Link href="/dashboard/nanny/enquiries" className="px-3 py-1.5 text-sm text-muted-foreground rounded-lg whitespace-nowrap">Messages</Link>
         </nav>
       )}
 
@@ -110,6 +113,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Link href="/dashboard/parent" className="px-3 py-1.5 text-sm text-muted-foreground rounded-lg whitespace-nowrap">Dashboard</Link>
           <Link href="/find-a-nanny" className="px-3 py-1.5 text-sm text-muted-foreground rounded-lg whitespace-nowrap">Find a Nanny</Link>
           <Link href="/post-a-job" className="px-3 py-1.5 text-sm text-muted-foreground rounded-lg whitespace-nowrap">Post a Job</Link>
+          <Link href="/dashboard/parent/messages" className="px-3 py-1.5 text-sm text-muted-foreground rounded-lg whitespace-nowrap">Messages</Link>
         </nav>
       )}
 
