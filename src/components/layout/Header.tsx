@@ -46,7 +46,7 @@ export function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-1.5 bg-secondary/40 p-1 rounded-full border border-border/20">
+          <div className="hidden lg:flex items-center gap-1.5 bg-secondary/40 p-1 rounded-full border border-border/20">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -64,7 +64,7 @@ export function Header() {
           </div>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3">
             {isLoggedIn ? (
               <>
                 <Link href={dashboardHref}>
@@ -109,7 +109,7 @@ export function Header() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="lg:hidden p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileMenuOpen}
@@ -124,7 +124,7 @@ export function Header() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border/20 animate-fade-in">
+          <div className="lg:hidden py-4 border-t border-border/20 animate-fade-in">
             <div className="space-y-1">
               {navLinks.map((link) => (
                 <Link

@@ -80,7 +80,7 @@ export default function ParentDashboard() {
       </div>
 
       {/* Stats Counter Row */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {stats.map((stat) => (
           <Card key={stat.label} className="rounded-2xl border border-border/40 p-4">
             <div className="flex items-center gap-3">
