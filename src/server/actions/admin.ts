@@ -196,6 +196,7 @@ export async function getAdminNannies(filters?: {
         documents: true,
       },
       orderBy: { createdAt: "desc" },
+      take: 100,
     });
 
     return { success: true, data: nannies };

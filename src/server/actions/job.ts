@@ -87,6 +87,11 @@ export async function getJobPosts(filters?: {
   suburb?: string;
 }): Promise<ActionResult> {
   try {
+    const session = await auth();
+    if (!session?.user?.id || (session.user as any).role !== "ADMIN") {
+      return { success: false, error: "Unauthorised" };
+    }
+
     const jobs = await prisma.jobPost.findMany({
       where: {
         ...(filters?.status && { status: filters.status }),
@@ -98,6 +103,7 @@ export async function getJobPosts(filters?: {
         },
       },
       orderBy: { createdAt: "desc" },
+      take: 50,
     });
 
     return { success: true, data: jobs };

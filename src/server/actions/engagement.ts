@@ -51,7 +51,7 @@ export async function getFavouriteIds(): Promise<ActionResult> {
     const session = await auth();
     const parentId = session?.user?.id;
     if (!parentId) return { success: true, data: [] };
-    const rows = await prisma.favourite.findMany({ where: { parentId }, select: { nannyId: true } });
+    const rows = await prisma.favourite.findMany({ where: { parentId }, select: { nannyId: true }, take: 200 });
     return { success: true, data: rows.map((r) => r.nannyId) };
   } catch (error) {
     console.error("getFavouriteIds error:", error);
@@ -61,13 +61,29 @@ export async function getFavouriteIds(): Promise<ActionResult> {
 
 // --- Profile views tracking ---
 
+// ponytail: in-memory throttle — won't survive restarts or work across serverless instances.
+// Upgrade to Redis/Upstash if view inflation becomes a problem.
+const viewThrottle = new Map<string, number>();
+const VIEW_THROTTLE_MS = 30_000;
+
 /** Best-effort: record that a nanny profile was viewed. Never throws to the caller. */
 export async function recordProfileView(nannyId: string): Promise<void> {
   try {
+    // Throttle by nannyId so one client can't inflate counts with rapid calls.
+    const now = Date.now();
+    const last = viewThrottle.get(nannyId);
+    if (last && now - last < VIEW_THROTTLE_MS) return;
+    viewThrottle.set(nannyId, now);
+
     const session = await auth();
     const viewerId = session?.user?.id;
-    // ponytail: demo accounts (demo-*) aren't real User rows — store as anonymous to avoid FK errors.
-    const realViewer = viewerId && !viewerId.startsWith("demo-") ? viewerId : null;
+    // ponytail: demo accounts (demo-*) and backup admin (backup-*) aren't real User rows — store as anonymous to avoid FK errors.
+    const realViewer = viewerId && !viewerId.startsWith("demo-") && !viewerId.startsWith("backup-") ? viewerId : null;
+
+    // Verify the nanny profile exists before recording a view.
+    const exists = await prisma.nannyProfile.findUnique({ where: { id: nannyId }, select: { id: true } });
+    if (!exists) return;
+
     await prisma.profileView.create({ data: { nannyId, viewerId: realViewer } });
   } catch (error) {
     console.error("recordProfileView error (ignored):", error);
@@ -168,6 +184,7 @@ export async function getParentDashboard(): Promise<ActionResult> {
         where: { parentId: userId },
         include: { nanny: { include: { user: { select: { name: true } } } } },
         orderBy: { createdAt: "desc" },
+        take: 50,
       }),
       prisma.enquiry.findMany({
         where: { parentId: userId },
@@ -252,6 +269,7 @@ export async function getMyNannyEnquiries(): Promise<ActionResult> {
       where: { nanny: { userId } },
       include: { parent: { select: { name: true, email: true } } },
       orderBy: { createdAt: "desc" },
+      take: 50,
     });
 
     return {

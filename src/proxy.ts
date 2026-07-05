@@ -2,10 +2,7 @@ import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-const authSecret =
-  process.env.AUTH_SECRET ||
-  process.env.NEXTAUTH_SECRET ||
-  "nannyora-dev-secret-change-in-production";
+const authSecret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "";
 
 export async function proxy(req: NextRequest) {
   const { nextUrl } = req;

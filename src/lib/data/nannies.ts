@@ -57,6 +57,7 @@ export async function getPublicNannies(filters?: NannyFilters): Promise<NannyPro
       where: { adminStatus: { in: PUBLIC_STATUSES } },
       include: { user: { select: { name: true } } },
       orderBy: { createdAt: "desc" },
+      take: 100,
     });
     if (rows.length > 0) return filterNannies(rows.map(toPublic), filters);
   } catch (error) {

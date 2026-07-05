@@ -8,6 +8,20 @@ import { sendRefereeRequests, sendNannyWelcome, notifyAdminNewNanny } from "@/li
 import type { ActionResult } from "./auth";
 import bcrypt from "bcryptjs";
 
+const DOC_MAX_BYTES = 5 * 1024 * 1024; // 5MB
+const DOC_ALLOWED_TYPES: Record<string, boolean> = {
+  "application/pdf": true,
+  "image/jpeg": true,
+  "image/png": true,
+  "image/webp": true,
+};
+
+function validateDoc(file: File): string | null {
+  if (file.size > DOC_MAX_BYTES) return "Each document must be under 5MB.";
+  if (!DOC_ALLOWED_TYPES[file.type]) return "Documents must be PDF, JPG, PNG, or WebP.";
+  return null;
+}
+
 export async function applyAsNanny(
   input: NannyApplicationInput & {
     password: string;
@@ -37,6 +51,8 @@ export async function applyAsNanny(
     if (input.documents && input.documents.length > 0) {
       for (const doc of input.documents) {
         const file = doc.file;
+        const docErr = validateDoc(file);
+        if (docErr) return { success: false, error: docErr };
         const safeName = file.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9._-]/g, "");
         const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${safeName}`;
         const arrayBuffer = await file.arrayBuffer();
@@ -241,6 +257,9 @@ export async function uploadNannyDocument(
     if (!profile) {
       return { success: false, error: "Nanny profile not found. Please complete your profile first." };
     }
+
+    const docErr = validateDoc(file);
+    if (docErr) return { success: false, error: docErr };
 
     // Upload the file to Supabase Storage
     const safeName = file.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9._-]/g, "");

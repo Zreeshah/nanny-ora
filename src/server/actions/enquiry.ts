@@ -88,6 +88,11 @@ export async function getEnquiries(filters?: {
   parentId?: string;
 }): Promise<ActionResult> {
   try {
+    const session = await auth();
+    if (!session?.user?.id || (session.user as any).role !== "ADMIN") {
+      return { success: false, error: "Unauthorised" };
+    }
+
     const enquiries = await prisma.enquiry.findMany({
       where: {
         ...(filters?.status && { status: filters.status }),
@@ -107,6 +112,7 @@ export async function getEnquiries(filters?: {
         },
       },
       orderBy: { createdAt: "desc" },
+      take: 50,
     });
 
     return { success: true, data: enquiries };
