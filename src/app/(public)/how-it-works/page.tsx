@@ -33,7 +33,7 @@ export default function HowItWorksPage() {
 
       {/* Contextual image */}
       <ImageBand
-        tags={["find", "family", "professional", "care"]}
+        tags={["how-it-works-band"]}
         seed="how-it-works"
         aspect="aspect-[16/7]"
         priority

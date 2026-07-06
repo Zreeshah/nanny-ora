@@ -19,6 +19,6 @@ assert.ok(pon[0].src.includes("ponsonby"), "suburb tag surfaces matching suburb 
 
 // Always returns the requested count, even with no matches.
 assert.equal(pickImages({ tags: ["nope"], count: 5, seed: "x" }).length, 5, "fills to count");
-assert.equal(SITE_IMAGES.length, 35, "all images registered");
+assert.equal(SITE_IMAGES.length, 36, "all images registered");
 
 console.log("images.test.ts: ok");
