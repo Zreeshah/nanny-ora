@@ -387,7 +387,9 @@ export default function AdminNanniesPage() {
                               </div>
                               <div className="w-36 flex-shrink-0">
                                 <Select
-                                  options={Object.entries(SAFETY_CHECK_STATUS_LABELS).map(([value, label]) => ({ value, label }))}
+                                  options={Object.entries(SAFETY_CHECK_STATUS_LABELS)
+                                    .filter(([value]) => value !== "NOT_APPLICABLE" || check.key === "proRegVerified")
+                                    .map(([value, label]) => ({ value, label }))}
                                   value={status}
                                   onChange={(e) => handleSafetyCheckStatusChange(nanny.id, check.key, e.target.value as SafetyCheckStatus)}
                                   disabled={isPending}

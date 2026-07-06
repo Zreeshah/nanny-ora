@@ -136,7 +136,8 @@ export async function getNannyDashboard(): Promise<ActionResult> {
       prisma.jobApplication.findMany({ where: { nannyProfileId: profile.id }, select: { jobId: true }, take: 100 }),
     ]);
 
-    const verifiedChecks = CHECK_FIELDS.filter((f) => (profile as any)[f] === "VERIFIED").length;
+    const applicableFields = CHECK_FIELDS.filter((f) => (profile as any)[f] !== "NOT_APPLICABLE");
+    const verifiedChecks = applicableFields.filter((f) => (profile as any)[f] === "VERIFIED").length;
     const avgRating = reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0;
 
     return {
@@ -158,7 +159,7 @@ export async function getNannyDashboard(): Promise<ActionResult> {
         checks: SAFETY_CHECKS.map((c) => ({ name: c.title, status: (profile as any)[c.key] || "NOT_STARTED" })),
         availabilitySummary: profile.availabilitySummary,
         verifiedChecks,
-        totalChecks: CHECK_FIELDS.length,
+        totalChecks: applicableFields.length,
         verificationLevel: profile.verificationLevel,
         reviewCount: reviews.length,
         avgRating: Math.round(avgRating * 10) / 10,

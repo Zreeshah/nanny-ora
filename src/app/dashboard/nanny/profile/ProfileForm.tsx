@@ -19,7 +19,7 @@ import {
   SAFETY_CHECK_STATUS_LABELS,
 } from "@/lib/constants";
 import type { DocumentType, SafetyCheckStatus } from "@/lib/constants";
-import { updateNannyProfile, uploadNannyDocument, deleteNannyDocument, uploadProfilePhoto } from "@/server/actions/nanny";
+import { updateNannyProfile, uploadNannyDocument, deleteNannyDocument, uploadProfilePhoto, setProRegApplicability } from "@/server/actions/nanny";
 import {
   Check, Save, Loader2, Award, Heart, Shield,
   Upload, CheckCircle, Clock, XCircle, FileText,
@@ -41,6 +41,7 @@ const CHECK_ICONS: Record<string, React.ElementType> = {
 // Status badge styling
 const STATUS_BADGE_STYLES: Record<string, { bg: string; text: string; icon: React.ElementType }> = {
   NOT_STARTED: { bg: "bg-muted/50 border-border", text: "text-muted-foreground", icon: Clock },
+  NOT_APPLICABLE: { bg: "bg-muted/50 border-border", text: "text-muted-foreground", icon: Check },
   SUBMITTED: { bg: "bg-amber-50 border-amber-200", text: "text-badge-premium", icon: Clock },
   VERIFIED: { bg: "bg-emerald-50 border-emerald-200", text: "text-badge-verified", icon: CheckCircle },
   REJECTED: { bg: "bg-red-50 border-red-200", text: "text-red-600", icon: XCircle },
@@ -145,6 +146,18 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
 
   // Documents
   const [documents, setDocuments] = useState<DocumentData[]>(initialDocuments);
+  const [proRegStatus, setProRegStatus] = useState<string>(safetyChecks.proRegVerified || "NOT_STARTED");
+  const [proRegBusy, setProRegBusy] = useState(false);
+
+  const toggleProRegNA = async () => {
+    if (proRegBusy) return;
+    setProRegBusy(true);
+    const next = proRegStatus !== "NOT_APPLICABLE";
+    const res = await setProRegApplicability(next);
+    setProRegBusy(false);
+    if (res.success) setProRegStatus(res.data.status);
+    else toast(res.error || "Could not update", "error");
+  };
   const [uploadingType, setUploadingType] = useState<string | null>(null);
 
   const toggleItem = (list: string[], setList: React.Dispatch<React.SetStateAction<string[]>>, item: string) => {
@@ -579,7 +592,7 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
         <div className="space-y-4">
           {SAFETY_CHECKS.map((check) => {
             const IconComponent = CHECK_ICONS[check.key] || Shield;
-            const status = (safetyChecks[check.key] || "NOT_STARTED") as SafetyCheckStatus;
+            const status = (check.key === "proRegVerified" ? proRegStatus : safetyChecks[check.key] || "NOT_STARTED") as SafetyCheckStatus;
             const statusStyle = STATUS_BADGE_STYLES[status] || STATUS_BADGE_STYLES.NOT_STARTED;
             const StatusIcon = statusStyle.icon;
             const checkDocuments = documents.filter(d => d.documentType === check.documentType);
@@ -631,8 +644,29 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
                   </div>
                 </div>
 
+                {/* Professional Registration can be waived */}
+                {check.key === "proRegVerified" && ["NOT_STARTED", "NOT_APPLICABLE"].includes(status) && (
+                  <div className="px-4 sm:px-5 pb-3">
+                    <button
+                      type="button"
+                      onClick={toggleProRegNA}
+                      disabled={proRegBusy}
+                      className={`flex items-center gap-2.5 w-full text-left p-3 rounded-xl border transition-all cursor-pointer text-xs font-semibold ${
+                        status === "NOT_APPLICABLE" ? "border-primary bg-primary/5 text-primary" : "border-border bg-card hover:border-primary/30 text-muted-foreground"
+                      }`}
+                    >
+                      <div className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${
+                        status === "NOT_APPLICABLE" ? "bg-primary border-primary text-white" : "border-border bg-card"
+                      }`}>
+                        {status === "NOT_APPLICABLE" && <Check className="w-3 h-3 stroke-[3]" />}
+                      </div>
+                      Not applicable — I don&apos;t hold a professional registration
+                    </button>
+                  </div>
+                )}
+
                 {/* Document upload / display (checks 1-5) */}
-                {check.nannyUploadable && check.documentType && (
+                {check.nannyUploadable && check.documentType && !(check.key === "proRegVerified" && status === "NOT_APPLICABLE") && (
                   <div className="px-4 sm:px-5 pb-4 sm:pb-5 space-y-2">
                     {/* Existing documents */}
                     {checkDocuments.map((doc) => (

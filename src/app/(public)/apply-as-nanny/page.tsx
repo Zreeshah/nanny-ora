@@ -52,6 +52,7 @@ export default function ApplyAsNannyPage() {
   const [selectedAvailability, setSelectedAvailability] = useState<string[]>([]);
   const [selectedSpecialistTags, setSelectedSpecialistTags] = useState<string[]>([]);
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
+  const [proRegNA, setProRegNA] = useState(false);
   const [availabilitySummaryText, setAvailabilitySummaryText] = useState("");
 
   // Toggles for checkboxes
@@ -211,6 +212,7 @@ export default function ApplyAsNannyPage() {
         password,
         documents: documentsList,
         policeVetAuthorized,
+        proRegNotApplicable: proRegNA,
       } as any);
 
       if (result.success) {
@@ -574,8 +576,28 @@ export default function ApplyAsNannyPage() {
                       </div>
                     </div>
 
+                    {/* Professional Registration can be waived */}
+                    {check.key === "proRegVerified" && (
+                      <div className="px-4 sm:px-5 pb-3">
+                        <button
+                          type="button"
+                          onClick={() => { setProRegNA(!proRegNA); if (!proRegNA && check.documentType) handleFileChange(check.documentType, null); }}
+                          className={`flex items-center gap-2.5 w-full text-left p-3 rounded-xl border transition-all cursor-pointer text-xs font-semibold ${
+                            proRegNA ? "border-primary bg-primary/5 text-primary" : "border-border bg-white hover:border-primary/30 text-muted-foreground"
+                          }`}
+                        >
+                          <div className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${
+                            proRegNA ? "bg-primary border-primary text-white" : "border-border bg-white"
+                          }`}>
+                            {proRegNA && <Check className="w-3 h-3 stroke-[3]" />}
+                          </div>
+                          Not applicable — I don&apos;t hold a professional registration
+                        </button>
+                      </div>
+                    )}
+
                     {/* Upload area */}
-                    {check.documentType && (
+                    {check.documentType && !(check.key === "proRegVerified" && proRegNA) && (
                       <div className="px-4 sm:px-5 pb-4 sm:pb-5">
                         <div className={`flex items-center justify-between p-3.5 rounded-xl border border-dashed transition-all ${
                           file

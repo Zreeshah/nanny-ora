@@ -27,6 +27,7 @@ export async function applyAsNanny(
     password: string;
     documents?: { documentType: string; file: File }[];
     policeVetAuthorized?: boolean;
+    proRegNotApplicable?: boolean;
   }
 ): Promise<ActionResult> {
   try {
@@ -124,6 +125,8 @@ export async function applyAsNanny(
           policeVetAuthorized: input.policeVetAuthorized || false,
           policeVetAuthorizedAt: input.policeVetAuthorized ? new Date() : null,
           ...safetyChecksUpdate,
+          // N/A wins over any uploaded pro-reg doc (upload is disabled in the UI when N/A)
+          ...(input.proRegNotApplicable ? { proRegVerified: "NOT_APPLICABLE" } : {}),
         },
       });
 
@@ -397,6 +400,31 @@ export async function uploadProfilePhoto(file: File): Promise<ActionResult> {
     return { success: true, data: { url } };
   } catch (error) {
     console.error("uploadProfilePhoto error:", error);
+    return { success: false, error: "Something went wrong. Please try again." };
+  }
+}
+
+/** Nanny toggles Professional Registration as not applicable. Only flips between
+ *  NOT_STARTED and NOT_APPLICABLE — never clobbers a submitted/verified check. */
+export async function setProRegApplicability(notApplicable: boolean): Promise<ActionResult> {
+  try {
+    const session = await auth();
+    const userId = session?.user?.id;
+    if (!userId || (session.user as any).role !== "NANNY") {
+      return { success: false, error: "Unauthorised" };
+    }
+    const profile = await prisma.nannyProfile.findUnique({ where: { userId }, select: { id: true, proRegVerified: true } });
+    if (!profile) return { success: false, error: "Complete your profile first." };
+    if (!["NOT_STARTED", "NOT_APPLICABLE"].includes(profile.proRegVerified)) {
+      return { success: false, error: "This check is already in review — contact the agency to change it." };
+    }
+    await prisma.nannyProfile.update({
+      where: { id: profile.id },
+      data: { proRegVerified: notApplicable ? "NOT_APPLICABLE" : "NOT_STARTED" },
+    });
+    return { success: true, data: { status: notApplicable ? "NOT_APPLICABLE" : "NOT_STARTED" } };
+  } catch (error) {
+    console.error("setProRegApplicability error:", error);
     return { success: false, error: "Something went wrong. Please try again." };
   }
 }

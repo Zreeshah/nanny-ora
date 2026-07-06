@@ -135,6 +135,7 @@ export const SAFETY_CHECK_STATUSES = {
   SUBMITTED: "SUBMITTED",
   VERIFIED: "VERIFIED",
   REJECTED: "REJECTED",
+  NOT_APPLICABLE: "NOT_APPLICABLE", // only offered for Professional Registration
 } as const;
 export type SafetyCheckStatus =
   (typeof SAFETY_CHECK_STATUSES)[keyof typeof SAFETY_CHECK_STATUSES];
@@ -144,6 +145,7 @@ export const SAFETY_CHECK_STATUS_LABELS: Record<SafetyCheckStatus, string> = {
   SUBMITTED: "Submitted",
   VERIFIED: "Verified",
   REJECTED: "Rejected",
+  NOT_APPLICABLE: "Not Applicable",
 };
 
 // --- 7 Safety Vetting Checks ---

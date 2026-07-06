@@ -113,13 +113,17 @@ const VALID_CHECK_FIELDS = [
 export async function updateSafetyCheckStatus(
   nannyProfileId: string,
   checkField: string,
-  status: "NOT_STARTED" | "SUBMITTED" | "VERIFIED" | "REJECTED"
+  status: "NOT_STARTED" | "SUBMITTED" | "VERIFIED" | "REJECTED" | "NOT_APPLICABLE"
 ): Promise<ActionResult> {
   const authErr = await requireAdmin();
   if (authErr) return authErr;
 
   if (!VALID_CHECK_FIELDS.includes(checkField as any)) {
     return { success: false, error: `Invalid check field: ${checkField}` };
+  }
+  // Only Professional Registration can be waived — every other check is mandatory.
+  if (status === "NOT_APPLICABLE" && checkField !== "proRegVerified") {
+    return { success: false, error: "Only Professional Registration can be marked Not Applicable." };
   }
 
   try {

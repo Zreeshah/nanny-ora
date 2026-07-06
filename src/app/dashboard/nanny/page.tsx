@@ -243,6 +243,9 @@ export default function NannyDashboard() {
                       Upload →
                     </Link>
                   )}
+                  {check.status === "NOT_APPLICABLE" && (
+                    <span className="text-[10px] font-bold text-muted-foreground">N/A</span>
+                  )}
                   {check.status === "REJECTED" && (
                     <span className="text-[10px] font-bold text-red-500">Rejected</span>
                   )}
