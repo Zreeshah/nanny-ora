@@ -11,9 +11,7 @@ const SITE_URL = process.env.NEXTAUTH_URL || "https://www.nannyora.co.nz";
 
 const sha256 = (s: string) => createHash("sha256").update(s).digest("hex");
 
-// ponytail: in-memory throttle (1 request/min per email) — per-lambda in prod,
-// good enough to stop casual mail-bombing; move to a DB column if it matters.
-const lastRequest = new Map<string, number>();
+
 
 /**
  * Start a password reset. Always reports success so attackers can't probe
@@ -26,11 +24,13 @@ export async function requestPasswordReset(email: string): Promise<ActionResult>
     if (!normalized.includes("@")) return ok;
 
     const now = Date.now();
-    if ((lastRequest.get(normalized) ?? 0) > now - 60_000) return ok; // throttled, same response
-    lastRequest.set(normalized, now);
 
     const user = await prisma.user.findUnique({ where: { email: normalized } });
     if (!user || user.role === "ADMIN") return ok; // no enumeration, no email-based admin reset
+
+    // Durable throttle (survives serverless instances): a token minted in the
+    // last 60s means a reset email just went out — same response, no resend.
+    if (user.resetTokenExpiry && user.resetTokenExpiry.getTime() - TOKEN_TTL_MS > now - 60_000) return ok;
 
     const token = randomBytes(32).toString("hex");
     await prisma.user.update({

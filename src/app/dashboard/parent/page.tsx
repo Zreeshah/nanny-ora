@@ -9,11 +9,68 @@ import Link from "next/link";
 import { formatDate, formatRate } from "@/lib/utils";
 import { CARE_TYPES, CHILD_AGE_RANGES } from "@/lib/constants";
 import { getParentDashboard } from "@/server/actions/engagement";
+import { createReview } from "@/server/actions/reviews";
 import {
   MessageCircle, Briefcase, Search, Heart, Eye, MapPin,
   CheckCircle, Calendar, ArrowRight, Star,
   FileText, Bell, Users, Send, PlusCircle, Sparkles
 } from "lucide-react";
+
+function RateNanny({ nannyId, existingRating }: { nannyId: string; existingRating: number | null }) {
+  const [open, setOpen] = useState(false);
+  const [rating, setRating] = useState(existingRating ?? 0);
+  const [comment, setComment] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(existingRating != null);
+  const [error, setError] = useState("");
+
+  const submit = async () => {
+    if (rating < 1) return setError("Pick a star rating first.");
+    setSaving(true);
+    setError("");
+    const res = await createReview(nannyId, rating, comment);
+    setSaving(false);
+    if (!res.success) return setError(res.error || "Could not save review.");
+    setSaved(true);
+    setOpen(false);
+  };
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="text-[10px] font-bold text-primary hover:text-primary-light transition-colors flex items-center gap-1 cursor-pointer"
+      >
+        <Star className={`w-3.5 h-3.5 ${saved ? "fill-amber-400 text-amber-400" : ""}`} aria-hidden="true" />
+        {saved ? `Rated ${rating}/5 — edit` : "Rate nanny"}
+      </button>
+    );
+  }
+  return (
+    <div className="w-full mt-2 p-3 rounded-2xl border border-border/40 bg-card">
+      <div className="flex items-center gap-1 mb-2">
+        {[1, 2, 3, 4, 5].map((n) => (
+          <button key={n} type="button" onClick={() => setRating(n)} aria-label={`${n} star${n > 1 ? "s" : ""}`} className="cursor-pointer">
+            <Star className={`w-5 h-5 ${n <= rating ? "fill-amber-400 text-amber-400" : "text-border"}`} />
+          </button>
+        ))}
+      </div>
+      <textarea
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+        placeholder="How was your experience? (optional)"
+        maxLength={1000}
+        className="w-full text-sm rounded-xl border border-border/60 bg-card px-3 py-2 min-h-[60px] focus:outline-none focus:border-primary"
+      />
+      {error && <p className="text-[11px] text-destructive mt-1" role="alert">{error}</p>}
+      <div className="flex gap-2 mt-2">
+        <Button variant="primary" size="sm" isLoading={saving} onClick={submit} className="rounded-full text-xs">Save review</Button>
+        <Button variant="ghost" size="sm" onClick={() => setOpen(false)} className="rounded-full text-xs">Cancel</Button>
+      </div>
+    </div>
+  );
+}
 
 export default function ParentDashboard() {
   const { data: session } = useSession();
@@ -130,9 +187,12 @@ export default function ParentDashboard() {
                       &ldquo;{enquiry.message}&rdquo;
                     </p>
                     <div className="flex items-center justify-between mt-3 pt-3 border-t border-border/30">
-                      <Link href={`/dashboard/parent/messages/${enquiry.id}`} className="text-[10px] font-bold text-primary hover:text-primary-light transition-colors flex items-center gap-1">
-                        <MessageCircle className="w-3.5 h-3.5" /> Open chat
-                      </Link>
+                      <div className="flex items-center gap-3">
+                        <Link href={`/dashboard/parent/messages/${enquiry.id}`} className="text-[10px] font-bold text-primary hover:text-primary-light transition-colors flex items-center gap-1">
+                          <MessageCircle className="w-3.5 h-3.5" /> Open chat
+                        </Link>
+                        {enquiry.reviewable && <RateNanny nannyId={enquiry.nannyId} existingRating={enquiry.myRating} />}
+                      </div>
                       <Badge variant="premium" size="sm" className="px-2 py-0.5 rounded-full font-bold uppercase tracking-wider text-[9px]">
                         {enquiry.status === "NEW" ? "Awaiting Reply" : enquiry.status}
                       </Badge>
@@ -194,6 +254,18 @@ export default function ParentDashboard() {
                       {job.status === "APPROVED" ? "Live" : job.status === "PENDING" ? "Reviewing" : job.status}
                     </Badge>
                   </div>
+                  {job.applicants?.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-border/40 flex items-center flex-wrap gap-2">
+                      <span className="text-[10px] font-bold text-muted-foreground flex items-center gap-1">
+                        <MessageCircle className="w-3.5 h-3.5 text-accent" /> {job.applicants.length} applicant{job.applicants.length > 1 ? "s" : ""}:
+                      </span>
+                      {job.applicants.map((a: any) => (
+                        <Link key={a.nannyId} href={`/nannies/${a.nannyId}`} className="text-[10px] font-bold text-primary hover:text-primary-light transition-colors">
+                          {a.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

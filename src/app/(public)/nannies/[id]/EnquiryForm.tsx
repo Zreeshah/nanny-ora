@@ -18,6 +18,7 @@ export default function EnquiryForm({ nannyId, firstName }: { nannyId: string; f
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
+  const [flagged, setFlagged] = useState(false);
 
   // Guests (or non-parent roles) are routed to registration, carrying the nanny id.
   if (status !== "loading" && role !== "PARENT") {
@@ -47,6 +48,11 @@ export default function EnquiryForm({ nannyId, firstName }: { nannyId: string; f
         <p className="text-xs text-muted-foreground">
           We&apos;ve passed your message to our team and emailed you a confirmation. We&apos;ll be in touch shortly.
         </p>
+        {flagged && (
+          <p className="text-[11px] text-amber-600 mt-2">
+            Heads up: your message looks like it contains contact details. For your safety, keep contact on NannyOra.
+          </p>
+        )}
       </Card>
     );
   }
@@ -69,6 +75,7 @@ export default function EnquiryForm({ nannyId, firstName }: { nannyId: string; f
       setError(res.error || "Something went wrong. Please try again.");
       return;
     }
+    setFlagged(!!res.data?.flagged);
     setSent(true);
   };
 

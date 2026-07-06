@@ -37,6 +37,7 @@ model User {
   favourites     Favourite[]    @relation("FavouritesByParent")
   profileViews   ProfileView[]  @relation("ViewsByUser")
   messagesSent   Message[]      @relation("MessagesSent")
+  conversationReads ConversationRead[] @relation("ConversationReads")
 
   @@map("users")
 }
@@ -114,6 +115,7 @@ model NannyProfile {
   reviewsReceived   Review[]       @relation("ReviewsReceived")
   favouritedBy      Favourite[]    @relation("FavouritesOfNanny")
   views             ProfileView[]  @relation("ViewsOfNanny")
+  jobApplications   JobApplication[]
 
   @@map("nanny_profiles")
 }
@@ -158,6 +160,7 @@ model JobPost {
   status           String   @default("PENDING") // PENDING, APPROVED, CLOSED, REJECTED
   contactEmail     String
   contactPhone     String?
+  applications     JobApplication[]
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -175,8 +178,12 @@ model Enquiry {
   nannyId   String
   nanny     NannyProfile @relation("EnquiriesReceived", fields: [nannyId], references: [id], onDelete: Cascade)
   message   String       // the parent's first message (seed of the conversation thread)
+  flagged   Boolean  @default(false) // seed message contains contact info (email/phone)
+  contactEmail String?  // admin-only visibility — never exposed to the nanny
+  contactPhone String?  // admin-only visibility
   status    String   @default("NEW") // NEW, CONTACTED, MATCHED, CLOSED
   messages  Message[]
+  reads     ConversationRead[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt // bumped on each new message → "last activity"
 
@@ -186,6 +193,33 @@ model Enquiry {
 // ============================================================
 // Messages (two-way chat within an Enquiry thread)
 // ============================================================
+
+// Per-user read marker for a conversation (unread counts)
+model ConversationRead {
+  id         String   @id @default(cuid())
+  enquiryId  String
+  enquiry    Enquiry  @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation("ConversationReads", fields: [userId], references: [id], onDelete: Cascade)
+  lastReadAt DateTime @default(now())
+
+  @@unique([enquiryId, userId])
+  @@map("conversation_reads")
+}
+
+// A nanny's one-click application to an approved job post
+model JobApplication {
+  id             String       @id @default(cuid())
+  jobId          String
+  job            JobPost      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  nannyProfileId String
+  nanny          NannyProfile @relation(fields: [nannyProfileId], references: [id], onDelete: Cascade)
+  status         String       @default("PENDING") // PENDING, ACCEPTED, DECLINED (admin-managed later)
+  createdAt      DateTime     @default(now())
+
+  @@unique([jobId, nannyProfileId])
+  @@map("job_applications")
+}
 
 model Message {
   id        String   @id @default(cuid())
@@ -215,6 +249,7 @@ model Review {
   comment   String
   createdAt DateTime @default(now())
 
+  @@unique([parentId, nannyId])
   @@map("reviews")
 }
 

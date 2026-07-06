@@ -79,3 +79,23 @@ export async function getPublicNannyById(id: string): Promise<NannyProfilePublic
   }
   return sampleNannies.find((n) => n.id === id);
 }
+
+/** Public reviews for a nanny profile (first name only for privacy). */
+export async function getNannyReviews(nannyId: string): Promise<{ reviews: { id: string; rating: number; comment: string; reviewerFirstName: string; createdAt: Date }[]; avg: number }> {
+  try {
+    const rows = await prisma.review.findMany({
+      where: { nannyId },
+      include: { parent: { select: { name: true } } },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+    });
+    const avg = rows.length ? Math.round((rows.reduce((s, r) => s + r.rating, 0) / rows.length) * 10) / 10 : 0;
+    return {
+      reviews: rows.map((r) => ({ id: r.id, rating: r.rating, comment: r.comment, reviewerFirstName: r.parent.name.split(" ")[0], createdAt: r.createdAt })),
+      avg,
+    };
+  } catch (error) {
+    console.error("getNannyReviews error:", error);
+    return { reviews: [], avg: 0 };
+  }
+}

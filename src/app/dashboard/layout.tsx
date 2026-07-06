@@ -2,12 +2,30 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getUnreadTotal } from "@/server/actions/messages";
+
+function UnreadBadge({ count }: { count: number }) {
+  if (count <= 0) return null;
+  return (
+    <span className="ml-1 min-w-[18px] h-[18px] px-1 rounded-full bg-accent text-accent-foreground text-[10px] font-bold inline-flex items-center justify-center align-middle">
+      {count > 9 ? "9+" : count}
+    </span>
+  );
+}
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
+  const [unread, setUnread] = useState(0);
+
+  // refresh the badge on route change (e.g. after reading a thread)
+  useEffect(() => {
+    if (status !== "authenticated") return;
+    getUnreadTotal().then((r) => { if (r.success) setUnread(r.data?.unread ?? 0); }).catch(() => {});
+  }, [status, pathname]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -50,7 +68,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     My Profile
                   </Link>
                   <Link href="/dashboard/nanny/enquiries" className="px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg transition-colors">
-                    Messages
+                    Messages<UnreadBadge count={unread} />
                   </Link>
                 </nav>
               )}
@@ -67,7 +85,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     Post a Job
                   </Link>
                   <Link href="/dashboard/parent/messages" className="px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg transition-colors">
-                    Messages
+                    Messages<UnreadBadge count={unread} />
                   </Link>
                 </nav>
               )}
@@ -103,7 +121,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <nav className="sm:hidden bg-card border-b border-border px-4 py-2 flex gap-1 overflow-x-auto">
           <Link href="/dashboard/nanny" className="px-3 py-1.5 text-sm text-muted-foreground rounded-lg whitespace-nowrap">Dashboard</Link>
           <Link href="/dashboard/nanny/profile" className="px-3 py-1.5 text-sm text-muted-foreground rounded-lg whitespace-nowrap">My Profile</Link>
-          <Link href="/dashboard/nanny/enquiries" className="px-3 py-1.5 text-sm text-muted-foreground rounded-lg whitespace-nowrap">Messages</Link>
+          <Link href="/dashboard/nanny/enquiries" className="px-3 py-1.5 text-sm text-muted-foreground rounded-lg whitespace-nowrap">Messages<UnreadBadge count={unread} /></Link>
         </nav>
       )}
 
@@ -113,7 +131,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Link href="/dashboard/parent" className="px-3 py-1.5 text-sm text-muted-foreground rounded-lg whitespace-nowrap">Dashboard</Link>
           <Link href="/find-a-nanny" className="px-3 py-1.5 text-sm text-muted-foreground rounded-lg whitespace-nowrap">Find a Nanny</Link>
           <Link href="/post-a-job" className="px-3 py-1.5 text-sm text-muted-foreground rounded-lg whitespace-nowrap">Post a Job</Link>
-          <Link href="/dashboard/parent/messages" className="px-3 py-1.5 text-sm text-muted-foreground rounded-lg whitespace-nowrap">Messages</Link>
+          <Link href="/dashboard/parent/messages" className="px-3 py-1.5 text-sm text-muted-foreground rounded-lg whitespace-nowrap">Messages<UnreadBadge count={unread} /></Link>
         </nav>
       )}
 

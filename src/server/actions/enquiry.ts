@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth/auth";
 import { enquirySchema, type EnquiryInput } from "@/lib/validations";
+import { detectContactInfo } from "@/lib/moderation";
 import { sendEnquiryReceipt, notifyAdminNewEnquiry, sendEnquiryStatusUpdate } from "@/lib/email";
 import type { ActionResult } from "./auth";
 
@@ -18,7 +19,7 @@ export async function createEnquiry(input: EnquiryInput): Promise<ActionResult> 
       return { success: false, error: parsed.error.issues[0]?.message || "Invalid input" };
     }
 
-    const { nannyId, message } = parsed.data;
+    const { nannyId, message, contactEmail, contactPhone } = parsed.data;
 
     // Verify nanny profile exists
     const nanny = await prisma.nannyProfile.findUnique({
@@ -29,11 +30,18 @@ export async function createEnquiry(input: EnquiryInput): Promise<ActionResult> 
       return { success: false, error: "Nanny profile not found." };
     }
 
+    // Flag contact info in the seed message (same rule as chat replies).
+    const { flagged } = detectContactInfo(message);
+
     const enquiry = await prisma.enquiry.create({
       data: {
         parentId: session.user.id,
         nannyId,
         message,
+        flagged,
+        // stored for the agency only — never exposed to the nanny
+        contactEmail: contactEmail || null,
+        contactPhone: contactPhone || null,
         status: "NEW",
       },
     });
@@ -44,7 +52,7 @@ export async function createEnquiry(input: EnquiryInput): Promise<ActionResult> 
     if (session.user.email) await sendEnquiryReceipt(parentName, session.user.email, nannyName);
     await notifyAdminNewEnquiry(parentName, nannyName, message);
 
-    return { success: true, data: { enquiryId: enquiry.id } };
+    return { success: true, data: { enquiryId: enquiry.id, flagged } };
   } catch (error) {
     console.error("Create enquiry error:", error);
     return { success: false, error: "Something went wrong. Please try again." };
@@ -110,6 +118,7 @@ export async function getEnquiries(filters?: {
             user: { select: { name: true } },
           },
         },
+        _count: { select: { messages: { where: { flagged: true } } } },
       },
       orderBy: { createdAt: "desc" },
       take: 50,

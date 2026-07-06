@@ -8,7 +8,7 @@ import { formatDate, getInitials } from "@/lib/utils";
 import { MessageCircle } from "lucide-react";
 import { getMyConversations } from "@/server/actions/messages";
 
-type Row = { enquiryId: string; otherPartyName: string; lastMessage: string; lastAt: string | Date; status: string; flaggedCount: number };
+type Row = { enquiryId: string; otherPartyName: string; lastMessage: string; lastAt: string | Date; status: string; flaggedCount: number; unread: number };
 
 const statusColors: Record<string, string> = {
   NEW: "bg-accent/10 text-accent border-accent/20",
@@ -59,6 +59,9 @@ export default function ConversationList({ basePath, title = "Messages" }: { bas
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-foreground text-sm truncate">{row.otherPartyName}</span>
+                      {row.unread > 0 && (
+                        <span className="min-w-[18px] h-[18px] px-1 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center">{row.unread}</span>
+                      )}
                       {row.flaggedCount > 0 && (
                         <span className="text-[10px] font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-full px-1.5 py-0.5">⚠ {row.flaggedCount}</span>
                       )}

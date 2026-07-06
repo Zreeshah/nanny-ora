@@ -203,3 +203,7 @@ export function sendNewMessageNotification(toName: string, toEmail: string, from
     <p style="color:#5B6D80;font-size:13px">For your safety, keep the conversation on NannyOra — avoid sharing personal contact details.</p>`;
   return sendEmail({ to: toEmail, from: FROM_ADMIN, subject: `New message from ${fromName} — NannyOra`, html: emailShell("You have a new message", body, { label: "Open conversation", href: threadUrl }) });
 }
+
+export function notifyAdminJobApplication(nannyName: string, jobTitle: string): Promise<boolean> {
+  return notifyAdmin("New job application", "New job application", `<p><strong>${escapeHtml(nannyName)}</strong> applied to <strong>${escapeHtml(jobTitle)}</strong>.</p>`, { label: "Review jobs", href: `${SITE_URL}/admin/jobs` });
+}

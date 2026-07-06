@@ -9,6 +9,7 @@ import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { CARE_TYPES } from "@/lib/constants";
 import { getNannyDashboard } from "@/server/actions/engagement";
+import { applyToJob } from "@/server/actions/job";
 import {
   MessageCircle, Briefcase, Clock, Star, Eye, MapPin,
   CheckCircle, Shield, Award, Calendar, TrendingUp,
@@ -34,6 +35,19 @@ export default function NannyDashboard() {
   ];
   const recentEnquiries: any[] = dash?.recentEnquiries ?? [];
   const recentJobs: any[] = dash?.recentJobs ?? [];
+  const [appliedIds, setAppliedIds] = useState<Set<string>>(new Set());
+  const [applyingId, setApplyingId] = useState<string | null>(null);
+  useEffect(() => {
+    if (dash?.appliedJobIds) setAppliedIds(new Set(dash.appliedJobIds));
+  }, [dash?.appliedJobIds]);
+
+  const handleApply = async (jobId: string) => {
+    if (applyingId) return;
+    setApplyingId(jobId);
+    const res = await applyToJob(jobId);
+    setApplyingId(null);
+    if (res.success) setAppliedIds((prev) => new Set(prev).add(jobId));
+  };
   const checks: { name: string; status: string }[] = dash?.checks ?? [];
 
   return (
@@ -147,6 +161,21 @@ export default function NannyDashboard() {
                         <span className="flex items-center gap-1"><Calendar className="w-3 h-3 text-primary" />{job.daysRequired}</span>
                       </div>
                     </div>
+                    {appliedIds.has(job.id) ? (
+                      <span className="text-xs font-bold text-badge-verified flex items-center gap-1 flex-shrink-0">
+                        <CheckCircle className="w-4 h-4" aria-hidden="true" /> Applied
+                      </span>
+                    ) : (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-xs font-bold text-primary rounded-full flex-shrink-0"
+                        isLoading={applyingId === job.id}
+                        onClick={() => handleApply(job.id)}
+                      >
+                        Apply
+                      </Button>
+                    )}
                   </div>
                   <div className="flex flex-wrap gap-1 mt-2.5">
                     <Badge variant="specialist" size="sm" className="rounded-full text-[9px] font-bold">
@@ -155,7 +184,6 @@ export default function NannyDashboard() {
                   </div>
                 </div>
               ))}
-              {/* ponytail: no job-application system yet — jobs are informational; contact happens via the agency (Phase 2: apply button) */}
             </div>
           </Card>
         </div>

@@ -26,7 +26,11 @@ export default function ConversationThread({ enquiryId, backHref }: { enquiryId:
       else setLoadError(r.error || "Could not load this conversation.");
     });
 
-  useEffect(() => { load(); }, [enquiryId]);
+  useEffect(() => {
+    load();
+    const t = setInterval(load, 15000); // lazy realtime: poll while the thread is open
+    return () => clearInterval(t);
+  }, [enquiryId]);
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [convo?.messages.length]);
 
   const handleSend = async () => {

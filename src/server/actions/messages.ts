@@ -51,8 +51,17 @@ export async function getConversation(enquiryId: string): Promise<ActionResult> 
       take: 200,
     });
 
+    if (myRole !== "ADMIN") {
+      // best-effort read marker — powers unread counts
+      await prisma.conversationRead.upsert({
+        where: { enquiryId_userId: { enquiryId, userId } },
+        create: { enquiryId, userId },
+        update: { lastReadAt: new Date() },
+      }).catch(() => {});
+    }
+
     const messages = [
-      { id: `seed-${enquiry.id}`, senderId: enquiry.parentId, body: enquiry.message, flagged: false, createdAt: enquiry.createdAt },
+      { id: `seed-${enquiry.id}`, senderId: enquiry.parentId, body: enquiry.message, flagged: enquiry.flagged, createdAt: enquiry.createdAt },
       ...replies.map((m) => ({ id: m.id, senderId: m.senderId, body: m.body, flagged: m.flagged, createdAt: m.createdAt })),
     ];
 
@@ -133,8 +142,9 @@ export async function getMyConversations(): Promise<ActionResult> {
       include: {
         parent: { select: { name: true } },
         nanny: { include: { user: { select: { name: true } } } },
-        messages: { orderBy: { createdAt: "desc" }, take: 1 },
-        _count: role === "ADMIN" ? { select: { messages: { where: { flagged: true } } } } : undefined,
+        messages: { orderBy: { createdAt: "desc" }, take: 20, select: { body: true, senderId: true, createdAt: true } },
+        reads: role === "ADMIN" ? false : { where: { userId } },
+        _count: { select: { messages: { where: { flagged: true } } } },
       },
       orderBy: { updatedAt: "desc" },
       take: 50,
@@ -144,18 +154,57 @@ export async function getMyConversations(): Promise<ActionResult> {
       success: true,
       data: enquiries.map((e) => {
         const last = e.messages[0];
+        const lastRead = (e as any).reads?.[0]?.lastReadAt ? new Date((e as any).reads[0].lastReadAt).getTime() : 0;
+        // unread = other-party messages newer than my read marker (+ the seed for the nanny)
+        let unread = 0;
+        if (role !== "ADMIN") {
+          unread = e.messages.filter((m) => m.senderId !== userId && new Date(m.createdAt).getTime() > lastRead).length;
+          if (role === "NANNY" && new Date(e.createdAt).getTime() > lastRead) unread += 1;
+        }
         return {
           enquiryId: e.id,
           otherPartyName: role === "NANNY" ? e.parent.name : role === "PARENT" ? e.nanny.user.name : `${e.parent.name} → ${e.nanny.user.name}`,
           lastMessage: last ? last.body : e.message,
           lastAt: last ? last.createdAt : e.createdAt,
           status: e.status,
-          flaggedCount: (e as any)._count?.messages ?? 0,
+          unread,
+          flaggedCount: ((e as any)._count?.messages ?? 0) + (e.flagged ? 1 : 0),
         };
       }),
     };
   } catch (error) {
     console.error("getMyConversations error:", error);
     return { success: false, error: "Failed to load conversations." };
+  }
+}
+
+/** Total unread messages for the current user — powers the nav badge. Cheap zeros on failure. */
+export async function getUnreadTotal(): Promise<ActionResult> {
+  try {
+    const session = await auth();
+    const userId = session?.user?.id;
+    const role = (session?.user as any)?.role;
+    if (!userId || role === "ADMIN") return { success: true, data: { unread: 0 } };
+
+    const where = role === "NANNY" ? { nanny: { userId } } : { parentId: userId };
+    const enquiries = await prisma.enquiry.findMany({
+      where,
+      select: {
+        createdAt: true,
+        messages: { select: { senderId: true, createdAt: true }, orderBy: { createdAt: "desc" }, take: 20 },
+        reads: { where: { userId }, select: { lastReadAt: true } },
+      },
+      take: 50,
+    });
+    let unread = 0;
+    for (const e of enquiries) {
+      const lastRead = e.reads[0]?.lastReadAt?.getTime() ?? 0;
+      unread += e.messages.filter((m) => m.senderId !== userId && m.createdAt.getTime() > lastRead).length;
+      if (role === "NANNY" && e.createdAt.getTime() > lastRead) unread += 1;
+    }
+    return { success: true, data: { unread } };
+  } catch (error) {
+    console.error("getUnreadTotal error:", error);
+    return { success: true, data: { unread: 0 } };
   }
 }

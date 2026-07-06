@@ -116,7 +116,7 @@ export async function getNannyDashboard(): Promise<ActionResult> {
     const profile = await prisma.nannyProfile.findUnique({ where: { userId } });
     if (!profile) return { success: true, data: empty };
 
-    const [profileViews, newEnquiries, recentEnquiries, matchingJobs, recentJobs, reviews] = await Promise.all([
+    const [profileViews, newEnquiries, recentEnquiries, matchingJobs, recentJobs, reviews, myApplications] = await Promise.all([
       prisma.profileView.count({ where: { nannyId: profile.id } }),
       prisma.enquiry.count({ where: { nannyId: profile.id, status: "NEW" } }),
       prisma.enquiry.findMany({
@@ -133,6 +133,7 @@ export async function getNannyDashboard(): Promise<ActionResult> {
         take: 3,
       }),
       prisma.review.findMany({ where: { nannyId: profile.id }, select: { rating: true } }),
+      prisma.jobApplication.findMany({ where: { nannyProfileId: profile.id }, select: { jobId: true }, take: 100 }),
     ]);
 
     const verifiedChecks = CHECK_FIELDS.filter((f) => (profile as any)[f] === "VERIFIED").length;
@@ -152,6 +153,7 @@ export async function getNannyDashboard(): Promise<ActionResult> {
         })),
         matchingJobs,
         recentJobs,
+        appliedJobIds: myApplications.map((a) => a.jobId),
         // the nanny's real 7-step vetting statuses, in official order
         checks: SAFETY_CHECKS.map((c) => ({ name: c.title, status: (profile as any)[c.key] || "NOT_STARTED" })),
         availabilitySummary: profile.availabilitySummary,
@@ -176,7 +178,7 @@ export async function getParentDashboard(): Promise<ActionResult> {
     const userId = session?.user?.id;
     if (!userId) return { success: true, data: empty };
 
-    const [enquiriesSent, activeJobs, viewed, favourites, recentEnquiries, jobs, profile, recommended] = await Promise.all([
+    const [enquiriesSent, activeJobs, viewed, favourites, recentEnquiries, jobs, myReviews, profile, recommended] = await Promise.all([
       prisma.enquiry.count({ where: { parentId: userId } }),
       prisma.jobPost.count({ where: { parentId: userId, status: { in: ["PENDING", "APPROVED"] } } }),
       prisma.profileView.findMany({ where: { viewerId: userId }, distinct: ["nannyId"], select: { nannyId: true } }),
@@ -194,10 +196,14 @@ export async function getParentDashboard(): Promise<ActionResult> {
       }),
       prisma.jobPost.findMany({
         where: { parentId: userId },
-        select: { id: true, title: true, careType: true, daysRequired: true, hourlyBudget: true, status: true },
+        select: {
+          id: true, title: true, careType: true, daysRequired: true, hourlyBudget: true, status: true,
+          applications: { select: { nanny: { select: { id: true, user: { select: { name: true } } } } }, take: 10 },
+        },
         orderBy: { createdAt: "desc" },
         take: 5,
       }),
+      prisma.review.findMany({ where: { parentId: userId }, select: { nannyId: true, rating: true } }),
       prisma.parentProfile.findUnique({ where: { userId } }),
       prisma.nannyProfile.findMany({
         where: { adminStatus: { in: ["APPROVED", "VERIFIED", "SPECIALIST"] } },
@@ -213,7 +219,11 @@ export async function getParentDashboard(): Promise<ActionResult> {
         enquiriesSent,
         activeJobs,
         carersViewed: viewed.length,
-        jobs,
+        jobs: jobs.map((j) => ({
+          ...j,
+          applications: undefined,
+          applicants: j.applications.map((a) => ({ nannyId: a.nanny.id, name: a.nanny.user.name })),
+        })),
         profile: profile
           ? {
               suburb: profile.suburb,
@@ -243,48 +253,19 @@ export async function getParentDashboard(): Promise<ActionResult> {
         })),
         recentEnquiries: recentEnquiries.map((e) => ({
           id: e.id,
+          nannyId: e.nannyId,
           nannyName: e.nanny.user.name,
           message: e.message,
           status: e.status,
           createdAt: e.createdAt,
+          // parent can rate once care is underway/finished; myRating shows an existing review
+          reviewable: ["MATCHED", "CLOSED"].includes(e.status),
+          myRating: myReviews.find((r) => r.nannyId === e.nannyId)?.rating ?? null,
         })),
       },
     };
   } catch (error) {
     console.error("getParentDashboard error:", error);
     return { success: true, data: empty };
-  }
-}
-
-/** All enquiries received by the current nanny (for /dashboard/nanny/enquiries). */
-export async function getMyNannyEnquiries(): Promise<ActionResult> {
-  try {
-    const session = await auth();
-    const userId = session?.user?.id;
-    if (!userId || (session.user as any).role !== "NANNY") {
-      return { success: false, error: "Unauthorised" };
-    }
-    // single round-trip: filter by relation instead of fetching the profile first
-    const enquiries = await prisma.enquiry.findMany({
-      where: { nanny: { userId } },
-      include: { parent: { select: { name: true, email: true } } },
-      orderBy: { createdAt: "desc" },
-      take: 50,
-    });
-
-    return {
-      success: true,
-      data: enquiries.map((e) => ({
-        id: e.id,
-        name: e.parent.name,
-        email: e.parent.email,
-        message: e.message,
-        status: e.status,
-        createdAt: e.createdAt,
-      })),
-    };
-  } catch (error) {
-    console.error("getMyNannyEnquiries error:", error);
-    return { success: false, error: "Failed to load enquiries." };
   }
 }

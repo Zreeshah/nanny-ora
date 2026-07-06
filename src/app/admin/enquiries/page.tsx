@@ -10,14 +10,15 @@ import { formatDate, getInitials } from "@/lib/utils";
 import { MessageCircle, ArrowRight } from "lucide-react";
 import { getEnquiries, updateEnquiryStatus } from "@/server/actions/enquiry";
 
-type EnquiryRow = { id: string; parentName: string; nannyName: string; message: string; status: string; createdAt: Date };
+type EnquiryRow = { id: string; parentName: string; nannyName: string; message: string; status: string; createdAt: Date; flaggedCount: number; contactEmail: string | null; contactPhone: string | null };
 
+const sampleDefaults = { flaggedCount: 0, contactEmail: null, contactPhone: null };
 const sampleEnquiries: EnquiryRow[] = [
-  { id: "enq-001", parentName: "Sarah K.", nannyName: "Emma Thompson", message: "Hi Emma, we're looking for a sensory-aware nanny for our 4-year-old. Would love to chat!", status: "NEW", createdAt: new Date("2025-01-12") },
-  { id: "enq-002", parentName: "James W.", nannyName: "Sarah Mitchell", message: "Hi Sarah, would you be available for after-school care in Remuera 3 days a week?", status: "CONTACTED", createdAt: new Date("2025-01-10") },
-  { id: "enq-003", parentName: "Lisa M.", nannyName: "Aroha Williams", message: "We need a nanny with early intervention experience for our son. Are you available?", status: "NEW", createdAt: new Date("2025-01-11") },
-  { id: "enq-004", parentName: "Kate R.", nannyName: "Mia Johnson", message: "Hi Mia, looking for a weekend babysitter in Devonport. Interested?", status: "MATCHED", createdAt: new Date("2025-01-08") },
-  { id: "enq-005", parentName: "Tom S.", nannyName: "Grace Taylor", message: "We need a specialist nanny for our daughter with ASD. Your profile looks perfect.", status: "NEW", createdAt: new Date("2025-01-13") },
+  { id: "enq-001", ...sampleDefaults, parentName: "Sarah K.", nannyName: "Emma Thompson", message: "Hi Emma, we're looking for a sensory-aware nanny for our 4-year-old. Would love to chat!", status: "NEW", createdAt: new Date("2025-01-12") },
+  { id: "enq-002", ...sampleDefaults, parentName: "James W.", nannyName: "Sarah Mitchell", message: "Hi Sarah, would you be available for after-school care in Remuera 3 days a week?", status: "CONTACTED", createdAt: new Date("2025-01-10") },
+  { id: "enq-003", ...sampleDefaults, parentName: "Lisa M.", nannyName: "Aroha Williams", message: "We need a nanny with early intervention experience for our son. Are you available?", status: "NEW", createdAt: new Date("2025-01-11") },
+  { id: "enq-004", ...sampleDefaults, parentName: "Kate R.", nannyName: "Mia Johnson", message: "Hi Mia, looking for a weekend babysitter in Devonport. Interested?", status: "MATCHED", createdAt: new Date("2025-01-08") },
+  { id: "enq-005", ...sampleDefaults, parentName: "Tom S.", nannyName: "Grace Taylor", message: "We need a specialist nanny for our daughter with ASD. Your profile looks perfect.", status: "NEW", createdAt: new Date("2025-01-13") },
 ];
 
 const statusColors: Record<string, string> = {
@@ -45,6 +46,9 @@ export default function AdminEnquiriesPage() {
               message: e.message,
               status: e.status,
               createdAt: new Date(e.createdAt),
+              flaggedCount: (e._count?.messages ?? 0) + (e.flagged ? 1 : 0),
+              contactEmail: e.contactEmail ?? null,
+              contactPhone: e.contactPhone ?? null,
             }))
           );
         }
@@ -110,9 +114,19 @@ export default function AdminEnquiriesPage() {
                     View conversation →
                   </Link>
                 </div>
+                {(enquiry.contactEmail || enquiry.contactPhone) && (
+                  <p className="text-[11px] text-muted-foreground mt-1.5">
+                    Contact (agency only): {[enquiry.contactEmail, enquiry.contactPhone].filter(Boolean).join(" · ")}
+                  </p>
+                )}
               </div>
 
               <div className="flex items-center gap-2 flex-shrink-0">
+                {enquiry.flaggedCount > 0 && (
+                  <span className="text-[10px] font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5" title="Messages containing contact details">
+                    ⚠ {enquiry.flaggedCount} flagged
+                  </span>
+                )}
                 <Badge className={`${statusColors[enquiry.status] || ""} rounded-full`} size="sm">
                   {enquiry.status}
                 </Badge>

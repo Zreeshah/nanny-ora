@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth/auth";
 import { jobPostSchema, type JobPostInput } from "@/lib/validations";
-import { notifyAdminNewJob, sendJobStatusUpdate } from "@/lib/email";
+import { notifyAdminNewJob, sendJobStatusUpdate, notifyAdminJobApplication } from "@/lib/email";
 import type { ActionResult } from "./auth";
 
 export async function createJobPost(input: JobPostInput): Promise<ActionResult> {
@@ -101,6 +101,7 @@ export async function getJobPosts(filters?: {
         parent: {
           select: { name: true, email: true },
         },
+        applications: { include: { nanny: { include: { user: { select: { name: true } } } } }, take: 20 },
       },
       orderBy: { createdAt: "desc" },
       take: 50,
@@ -110,5 +111,33 @@ export async function getJobPosts(filters?: {
   } catch (error) {
     console.error("Get jobs error:", error);
     return { success: false, error: "Failed to load jobs." };
+  }
+}
+
+/** One-click nanny application to an approved job. Idempotent per (job, nanny). */
+export async function applyToJob(jobId: string): Promise<ActionResult> {
+  try {
+    const session = await auth();
+    const userId = session?.user?.id;
+    if (!userId || (session.user as any).role !== "NANNY") {
+      return { success: false, error: "Only nannies can apply to jobs." };
+    }
+    const profile = await prisma.nannyProfile.findUnique({ where: { userId }, select: { id: true } });
+    if (!profile) return { success: false, error: "Complete your profile first." };
+
+    const job = await prisma.jobPost.findUnique({ where: { id: jobId }, select: { id: true, title: true, status: true } });
+    if (!job || job.status !== "APPROVED") return { success: false, error: "This job is not open for applications." };
+
+    const existing = await prisma.jobApplication.findUnique({
+      where: { jobId_nannyProfileId: { jobId, nannyProfileId: profile.id } },
+    });
+    if (existing) return { success: true, data: { applied: true } }; // idempotent
+
+    await prisma.jobApplication.create({ data: { jobId, nannyProfileId: profile.id } });
+    await notifyAdminJobApplication(session?.user?.name || "A nanny", job.title);
+    return { success: true, data: { applied: true } };
+  } catch (error) {
+    console.error("applyToJob error:", error);
+    return { success: false, error: "Something went wrong. Please try again." };
   }
 }

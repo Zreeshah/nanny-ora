@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge, VerificationBadge, SpecialistTag } from "@/components/ui/Badge";
 import { sampleNannies } from "@/lib/data/sample-nannies";
-import { getPublicNannyById } from "@/lib/data/nannies";
+import { getPublicNannyById, getNannyReviews } from "@/lib/data/nannies";
 import { formatRate, getInitials } from "@/lib/utils";
 import { CARE_TYPES, LANGUAGE_TAGS } from "@/lib/constants";
 import EnquiryForm from "./EnquiryForm";
@@ -42,6 +42,7 @@ export default async function NannyProfilePage({
   const { id } = await params;
   const nanny = await getPublicNannyById(id);
   if (!nanny) notFound();
+  const { reviews, avg } = await getNannyReviews(nanny.id);
 
   const careLabels = nanny.careTypes
     .map((ct) => CARE_TYPES.find((c) => c.value === ct)?.label)
@@ -203,19 +204,38 @@ export default async function NannyProfilePage({
             </div>
           </Card>
 
-          {/* Reviews Placeholder */}
+          {/* Parent Reviews */}
           <Card>
-            <h2 className="font-heading text-xl text-foreground mb-4">Parent Reviews</h2>
-            <div className="text-center py-8">
-              <div className="flex justify-center gap-1 mb-3">
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} className="w-5 h-5 text-amber-400 fill-amber-400" aria-hidden="true" />
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-heading text-xl text-foreground">Parent Reviews</h2>
+              {reviews.length > 0 && (
+                <span className="flex items-center gap-1 text-sm font-bold text-foreground">
+                  <Star className="w-4 h-4 text-amber-400 fill-amber-400" aria-hidden="true" />
+                  {avg} · {reviews.length} review{reviews.length > 1 ? "s" : ""}
+                </span>
+              )}
+            </div>
+            {reviews.length === 0 ? (
+              <p className="text-muted-foreground text-sm text-center py-6">
+                No reviews yet — families can leave one after a confirmed placement.
+              </p>
+            ) : (
+              <div className="space-y-4">
+                {reviews.map((r) => (
+                  <div key={r.id} className="p-4 rounded-2xl border border-border/30 bg-secondary/10">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="font-semibold text-foreground text-sm">{r.reviewerFirstName}</span>
+                      <span className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map((n) => (
+                          <Star key={n} className={`w-3.5 h-3.5 ${n <= r.rating ? "text-amber-400 fill-amber-400" : "text-border"}`} aria-hidden="true" />
+                        ))}
+                      </span>
+                    </div>
+                    {r.comment && <p className="text-sm text-muted-foreground leading-relaxed">{r.comment}</p>}
+                  </div>
                 ))}
               </div>
-              <p className="text-muted-foreground text-sm">
-                Reviews will be available soon. Check back later!
-              </p>
-            </div>
+            )}
           </Card>
         </div>
 
