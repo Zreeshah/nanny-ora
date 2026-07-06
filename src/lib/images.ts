@@ -8,7 +8,7 @@ export type SiteImage = { src: string; alt: string; tags: string[] };
 export const SITE_IMAGES: SiteImage[] = [
   // Dedicated banner images (unique tag = deterministic pick).
   { src: "/images/find-a-nanny-band.jpeg", alt: "Happy child playing at an Auckland beach", tags: ["find-a-nanny-band"] },
-  { src: "/images/how-it-works-band.jpeg", alt: "Children enjoying sensory foam play outdoors with their nanny", tags: ["how-it-works-band"] },
+  { src: "/images/how-it-works-band.jpeg", alt: "Babies playing happily in front of a mirror during home-based care", tags: ["how-it-works-band"] },
   { src: "/images/adhd-childcare-support.jpeg", alt: "Nanny supporting a child with ADHD during calm play", tags: ["sensory", "neurodiverse", "specialist", "care", "adhd"] },
   { src: "/images/sensory-aware-nanny.jpeg", alt: "Sensory-aware nanny engaging a child in a calm activity", tags: ["sensory", "neurodiverse", "specialist", "care"] },
   { src: "/images/ece-nanny-jobs.jpeg", alt: "Early childhood educator working with young children", tags: ["ece", "teacher", "career", "jobs", "specialist"] },

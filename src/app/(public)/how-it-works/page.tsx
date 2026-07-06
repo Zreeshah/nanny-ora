@@ -35,7 +35,7 @@ export default function HowItWorksPage() {
       <ImageBand
         tags={["how-it-works-band"]}
         seed="how-it-works"
-        aspect="aspect-[16/7]"
+        aspect="aspect-[16/9]"
         priority
         className="mb-20"
       />
