@@ -34,6 +34,7 @@ This document is the authoritative reference for the NannyOra codebase — archi
 | Icons | lucide-react | ^1.18.0 |
 | Utilities | clsx + tailwind-merge | — |
 | Email | Resend | ^6.16.0 |
+| SMS | Twilio (plain REST, no SDK) | — |
 | Server-only guard | `server-only` | ^0.0.1 |
 
 ### Build Scripts
@@ -44,7 +45,7 @@ npm run start     → next start
 npm run lint      → eslint
 npm run db:push   → prisma db push --skip-generate
 npm run db:seed   → tsx prisma/seed.ts
-npm test          → tsx src/lib/email/escape.test.ts src/lib/images.test.ts
+npm test          → tsx src/lib/email/escape.test.ts src/lib/images.test.ts src/lib/moderation.test.ts src/lib/sms/normalise.test.ts
 postinstall       → prisma generate
 ```
 
@@ -82,6 +83,7 @@ Set on Vercel project `nanny-ora` for the Production environment:
 - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
 - `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_FROM_VERIFICATION`, `EMAIL_FROM_ADMIN`, `ADMIN_EMAIL`
 - `ADMIN_BACKUP_EMAIL`, `ADMIN_BACKUP_PASSWORD`
+- `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM`
 
 > **`AUTH_SECRET` is required** — `auth.ts` throws on startup if unset. No hardcoded fallback.
 
@@ -254,9 +256,11 @@ nannyora/
 | `phone` | String? | |
 | `role` | String | Default "PARENT" — PARENT/NANNY/ADMIN |
 | `image` | String? | |
+| `resetTokenHash` | String? | SHA-256 hash of password reset token (raw token never stored) |
+| `resetTokenExpiry` | DateTime? | 1-hour TTL; cleared on use |
 | `createdAt` / `updatedAt` | DateTime | |
 
-Relations: `parentProfile?`, `nannyProfile?`, `jobPosts[]`, `enquiriesSent[]`, `reviewsGiven[]`, `favourites[]` (FavouritesByParent), `profileViews[]` (ViewsByUser)
+Relations: `parentProfile?`, `nannyProfile?`, `jobPosts[]`, `enquiriesSent[]`, `reviewsGiven[]`, `favourites[]` (FavouritesByParent), `profileViews[]` (ViewsByUser), `messagesSent[]` (MessagesSent), `conversationReads[]` (ConversationReads)
 
 #### `ParentProfile` → table `parent_profiles`
 | Field | Type | Notes |
@@ -285,10 +289,10 @@ Relations: `parentProfile?`, `nannyProfile?`, `jobPosts[]`, `enquiriesSent[]`, `
 | Referee data | `refereeData` (JSON string of `{name, phone, email, relationship}[]`) | |
 | Verification | `verificationLevel` (default "LISTED") | LISTED/VERIFIED/PREMIUM_VETTED/SPECIALIST |
 | Admin status | `adminStatus` (default "SUBMITTED") | DRAFT/SUBMITTED/UNDER_REVIEW/APPROVED/VERIFIED/SPECIALIST/SUSPENDED/ARCHIVED |
-| **7 Safety checks** | `identityVerified`, `workHistoryVerified`, `proRegVerified`, `refereeCheckStatus`, `policeVetStatus`, `interviewStatus`, `riskAssessmentStatus` | Each: NOT_STARTED/SUBMITTED/VERIFIED/REJECTED |
+| **7 Safety checks** | `identityVerified`, `workHistoryVerified`, `proRegVerified`, `refereeCheckStatus`, `policeVetStatus`, `interviewStatus`, `riskAssessmentStatus` | Each: NOT_STARTED/SUBMITTED/VERIFIED/REJECTED/**NOT_APPLICABLE** (NOT_APPLICABLE only offered for `proRegVerified`) |
 | **Police vet auth** | `policeVetAuthorized` (Boolean), `policeVetAuthorizedAt` (DateTime?) | Children's Act 2014 consent |
 | Timestamps | `createdAt`, `updatedAt` | |
-| Engagement | `favouritedBy` (Favourite[]), `views` (ProfileView[]) | Relations |
+| Engagement | `favouritedBy` (Favourite[]), `views` (ProfileView[]), `jobApplications[]` | Relations |
 
 > **JSON-as-string pattern:** Arrays (careTypes, availability, specialistTags, areasCovered, refereeData, languages, etc.) are stored as `JSON.stringify()` strings in `String` columns, not native Postgres arrays. Read/write code must `JSON.parse()` / `JSON.stringify()`.
 
