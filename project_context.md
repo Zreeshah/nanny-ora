@@ -165,6 +165,9 @@ nannyora/
 │   │   ├── layout.tsx         # Root layout (fonts, metadata, Providers wrapper)
 │   │   ├── globals.css        # Tailwind v4 theme + design system
 │   │   ├── login/page.tsx     # Custom NextAuth sign-in form (CLIENT)
+│   │   ├── forgot-password/page.tsx  # Password reset request form (CLIENT)
+│   │   ├── reset-password/page.tsx   # Set new password with token (CLIENT)
+│   │   ├── icon.png, apple-icon.png, favicon.ico  # Brand favicon (tan heart on navy)
 │   │   ├── api/auth/[...nextauth]/route.ts  # Auth handlers (3 lines)
 │   │   ├── (public)/          # Public marketing + listing pages
 │   │   │   ├── layout.tsx     # Shared public layout
@@ -193,14 +196,18 @@ nannyora/
 │   │   │   ├── page.tsx       # Warm operations-center dashboard with KPIs, funnel, activity feed (SERVER, 346 lines)
 │   │   │   ├── nannies/page.tsx  # Nanny moderation — warm card design (CLIENT, 519 lines)
 │   │   │   ├── jobs/page.tsx     # Job management — warm card design (CLIENT)
-│   │   │   └── enquiries/page.tsx # Enquiry management — parent→nanny flow (CLIENT)
+│   │   │   ├── enquiries/page.tsx # Enquiry inbox — parent→nanny flow, flagged badges (CLIENT)
+│   │   │   └── enquiries/[id]/page.tsx # Admin conversation viewer (CLIENT, ConversationThread wrapper)
 │   │   └── dashboard/         # User dashboards (role-guarded)
-│   │       ├── layout.tsx     # Shared dashboard shell (CLIENT)
-│   │       ├── nanny/page.tsx # Nanny dashboard — live stats from getNannyDashboard (CLIENT, 267 lines)
-│   │       ├── nanny/enquiries/page.tsx    # Nanny enquiries inbox (CLIENT, 84 lines)
+│   │       ├── layout.tsx     # Shared dashboard shell — unread message badge in nav (CLIENT)
+│   │       ├── nanny/page.tsx # Nanny dashboard — live stats from getNannyDashboard (CLIENT)
+│   │       ├── nanny/enquiries/page.tsx    # Nanny message inbox (ConversationList wrapper)
+│   │       ├── nanny/enquiries/[id]/page.tsx # Nanny conversation thread (ConversationThread wrapper)
 │   │       ├── nanny/profile/page.tsx      # Profile editor wrapper (SERVER, 133 lines)
 │   │       ├── nanny/profile/ProfileForm.tsx # Profile editor form (CLIENT, 816 lines)
-│   │       ├── parent/page.tsx # Parent dashboard — live stats from getParentDashboard (CLIENT, 363 lines)
+│   │       ├── parent/page.tsx # Parent dashboard — live stats from getParentDashboard (CLIENT)
+│   │       ├── parent/messages/page.tsx    # Parent message inbox (ConversationList wrapper)
+│   │       ├── parent/messages/[id]/page.tsx # Parent conversation thread (ConversationThread wrapper)
 │   │       └── parent/profile/page.tsx # Parent profile editor (CLIENT, 142 lines)
 │   ├── components/
 │   │   ├── providers/Providers.tsx   # SessionProvider + ToastProvider
@@ -208,6 +215,7 @@ nannyora/
 │   │   ├── cards/NannyCard.tsx       # Nanny listing card
 │   │   ├── cards/FavouriteButton.tsx # Optimistic heart toggle (PARENT only)
 │   │   ├── home/                     # InteractiveHero, BentoFeatures, MarqueeTestimonials, StatsTicker, TrustStrip, TrustStandard, SpecialistExpertise, DayInLife, LifestyleGallery
+│   │   ├── messaging/                # ConversationList (inbox), ConversationThread (chat view)
 │   │   └── ui/                       # Button, Input, Select, Textarea, Card, Badge (+VerificationBadge), Accordion, Toast (+useToast hook), Reveal, ShinyText, BorderBeam, ImageBand, TagInput
 │   ├── lib/
 │   │   ├── utils.ts                  # cn(), formatRate(), getInitials()
@@ -216,17 +224,22 @@ nannyora/
 │   │   ├── auth/auth.ts             # NextAuth config
 │   │   ├── db/prisma.ts             # Prisma client singleton
 │   │   ├── supabase/server.ts       # Server Supabase client (service role key) — browser client deleted
-│   │   ├── email/                    # Resend lifecycle email system (sendEmail + 10 lifecycle templates + escapeHtml + emailShell)
+│   │   ├── email/                    # Resend lifecycle email system (sendEmail + 13 lifecycle templates + escapeHtml + emailShell)
+│   │   ├── sms/                      # Twilio SMS via plain REST (sendSms) + NZ phone normaliser (toE164NZ)
+│   │   ├── moderation.ts            # detectContactInfo() — flags email/phone in messages (de-obfuscates "at"/"dot"/spelled digits)
 │   │   ├── images.ts                # Tagged local image library + pickImages() deterministic seeded picker
 │   │   ├── data/sample-nannies.ts   # Dev sample data (10 mock nannies + filterNannies + NannyFilters type)
-│   │   └── data/nannies.ts          # DB-backed public nanny directory (getPublicNannies, getPublicNannyById) — falls back to sample data
+│   │   └── data/nannies.ts          # DB-backed public nanny directory (getPublicNannies, getPublicNannyById, getNannyReviews) — falls back to sample data
 │   └── server/actions/              # Server Actions (all use "use server")
 │       ├── auth.ts                  # Exports ActionResult type only (registerUser deleted; signups via registerParent/applyAsNanny)
-│       ├── nanny.ts                 # applyAsNanny, updateNannyProfile, uploadNannyDocument, deleteNannyDocument, getNannyDocuments, uploadProfilePhoto
+│       ├── nanny.ts                 # applyAsNanny, updateNannyProfile, uploadNannyDocument, deleteNannyDocument, getNannyDocuments, uploadProfilePhoto, setProRegApplicability
 │       ├── parent.ts                # registerParent, updateParentProfile, getMyParentProfile
-│       ├── job.ts                   # createJobPost, updateJobStatus, getJobPosts
+│       ├── job.ts                   # createJobPost, updateJobStatus, getJobPosts, applyToJob
 │       ├── enquiry.ts               # createEnquiry, updateEnquiryStatus, getEnquiries
 │       ├── engagement.ts            # toggleFavourite, getFavouriteIds, recordProfileView, getNannyDashboard, getParentDashboard, getMyNannyEnquiries
+│       ├── messages.ts              # getConversation, sendMessage, getMyConversations, getUnreadTotal
+│       ├── password.ts              # requestPasswordReset, resetPassword
+│       ├── reviews.ts               # createReview
 │       └── admin.ts                 # updateNannyStatus, updateVerificationLevel, reviewDocument, updateSafetyCheckStatus, getAdminStats, getAdminNannies, getDocumentDownloadUrl
 ├── next.config.ts                   # serverActions.bodySizeLimit: 10mb, images, turbopack
 ├── postcss.config.mjs              # @tailwindcss/postcss (Tailwind v4)
@@ -319,20 +332,63 @@ Relations: `parentProfile?`, `nannyProfile?`, `jobPosts[]`, `enquiriesSent[]`, `
 | `specialistSupport`, `description` | String | |
 | `status` | String | Default "PENDING" — PENDING/APPROVED/CLOSED/REJECTED |
 | `contactEmail`, `contactPhone?` | String | |
+| `applications` | JobApplication[] | Relation |
 
-#### `Enquiry` → table `enquiries`
+#### `Enquiry` → table `enquiries` (now a conversation thread, not a one-shot message)
 | Field | Type | Notes |
 |---|---|---|
 | `id`, `parentId` (FK→User), `nannyId` (FK→NannyProfile) | String | |
-| `message` | String | |
+| `message` | String | Seed message from parent (first message in thread) |
+| `flagged` | Boolean | Default false — seed message contains contact info (email/phone) |
+| `contactEmail` | String? | Admin-only visibility — never exposed to nanny |
+| `contactPhone` | String? | Admin-only visibility |
 | `status` | String | Default "NEW" — NEW/CONTACTED/MATCHED/CLOSED |
+| `messages` | Message[] | Thread replies |
+| `reads` | ConversationRead[] | Per-user read markers (unread counts) |
+| `createdAt`, `updatedAt` | DateTime | `updatedAt` bumped on each new message → "last activity" |
 
-#### `Review` → table `reviews` (placeholder for Phase 2)
+#### `Message` → table `messages` (NEW — two-way chat replies within enquiry threads)
 | Field | Type | Notes |
 |---|---|---|
-| `id`, `parentId` (FK→User), `nannyId` (FK→NannyProfile) | String | |
-| `rating` | Int | Default 5 |
-| `comment` | String | |
+| `id` | String (cuid) | PK |
+| `enquiryId` | String | FK→Enquiry (cascade) |
+| `senderId` | String | FK→User (MessagesSent, cascade) |
+| `body` | String | Max 2000 chars |
+| `flagged` | Boolean | Default false — contains contact info (email/phone) |
+| `createdAt` | DateTime | |
+
+`@@index([enquiryId])`.
+
+#### `ConversationRead` → table `conversation_reads` (NEW — per-user read markers)
+| Field | Type | Notes |
+|---|---|---|
+| `id` | String (cuid) | PK |
+| `enquiryId` | String | FK→Enquiry (cascade) |
+| `userId` | String | FK→User (ConversationReads, cascade) |
+| `lastReadAt` | DateTime | Default now() — updated when user opens the conversation |
+
+`@@unique([enquiryId, userId])`.
+
+#### `JobApplication` → table `job_applications` (NEW — nanny one-click applications to approved jobs)
+| Field | Type | Notes |
+|---|---|---|
+| `id` | String (cuid) | PK |
+| `jobId` | String | FK→JobPost (cascade) |
+| `nannyProfileId` | String | FK→NannyProfile (cascade) |
+| `status` | String | Default "PENDING" — PENDING/ACCEPTED/DECLINED (admin-managed) |
+| `createdAt` | DateTime | |
+
+`@@unique([jobId, nannyProfileId])` — one application per nanny per job.
+
+#### `Review` → table `reviews` (now active — was placeholder for Phase 2)
+| Field | Type | Notes |
+|---|---|---|
+| `id`, `parentId` (FK→User "ReviewsGiven"), `nannyId` (FK→NannyProfile "ReviewsReceived") | String | |
+| `rating` | Int | 1–5 (default 5) |
+| `comment` | String | Max 1000 chars |
+| `createdAt` | DateTime | |
+
+`@@unique([parentId, nannyId])` — one review per parent per nanny (upsert updates existing). Gated on having an enquiry with that nanny in MATCHED or CLOSED status.
 
 #### `SkillTag` → table `skill_tags`
 | Field | Type | Notes |
@@ -424,6 +480,7 @@ Exports only the `ActionResult` type. `registerUser` was deleted — signups now
 | `deleteNannyDocument(documentId)` | NANNY | Verifies ownership, deletes PENDING docs only (DB record, not Storage file) |
 | `getNannyDocuments()` | NANNY | Returns all documents for logged-in nanny |
 | `uploadProfilePhoto(file)` | NANNY | Uploads/replaces profile photo to public `nanny-photos` bucket. Validates type (JPG/PNG/WebP) + 5MB max. Cache-bust on replace |
+| `setProRegApplicability(notApplicable)` | NANNY | Toggles `proRegVerified` between NOT_STARTED and NOT_APPLICABLE (only; never clobbers submitted/verified) |
 
 ### Parent (`src/server/actions/parent.ts`)
 | Function | Auth | Description |
@@ -437,14 +494,15 @@ Exports only the `ActionResult` type. `registerUser` was deleted — signups now
 |---|---|---|
 | `createJobPost(input)` | Logged in (any role) | Creates JobPost (PENDING), emails admin |
 | `updateJobStatus(jobId, status)` | ADMIN | Updates status, emails parent |
-| `getJobPosts(filters?)` | ADMIN | Returns job posts with optional filters. `take: 50` limit. Includes parent email PII. |
+| `getJobPosts(filters?)` | ADMIN | Returns job posts with optional filters. `take: 50` limit. Includes parent email PII + applications (with nanny names, `take: 20`) |
+| `applyToJob(jobId)` | NANNY | One-click application to an APPROVED job. Idempotent per (job, nanny). Notifies admin |
 
 ### Enquiry (`src/server/actions/enquiry.ts`)
 | Function | Auth | Description |
 |---|---|---|
-| `createEnquiry(input)` | Logged in (any role) | Zod validates, creates Enquiry (status NEW), emails parent receipt + notifies admin |
+| `createEnquiry(input)` | Logged in (any role) | Zod validates, flags contact info via `detectContactInfo()`, creates Enquiry (status NEW, `flagged` field), stores `contactEmail`/`contactPhone` (admin-only), emails parent receipt + notifies admin |
 | `updateEnquiryStatus(enquiryId, status)` | ADMIN | Updates status, emails parent |
-| `getEnquiries(filters?)` | ADMIN | Returns enquiries with optional filters. `take: 50` limit. Includes parent name + email PII. |
+| `getEnquiries(filters?)` | ADMIN | Returns enquiries with optional filters. `take: 50` limit. Includes parent name + email PII + flagged message counts |
 
 ### Engagement (`src/server/actions/engagement.ts`) (NEW)
 | Function | Auth | Description |
@@ -466,6 +524,25 @@ Exports only the `ActionResult` type. `registerUser` was deleted — signups now
 | `getAdminStats()` | ADMIN | Returns dashboard counts |
 | `getAdminNannies(filters?)` | ADMIN | Returns all nanny profiles with user + documents. `take: 100` limit |
 | `getDocumentDownloadUrl(documentId)` | ADMIN | Generates 5-minute signed Storage URL |
+
+### Messages (`src/server/actions/messages.ts`) (NEW — Fiverr-style in-app chat)
+| Function | Auth | Description |
+|---|---|---|
+| `getConversation(enquiryId)` | PARENT/NANNY/ADMIN (party to enquiry) | Returns seed message + all replies (oldest first, `take: 200`). Non-admin: marks conversation as read via `ConversationRead` upsert |
+| `sendMessage(enquiryId, body)` | PARENT/NANNY (not admin) | Validates body (max 2000 chars), 2s anti-spam throttle, flags contact info via `detectContactInfo()`, creates `Message`, bumps enquiry `updatedAt`. Notifies other party: email every message + SMS throttled to 10min digest |
+| `getMyConversations()` | Logged in (role-branched) | Inbox list: last message, unread count (messages newer than `ConversationRead.lastReadAt`), flagged count. `take: 50` |
+| `getUnreadTotal()` | Logged in (not admin) | Total unread messages for nav badge. Cheap zeros on failure |
+
+### Password Reset (`src/server/actions/password.ts`) (NEW)
+| Function | Auth | Description |
+|---|---|---|
+| `requestPasswordReset(email)` | Public | Always returns success (no email enumeration). Nannies + families only (admins reset via DB). Stores SHA-256 hash of random 32-byte token, 1-hour expiry. 60s throttle on resends. Emails reset link |
+| `resetPassword(token, password)` | Public | Validates token (SHA-256 hash lookup + expiry check). Min 6-char password. Sets new bcrypt hash, clears token (single use) |
+
+### Reviews (`src/server/actions/reviews.ts`) (NEW — `Review` model now active)
+| Function | Auth | Description |
+|---|---|---|
+| `createReview(nannyProfileId, rating, comment)` | PARENT | Rates a nanny (1–5). Gated on having an enquiry in MATCHED or CLOSED status. Upsert via `@@unique([parentId, nannyId])` — re-submitting updates existing review. Max 1000-char comment |
 
 ---
 
@@ -623,6 +700,13 @@ npm run dev      # starts at http://localhost:3000
 14. **Bounded queries** — All `findMany` calls have `take` limits (50-100) to prevent LPDOS from unbounded result sets
 15. **File upload validation** — `applyAsNanny` and `uploadNannyDocument` validate file size (5MB max) + type (PDF/JPG/PNG/WebP) before uploading to Storage
 16. **View rate limiting** — `recordProfileView` has a 30s in-memory throttle per `nannyId` + nannyId existence check to prevent view count inflation
+17. **In-app messaging** — Fiverr-style two-way chat within enquiry threads. `Message` model + `ConversationRead` read markers. Contact info auto-flagged by `detectContactInfo()`. Email + SMS (throttled) notifications
+18. **Password reset flow** — SHA-256 token hash (raw token never stored), 1-hour TTL, single use. No email enumeration (always returns success). Nannies + families only (admins reset via DB)
+19. **SMS notifications** — Twilio via plain REST (no SDK), best-effort (no-ops without env vars). NZ phone normaliser (`toE164NZ`). SMS throttled to 10-min digest per conversation
+20. **Content moderation** — `detectContactInfo()` flags email/phone in messages. Handles common obfuscations ("at"/"dot", spelled digits). Admin flag review is the human backstop
+21. **Reviews** — `Review` model now active. Parents rate nannies (1–5) after MATCHED/CLOSED enquiry. Upsert via unique `[parentId, nannyId]` — re-submitting updates
+22. **Job applications** — Nannies one-click apply to APPROVED jobs via `JobApplication` model. Idempotent per (job, nanny). Admin sees applicants in job list
+23. **Backup admin fail-closed** — Emergency admin account exists only when BOTH `ADMIN_BACKUP_EMAIL` + `ADMIN_BACKUP_PASSWORD` env vars are set. No hardcoded credentials in code
 
 ---
 
@@ -633,10 +717,8 @@ npm run dev      # starts at http://localhost:3000
 - **`uploadProfilePhoto`** with extension change leaves the old file orphaned in Storage
 - **Post-commit email bug** — `applyAsNanny`, `registerParent`, `createEnquiry`, `createJobPost`, and admin status updates all `await` emails after the DB write. If email throws, client sees failure but the DB mutation already committed. Should use per-send try/catch or `Promise.allSettled`
 - **`createEnquiry` / `createJobPost`** accept any logged-in role (should be PARENT-only); `contactEmail` comes from input, not session (spoofable)
-- **View throttle is in-memory** — `recordProfileView`'s 30s throttle won't survive restarts or work across serverless instances. Upgrade to Redis/Upstash if view inflation becomes a problem
-- **`Review` model** exists in schema but is unused (placeholder for Phase 2)
+- **View throttle + message throttle + SMS throttle are in-memory** — won't survive restarts or work across serverless instances. Upgrade to Redis/Upstash if rate-limiting needs to be strict
 - **`SkillTag` model** exists in schema but is unused (specialist tags are hardcoded in constants, not DB-driven)
-- **No messaging system** — enquiries are one-shot messages, not threaded conversations
 - **No payment integration** — the pricing page is informational only
 - **`lucide-react` v1.18.0** — unusual version pin (latest is v0.x); may have API differences
 - **Lint has ~574 errors** — mostly `@typescript-eslint/no-explicit-any` on `(session.user as any).role` patterns; not blocking builds
@@ -768,3 +850,64 @@ Comprehensive read-only audit across 7 vulnerability classes, followed by fixes:
 - Set via env vars only: `ADMIN_BACKUP_EMAIL`, `ADMIN_BACKUP_PASSWORD` (Vercel prod + local `.env`)
 - No default in code — if the vars are unset, the backup account does not exist (fail closed)
 - Works without DB; all other accounts require bcrypt-verified DB lookups
+
+### Fail-Closed Backup Admin (commit `a08f8eb`)
+- Backup admin no longer has hardcoded credentials — if `ADMIN_BACKUP_EMAIL` or `ADMIN_BACKUP_PASSWORD` env vars are unset, the backup account doesn't exist at all (fail closed). No credential in code to leak.
+
+### Password Reset (commit `626d39c`)
+- **New pages:** `/forgot-password` (request form) + `/reset-password` (set new password with token)
+- **New server action file `password.ts`** — `requestPasswordReset(email)` + `resetPassword(token, password)`
+- **Security:** SHA-256 token hash (raw token never stored), 1-hour TTL, single use. Always returns success (no email enumeration). Nannies + families only — admins reset via DB. 60s resend throttle.
+- **New User fields:** `resetTokenHash`, `resetTokenExpiry`
+- **New email function:** `sendPasswordReset` in `src/lib/email/index.ts`
+- Login page now has "Forgot password?" link
+
+### In-App Messaging / Fiverr-Style Chat (commit `4163df1`)
+- **New DB models:** `Message` (threaded replies within enquiry), `ConversationRead` (per-user read markers for unread counts)
+- **Enquiry model updated:** `flagged` (Boolean — seed message contains contact info), `contactEmail`/`contactPhone` (admin-only), `messages[]`, `reads[]`, `updatedAt` (bumped on each message)
+- **New server action file `messages.ts`** (210 lines) — `getConversation`, `sendMessage`, `getMyConversations`, `getUnreadTotal`
+- **New components:** `ConversationList.tsx` (inbox), `ConversationThread.tsx` (chat view) in `src/components/messaging/`
+- **New pages:** `/dashboard/parent/messages` + `[id]`, `/dashboard/nanny/enquiries/[id]`, `/admin/enquiries/[id]`
+- Dashboard layout shows unread message badge in nav (`getUnreadTotal`)
+- `sendMessage`: 2s anti-spam, 2000-char max, flags contact info, notifies other party (email + SMS throttled to 10min)
+
+### SMS Notifications (commit `4163df1`)
+- **New `src/lib/sms/index.ts`** — Twilio via plain REST (no SDK, Basic auth). Best-effort (no-ops without `TWILIO_ACCOUNT_SID`/`TWILIO_AUTH_TOKEN`/`TWILIO_FROM`)
+- **New `src/lib/sms/normalise.ts`** — `toE164NZ()` normalises NZ-entered phones to E.164
+- **New env vars:** `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM`
+- SMS throttled to 10-min digest per conversation (in-memory)
+
+### Content Moderation (commit `4163df1`)
+- **New `src/lib/moderation.ts`** — `detectContactInfo(text)` flags email/phone in messages
+- De-obfuscates common patterns: "at"/"dot" → @/., spelled-out digits ("oh two one" → "021")
+- Used by `createEnquiry` (seed message) + `sendMessage` (replies) — flagged messages visible to admin
+- `Enquiry.flagged` + `Message.flagged` boolean fields
+
+### Reviews (commit `5d0e882`)
+- **`Review` model now active** (was Phase 2 placeholder) — `@@unique([parentId, nannyId])`, upsert updates
+- **New server action file `reviews.ts`** — `createReview(nannyProfileId, rating, comment)`. PARENT-only, gated on MATCHED/CLOSED enquiry, 1–5 rating, max 1000-char comment
+- **New `getNannyReviews(nannyId)`** in `nannies.ts` — public reviews with first-name-only privacy. `take: 20`
+- Nanny dashboard shows review count + avg rating
+
+### Job Applications (commit `5d0e882`)
+- **New DB model `JobApplication`** — `@@unique([jobId, nannyProfileId])`, PENDING/ACCEPTED/DECLINED status
+- **New `applyToJob(jobId)`** in `job.ts` — NANNY-only, one-click, idempotent, APPROVED jobs only, notifies admin
+- `getJobPosts` now includes applications (with nanny names, `take: 20`)
+- `getNannyDashboard` includes `appliedJobIds` so nanny dashboard can show "Applied" state on jobs
+
+### Professional Registration N/A Toggle (commit `76f81e7`)
+- **New `setProRegApplicability(notApplicable)`** in `nanny.ts` — toggles `proRegVerified` between NOT_STARTED and NOT_APPLICABLE
+- Only works when current status is NOT_STARTED or NOT_APPLICABLE (never clobbers submitted/verified)
+- `NOT_APPLICABLE` added as a safety check status value (only offered for Professional Registration)
+- ProfileForm shows "Not applicable" toggle for pro reg check
+
+### Brand Favicon + Hero/Banner Updates (commits `1134726`, `628534d`, `c22fa06`, `b9c5b45`)
+- **Brand favicon** — `icon.png`, `apple-icon.png`, `favicon.ico` (tan heart mark on navy circle, generated from logo)
+- **Hero collage** swapped to real NannyOra photos (`hero-nanny-reading.jpeg`, `hero-sensory-play.jpeg`)
+- **Hero badge** "Sensory-Led Nanny" (was "ADHD-Aware")
+- **How-it-works banner** — sensory foam play photo (`how-it-works-band.jpeg`), then mirror-play babies photo (`how-it-works-band.jpeg`, pre-cropped 16:9)
+- **Find-a-nanny banner** — new `find-a-nanny-band.jpeg`
+
+### Other UI Fixes
+- **Mobile/tablet responsiveness** (commit `ddcf10d`) — header breakpoint fix + parent stat tile layout
+- **Select chevron overlap** (commit `8950d0b`) — fixed dropdown arrow overlap
