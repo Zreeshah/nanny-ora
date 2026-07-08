@@ -148,6 +148,17 @@ export const SAFETY_CHECK_STATUS_LABELS: Record<SafetyCheckStatus, string> = {
   NOT_APPLICABLE: "Not Applicable",
 };
 
+// --- Placement / Availability statuses (admin-managed) ---
+export const PLACEMENT_STATUSES = ["AVAILABLE", "TRIAL_PENDING", "PLACED", "CONTRACT_ENDING"] as const;
+export type PlacementStatus = (typeof PLACEMENT_STATUSES)[number];
+
+export const PLACEMENT_STATUS_LABELS: Record<PlacementStatus, string> = {
+  AVAILABLE: "Available",
+  TRIAL_PENDING: "Trial Pending",
+  PLACED: "Placed",
+  CONTRACT_ENDING: "Contract Ending",
+};
+
 // --- 7 Safety Vetting Checks ---
 export const SAFETY_CHECKS = [
   {

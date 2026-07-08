@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Send, CheckCircle } from "lucide-react";
 import { createEnquiry } from "@/server/actions/enquiry";
 
-export default function EnquiryForm({ nannyId, firstName }: { nannyId: string; firstName: string }) {
+export default function EnquiryForm({ nannyId, firstName, placementStatus }: { nannyId: string; firstName: string; placementStatus?: string }) {
   const { data: session, status } = useSession();
   const role = (session?.user as any)?.role;
   const [message, setMessage] = useState("");
@@ -82,9 +82,15 @@ export default function EnquiryForm({ nannyId, firstName }: { nannyId: string; f
   return (
     <Card className="sticky top-24 border-l-4 border-l-accent">
       <h3 className="font-semibold text-foreground mb-2">Interested in {firstName}?</h3>
-      <p className="text-xs text-muted-foreground mb-4">
-        Send an enquiry to connect with this nanny. All messages are private.
-      </p>
+      {placementStatus && placementStatus !== "AVAILABLE" ? (
+        <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 mb-4">
+          {firstName} is currently placed. You can message them to register interest for when they&apos;re available again.
+        </p>
+      ) : (
+        <p className="text-xs text-muted-foreground mb-4">
+          Send an enquiry to connect with this nanny. All messages are private.
+        </p>
+      )}
       <div className="space-y-3">
         <Textarea
           name="message"

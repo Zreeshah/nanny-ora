@@ -68,6 +68,31 @@ export function VerificationBadge({ level }: { level: VerificationLevel }) {
   );
 }
 
+/** Placement/availability badge — orthogonal to trust/vetting. */
+export function PlacementBadge({
+  status,
+  placementEnd,
+  className,
+}: {
+  status: string;
+  placementEnd?: string | null;
+  className?: string;
+}) {
+  const config: Record<string, { label: string; cls: string; icon: React.ReactNode }> = {
+    AVAILABLE: { label: "Available", cls: "bg-emerald-50 text-badge-verified border-emerald-200", icon: <Check className="w-3 h-3 stroke-[3]" aria-hidden="true" /> },
+    TRIAL_PENDING: { label: "Trial Pending", cls: "bg-amber-50 text-badge-premium border-amber-200", icon: <Clock className="w-3 h-3" aria-hidden="true" /> },
+    PLACED: { label: "Placed", cls: "bg-blue-50 text-badge-specialist border-blue-200", icon: <Star className="w-3 h-3 fill-blue-200" aria-hidden="true" /> },
+    CONTRACT_ENDING: { label: placementEnd ? `Available from ${placementEnd}` : "Contract Ending", cls: "bg-teal-50 text-teal-700 border-teal-200", icon: <Clock className="w-3 h-3" aria-hidden="true" /> },
+  };
+  const c = config[status] || config.AVAILABLE;
+  return (
+    <span className={cn("inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider", c.cls, className)}>
+      {c.icon}
+      {c.label}
+    </span>
+  );
+}
+
 export function SpecialistTag({ tag }: { tag: SpecialistTagValue }) {
   const label = SPECIALIST_TAGS.find((t) => t.value === tag)?.label ?? tag;
   return (

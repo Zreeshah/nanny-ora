@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
-import { Badge, VerificationBadge, SpecialistTag } from "@/components/ui/Badge";
-import { sampleNannies } from "@/lib/data/sample-nannies";
+import { Badge, VerificationBadge, SpecialistTag, PlacementBadge } from "@/components/ui/Badge";
 import { getPublicNannyById, getNannyReviews } from "@/lib/data/nannies";
+import { prisma } from "@/lib/db/prisma";
 import { formatRate, getInitials } from "@/lib/utils";
 import { CARE_TYPES, LANGUAGE_TAGS } from "@/lib/constants";
 import EnquiryForm from "./EnquiryForm";
@@ -17,7 +17,16 @@ import {
 export const revalidate = 300;
 
 export async function generateStaticParams() {
-  return sampleNannies.map((n) => ({ id: n.id }));
+  try {
+    const rows = await prisma.nannyProfile.findMany({
+      where: { adminStatus: { in: ["APPROVED", "VERIFIED", "SPECIALIST"] } },
+      select: { id: true },
+      take: 100,
+    });
+    return rows.map((n) => ({ id: n.id }));
+  } catch {
+    return []; // pages still render on-demand via revalidate
+  }
 }
 
 export async function generateMetadata({
@@ -90,7 +99,12 @@ export default async function NannyProfilePage({
                   <MapPin className="w-4 h-4 text-primary" aria-hidden="true" />
                   <span className="text-sm font-semibold">{nanny.suburb}, Auckland</span>
                 </div>
-                <VerificationBadge level={nanny.verificationLevel as any} />
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                  <VerificationBadge level={nanny.verificationLevel as any} />
+                  {nanny.placementStatus && nanny.placementStatus !== "AVAILABLE" && (
+                    <PlacementBadge status={nanny.placementStatus} placementEnd={nanny.placementEnd} />
+                  )}
+                </div>
               </div>
 
               <div className="text-center sm:text-right bg-secondary/45 border border-border/25 px-5 py-2.5 rounded-2xl min-w-[140px]">
@@ -241,8 +255,23 @@ export default async function NannyProfilePage({
 
         {/* Sidebar */}
         <div className="space-y-6">
+          {/* Placement status (visible to all) */}
+          {nanny.placementStatus && nanny.placementStatus !== "AVAILABLE" && (
+            <Card className="border-l-4 border-l-blue-400">
+              <div className="flex items-center gap-2 mb-2">
+                <PlacementBadge status={nanny.placementStatus} placementEnd={nanny.placementEnd} />
+              </div>
+              <div className="text-xs text-muted-foreground space-y-1">
+                {nanny.placementStatus === "TRIAL_PENDING" && nanny.trialDate && <p>Trial scheduled for <strong className="text-foreground">{nanny.trialDate}</strong>.</p>}
+                {nanny.placementStatus === "PLACED" && nanny.placementStart && <p>Placement started <strong className="text-foreground">{nanny.placementStart}</strong>.</p>}
+                {nanny.placementStatus === "CONTRACT_ENDING" && nanny.placementEnd && <p>Available again from <strong className="text-foreground">{nanny.placementEnd}</strong>.</p>}
+                {nanny.placementNote && <p>{nanny.placementNote}</p>}
+              </div>
+            </Card>
+          )}
+
           {/* Enquiry CTA */}
-          <EnquiryForm nannyId={nanny.id} firstName={nanny.name.split(" ")[0]} />
+          <EnquiryForm nannyId={nanny.id} firstName={nanny.name.split(" ")[0]} placementStatus={nanny.placementStatus} />
 
           {/* Availability */}
           <Card>

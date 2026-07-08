@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/Card";
-import { Badge, VerificationBadge, SpecialistTag } from "@/components/ui/Badge";
+import { Badge, VerificationBadge, SpecialistTag, PlacementBadge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { MapPin, Clock, Star } from "lucide-react";
 import { formatRate, truncate, getInitials } from "@/lib/utils";
@@ -59,8 +59,11 @@ export function NannyCard({ nanny, className, favourited }: NannyCardProps) {
               <MapPin className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
               <span className="truncate">{nanny.suburb}</span>
             </div>
-            <div className="mt-1.5">
+            <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
               <VerificationBadge level={nanny.verificationLevel as any} />
+              {nanny.placementStatus && nanny.placementStatus !== "AVAILABLE" && (
+                <PlacementBadge status={nanny.placementStatus} placementEnd={nanny.placementEnd} />
+              )}
             </div>
           </div>
 

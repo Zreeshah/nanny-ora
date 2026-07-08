@@ -33,4 +33,10 @@ export interface NannyProfilePublic {
   verificationLevel: VerificationLevel;
   profileImageUrl?: string;
   createdAt: Date;
+  // placement/availability (admin-managed; paidConfirmed intentionally excluded — internal)
+  placementStatus: string;
+  trialDate?: string | null;
+  placementStart?: string | null;
+  placementEnd?: string | null;
+  placementNote?: string | null;
 }

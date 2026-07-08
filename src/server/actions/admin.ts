@@ -236,3 +236,44 @@ export async function getDocumentDownloadUrl(documentId: string): Promise<Action
     return { success: false, error: "Something went wrong." };
   }
 }
+
+// --- Placement / Availability (admin-managed) ---
+
+const PLACEMENT_VALUES = ["AVAILABLE", "TRIAL_PENDING", "PLACED", "CONTRACT_ENDING"];
+
+export async function updatePlacement(
+  nannyProfileId: string,
+  data: {
+    placementStatus: string;
+    trialDate?: string | null;
+    placementStart?: string | null;
+    placementEnd?: string | null;
+    placementNote?: string | null;
+    paidConfirmed?: boolean;
+  }
+): Promise<ActionResult> {
+  const authErr = await requireAdmin();
+  if (authErr) return authErr;
+
+  if (!PLACEMENT_VALUES.includes(data.placementStatus)) {
+    return { success: false, error: `Invalid placement status: ${data.placementStatus}` };
+  }
+
+  try {
+    await prisma.nannyProfile.update({
+      where: { id: nannyProfileId },
+      data: {
+        placementStatus: data.placementStatus,
+        trialDate: data.trialDate || null,
+        placementStart: data.placementStart || null,
+        placementEnd: data.placementEnd || null,
+        placementNote: (data.placementNote ?? "").trim() || null,
+        ...(data.paidConfirmed !== undefined ? { paidConfirmed: data.paidConfirmed } : {}),
+      },
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Update placement error:", error);
+    return { success: false, error: "Something went wrong." };
+  }
+}

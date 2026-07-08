@@ -1,16 +1,41 @@
 // ============================================================
 // NannyOra — Public nanny directory data (DB-backed)
-// Server-only: queries Prisma. Falls back to sample data when
-// the DB has no approved nannies or is unreachable (demo mode).
+// Server-only: queries Prisma for real approved nannies (no sample fallback).
 // ============================================================
 
 import type { NannyProfile } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import type { NannyProfilePublic } from "@/types";
-import { filterNannies, sampleNannies, type NannyFilters } from "./sample-nannies";
+
 
 // Only these admin statuses appear in the public directory
 const PUBLIC_STATUSES = ["APPROVED", "VERIFIED", "SPECIALIST"];
+
+export type NannyFilters = {
+  suburb?: string;
+  verifiedOnly?: boolean;
+  specialistTag?: string;
+  careType?: string;
+  maxRate?: number;
+  minRate?: number;
+};
+
+/** Apply directory filters to a DB-backed nanny list. */
+export function filterNannies(nannies: NannyProfilePublic[], filters?: NannyFilters): NannyProfilePublic[] {
+  let results = [...nannies];
+  if (filters?.suburb) {
+    results = results.filter(
+      (n) => n.suburb.toLowerCase() === filters.suburb!.toLowerCase() ||
+        n.areasCovered.some((a) => a.toLowerCase() === filters.suburb!.toLowerCase())
+    );
+  }
+  if (filters?.verifiedOnly) results = results.filter((n) => n.verificationLevel !== "LISTED");
+  if (filters?.specialistTag) results = results.filter((n) => (n.specialistTags as string[]).includes(filters.specialistTag!));
+  if (filters?.careType) results = results.filter((n) => (n.careTypes as string[]).includes(filters.careType!));
+  if (filters?.minRate) results = results.filter((n) => n.hourlyRate >= filters.minRate!);
+  if (filters?.maxRate) results = results.filter((n) => n.hourlyRate <= filters.maxRate!);
+  return results;
+}
 
 function parseJsonArray(value: string): string[] {
   try {
@@ -44,6 +69,11 @@ function toPublic(row: NannyProfile & { user: { name: string } }): NannyProfileP
     verificationLevel: row.verificationLevel as NannyProfilePublic["verificationLevel"],
     profileImageUrl: row.profileImageUrl ?? undefined,
     createdAt: row.createdAt,
+    placementStatus: row.placementStatus,
+    trialDate: row.trialDate,
+    placementStart: row.placementStart,
+    placementEnd: row.placementEnd,
+    placementNote: row.placementNote,
   };
 }
 
@@ -59,11 +89,11 @@ export async function getPublicNannies(filters?: NannyFilters): Promise<NannyPro
       orderBy: { createdAt: "desc" },
       take: 100,
     });
-    if (rows.length > 0) return filterNannies(rows.map(toPublic), filters);
+    return filterNannies(rows.map(toPublic), filters);
   } catch (error) {
-    console.error("getPublicNannies DB error, using sample data:", error);
+    console.error("getPublicNannies DB error:", error);
+    return [];
   }
-  return filterNannies(sampleNannies, filters);
 }
 
 /** Single public nanny by profile id — DB first, then sample data. */
@@ -74,10 +104,11 @@ export async function getPublicNannyById(id: string): Promise<NannyProfilePublic
       include: { user: { select: { name: true } } },
     });
     if (row && PUBLIC_STATUSES.includes(row.adminStatus)) return toPublic(row);
+    return undefined;
   } catch (error) {
-    console.error("getPublicNannyById DB error, using sample data:", error);
+    console.error("getPublicNannyById DB error:", error);
+    return undefined;
   }
-  return sampleNannies.find((n) => n.id === id);
 }
 
 /** Public reviews for a nanny profile (first name only for privacy). */

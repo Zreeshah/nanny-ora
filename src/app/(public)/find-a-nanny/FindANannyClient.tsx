@@ -49,6 +49,7 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
   const [languages, setLanguages] = useState<string[]>([]);
   const [ageRanges, setAgeRanges] = useState<string[]>([]);
   const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [availableOnly, setAvailableOnly] = useState(false);
   const [eceExperience, setEceExperience] = useState(false);
   const [firstAid, setFirstAid] = useState(false);
   const [driverLicence, setDriverLicence] = useState(false);
@@ -120,9 +121,16 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
     if (driverLicence) results = results.filter((n) => n.driverLicence);
     if (minRate > 0) results = results.filter((n) => n.hourlyRate >= minRate);
     if (maxRate < 100) results = results.filter((n) => n.hourlyRate <= maxRate);
+    if (availableOnly) results = results.filter((n) => (n.placementStatus || "AVAILABLE") === "AVAILABLE");
+
+    // Available nannies first; placed/trial sink below but stay listed.
+    results.sort((a, b) => {
+      const av = (n: typeof a) => ((n.placementStatus || "AVAILABLE") === "AVAILABLE" ? 0 : 1);
+      return av(a) - av(b);
+    });
 
     return results;
-  }, [search, region, suburb, careTypes, specialistTags, languages, ageRanges, verifiedOnly, eceExperience, firstAid, driverLicence, minRate, maxRate, allNannies]);
+  }, [search, region, suburb, careTypes, specialistTags, languages, ageRanges, verifiedOnly, availableOnly, eceExperience, firstAid, driverLicence, minRate, maxRate, allNannies]);
 
   const activeFilterCount = [
     careTypes.length > 0,
@@ -132,6 +140,7 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
     languages.length > 0,
     ageRanges.length > 0,
     verifiedOnly,
+    availableOnly,
     eceExperience,
     firstAid,
     driverLicence,
@@ -151,6 +160,7 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
     setLanguages([]);
     setAgeRanges([]);
     setVerifiedOnly(false);
+    setAvailableOnly(false);
     setEceExperience(false);
     setFirstAid(false);
     setDriverLicence(false);
@@ -284,6 +294,7 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
       <FilterSection title="Quick Filters">
         <div className="flex flex-wrap gap-2">
           <CheckboxPill checked={verifiedOnly} onClick={() => setVerifiedOnly(!verifiedOnly)} label="Verified Only" />
+          <CheckboxPill checked={availableOnly} onClick={() => setAvailableOnly(!availableOnly)} label="Available Now" />
           <CheckboxPill checked={eceExperience} onClick={() => setEceExperience(!eceExperience)} label="ECE Qualified" />
           <CheckboxPill checked={firstAid} onClick={() => setFirstAid(!firstAid)} label="First Aid" />
           <CheckboxPill checked={driverLicence} onClick={() => setDriverLicence(!driverLicence)} label="Driver Licence" />

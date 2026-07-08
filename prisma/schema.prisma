@@ -107,6 +107,14 @@ model NannyProfile {
   policeVetAuthorized     Boolean  @default(false)
   policeVetAuthorizedAt   DateTime?
 
+  // --- Placement / availability (admin-managed; orthogonal to adminStatus & verificationLevel) ---
+  placementStatus        String   @default("AVAILABLE") // AVAILABLE, TRIAL_PENDING, PLACED, CONTRACT_ENDING
+  trialDate              String?  // date-input string, for TRIAL_PENDING
+  placementStart         String?  // job start, for PLACED
+  placementEnd           String?  // contract end / available-from, for CONTRACT_ENDING
+  placementNote          String?  // admin-written public summary of the placement/job
+  paidConfirmed          Boolean  @default(false) // admin-manual payment flag — INTERNAL, never public
+
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
 

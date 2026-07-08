@@ -6,7 +6,6 @@ import { Badge, VerificationBadge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
 import { useToast } from "@/components/ui/Toast";
-import { sampleNannies } from "@/lib/data/sample-nannies";
 import {
   NANNY_STATUS_LABELS,
   VERIFICATION_LEVEL_LABELS,
@@ -14,6 +13,8 @@ import {
   SAFETY_CHECKS,
   SAFETY_CHECK_STATUS_LABELS,
   SAFETY_CHECK_STATUSES,
+  PLACEMENT_STATUSES,
+  PLACEMENT_STATUS_LABELS,
 } from "@/lib/constants";
 import type { VerificationLevel, SafetyCheckStatus, DocumentType } from "@/lib/constants";
 import { formatRate } from "@/lib/utils";
@@ -32,6 +33,7 @@ import {
   reviewDocument,
   updateSafetyCheckStatus,
   getDocumentDownloadUrl,
+  updatePlacement,
 } from "@/server/actions/admin";
 
 const statusOptions = Object.entries(NANNY_STATUS_LABELS).map(([value, label]) => ({ value, label }));
@@ -71,7 +73,95 @@ interface MappedNanny {
   policeVetStatus: string;
   interviewStatus: string;
   riskAssessmentStatus: string;
+  placementStatus: string;
+  trialDate: string;
+  placementStart: string;
+  placementEnd: string;
+  placementNote: string;
+  paidConfirmed: boolean;
   documents: DocumentData[];
+}
+
+
+function PlacementEditor({
+  nanny,
+  onSave,
+}: {
+  nanny: MappedNanny;
+  onSave: (id: string, data: { placementStatus: string; trialDate: string; placementStart: string; placementEnd: string; placementNote: string; paidConfirmed: boolean }) => Promise<boolean>;
+}) {
+  const [status, setStatus] = useState(nanny.placementStatus);
+  const [trialDate, setTrialDate] = useState(nanny.trialDate);
+  const [placementStart, setPlacementStart] = useState(nanny.placementStart);
+  const [placementEnd, setPlacementEnd] = useState(nanny.placementEnd);
+  const [note, setNote] = useState(nanny.placementNote);
+  const [paid, setPaid] = useState(nanny.paidConfirmed);
+  const [saving, setSaving] = useState(false);
+
+  const dirty =
+    status !== nanny.placementStatus || trialDate !== nanny.trialDate || placementStart !== nanny.placementStart ||
+    placementEnd !== nanny.placementEnd || note !== nanny.placementNote || paid !== nanny.paidConfirmed;
+
+  const save = async () => {
+    setSaving(true);
+    await onSave(nanny.id, { placementStatus: status, trialDate, placementStart, placementEnd, placementNote: note, paidConfirmed: paid });
+    setSaving(false);
+  };
+
+  return (
+    <div className="space-y-3">
+      <h4 className="font-bold text-foreground uppercase tracking-wider text-xs flex items-center gap-1.5">
+        <MapPin className="w-4 h-4 text-primary" />
+        Placement & Availability
+      </h4>
+      <div className="bg-secondary/20 p-3.5 rounded-2xl border border-border/40 space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Status</label>
+            <Select
+              options={PLACEMENT_STATUSES.map((v) => ({ value: v, label: PLACEMENT_STATUS_LABELS[v] }))}
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="h-9 py-0.5 text-xs rounded-xl mt-1"
+            />
+          </div>
+          {status === "TRIAL_PENDING" && (
+            <div>
+              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Trial date</label>
+              <input type="date" value={trialDate} onChange={(e) => setTrialDate(e.target.value)} className="w-full h-9 mt-1 rounded-xl border border-border/70 bg-card px-3 text-xs" />
+            </div>
+          )}
+          {status === "PLACED" && (
+            <div>
+              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Start date</label>
+              <input type="date" value={placementStart} onChange={(e) => setPlacementStart(e.target.value)} className="w-full h-9 mt-1 rounded-xl border border-border/70 bg-card px-3 text-xs" />
+            </div>
+          )}
+          {status === "CONTRACT_ENDING" && (
+            <div>
+              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Available from</label>
+              <input type="date" value={placementEnd} onChange={(e) => setPlacementEnd(e.target.value)} className="w-full h-9 mt-1 rounded-xl border border-border/70 bg-card px-3 text-xs" />
+            </div>
+          )}
+        </div>
+        {status !== "AVAILABLE" && (
+          <div>
+            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Job summary (shown publicly)</label>
+            <input type="text" value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. 4h/week after-school care, Remuera" className="w-full h-9 mt-1 rounded-xl border border-border/70 bg-card px-3 text-xs" />
+          </div>
+        )}
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-foreground">
+            <input type="checkbox" checked={paid} onChange={(e) => setPaid(e.target.checked)} className="w-4 h-4 rounded border-border accent-primary" />
+            Payment confirmed <span className="text-[10px] text-muted-foreground font-normal">(internal)</span>
+          </label>
+          <Button variant="primary" size="sm" isLoading={saving} disabled={!dirty} onClick={save} className="rounded-full text-xs">
+            Save placement
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function AdminNanniesPage() {
@@ -111,48 +201,18 @@ export default function AdminNanniesPage() {
           policeVetStatus: n.policeVetStatus || "NOT_STARTED",
           interviewStatus: n.interviewStatus || "NOT_STARTED",
           riskAssessmentStatus: n.riskAssessmentStatus || "NOT_STARTED",
+          placementStatus: n.placementStatus || "AVAILABLE",
+          trialDate: n.trialDate || "",
+          placementStart: n.placementStart || "",
+          placementEnd: n.placementEnd || "",
+          placementNote: n.placementNote || "",
+          paidConfirmed: !!n.paidConfirmed,
           documents: n.documents || [],
         }));
         setNannies(mapped);
       } else {
-        // Fallback to sample data for local demo mode if database is empty/unconfigured
-        console.log("No nannies found in database, using mock sample nannies");
-        const mockMapped = sampleNannies.map((n, index) => ({
-          id: n.id,
-          userId: `mock-user-${index}`,
-          name: n.name,
-          email: `${n.name.toLowerCase().replace(/ /g, ".")}@example.com`,
-          phone: "021 555 1234",
-          suburb: n.suburb,
-          hourlyRate: n.hourlyRate,
-          verificationLevel: n.verificationLevel,
-          adminStatus: "APPROVED",
-          eceExperience: true,
-          neurodiverseExperience: true,
-          firstAidCurrent: true,
-          driverLicence: true,
-          bio: n.bio,
-          refereeData: "[]",
-          image: n.profileImageUrl || pickImages({ tags: ["professional", "care", "find"], seed: n.id })[0].src,
-          identityVerified: "VERIFIED",
-          workHistoryVerified: "VERIFIED",
-          proRegVerified: "VERIFIED",
-          refereeCheckStatus: "VERIFIED",
-          policeVetStatus: "VERIFIED",
-          interviewStatus: "VERIFIED",
-          riskAssessmentStatus: "VERIFIED",
-          documents: [
-            {
-              id: `mock-doc-${index}-1`,
-              documentType: "ID",
-              fileName: `${n.name.toLowerCase().replace(/ /g, "-")}-passport.pdf`,
-              fileUrl: null,
-              reviewStatus: "APPROVED",
-              createdAt: new Date(),
-            },
-          ],
-        }));
-        setNannies(mockMapped);
+        // Real nannies only — no sample fallback (live site).
+        setNannies([]);
       }
     } catch (err) {
       console.error("Failed to load admin nannies:", err);
@@ -200,6 +260,26 @@ export default function AdminNanniesPage() {
         toast("An error occurred.", "error");
       }
     });
+  };
+
+  const handlePlacementSave = async (nannyId: string, data: {
+    placementStatus: string; trialDate: string; placementStart: string; placementEnd: string; placementNote: string; paidConfirmed: boolean;
+  }) => {
+    const res = await updatePlacement(nannyId, {
+      placementStatus: data.placementStatus,
+      trialDate: data.trialDate || null,
+      placementStart: data.placementStart || null,
+      placementEnd: data.placementEnd || null,
+      placementNote: data.placementNote || null,
+      paidConfirmed: data.paidConfirmed,
+    });
+    if (res.success) {
+      setNannies((prev) => prev.map((n) => (n.id === nannyId ? { ...n, ...data } : n)));
+      toast("Placement updated", "success");
+    } else {
+      toast(res.error || "Failed to update placement", "error");
+    }
+    return res.success;
   };
 
   const handleDocumentReview = async (nannyId: string, docId: string, status: "APPROVED" | "REJECTED") => {
@@ -369,6 +449,9 @@ export default function AdminNanniesPage() {
                         {nanny.bio || "No biography provided."}
                       </p>
                     </div>
+
+                    {/* Placement / Availability */}
+                    <PlacementEditor nanny={nanny} onSave={handlePlacementSave} />
 
                     {/* Safety Vetting Grid */}
                     <div className="space-y-3">

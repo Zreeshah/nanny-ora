@@ -116,52 +116,6 @@ function LoginForm() {
         </form>
       </Card>
 
-      {/* Demo Credentials */}
-      <Card className="mt-4 bg-secondary/35 border border-border/40 rounded-3xl p-5">
-        <h3 className="font-bold uppercase tracking-wider text-xs text-muted-foreground mb-3.5">Demo Quick Login</h3>
-        <div className="space-y-2 text-xs">
-          {[
-            { role: "Admin", email: "admin@nannyora.co.nz", color: "text-badge-premium bg-amber-50 border-amber-100/50" },
-            { role: "Nanny", email: "emma@nannyora.co.nz", color: "text-badge-specialist bg-blue-50 border-blue-100/50" },
-            { role: "Parent", email: "parent@nannyora.co.nz", color: "text-primary bg-emerald-50 border-emerald-100/50" },
-          ].map((account) => (
-            <button
-              key={account.email}
-              type="button"
-              className="w-full flex items-center justify-between px-4 py-2.5 rounded-full hover:bg-card border border-border/40 bg-card/70 hover:border-primary/20 transition-all duration-300 cursor-pointer text-left shadow-sm active:scale-[0.98]"
-              onClick={async () => {
-                setIsLoading(true);
-                setError("");
-                const result = await signIn("credentials", {
-                  email: account.email,
-                  password: "demo1234",
-                  redirect: false,
-                });
-                if (result?.error) {
-                  setError("Failed to sign in. Make sure you've run the seed script.");
-                  setIsLoading(false);
-                  return;
-                }
-                const sessionRes = await fetch("/api/auth/session");
-                const session = await sessionRes.json();
-                const role = session?.user?.role;
-                if (role === "ADMIN") router.push("/admin");
-                else if (role === "NANNY") router.push("/dashboard/nanny");
-                else if (role === "PARENT") router.push("/dashboard/parent");
-                else router.push("/");
-                router.refresh();
-              }}
-            >
-              <div>
-                <span className={`font-bold px-2 py-0.5 rounded-full text-[10px] uppercase border ${account.color}`}>{account.role}</span>
-                <span className="text-foreground font-semibold ml-2.5">{account.email}</span>
-              </div>
-              <span className="text-[10px] text-muted-foreground/80 font-bold bg-secondary py-0.5 px-2 rounded-full">demo1234</span>
-            </button>
-          ))}
-        </div>
-      </Card>
-
       <p className="text-center text-xs text-muted-foreground mt-6">
         Don&apos;t have an account?{" "}
         <Link href="/register-family" className="text-primary hover:text-primary-light font-bold transition-colors">
