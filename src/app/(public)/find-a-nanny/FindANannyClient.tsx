@@ -30,6 +30,28 @@ const AGE_TO_TAG: Record<string, string> = {
   teenager: "after_school_care",
 };
 
+const FilterSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
+  <div className="border-b border-border/30 py-5 first:pt-0 last:border-0">
+    <h3 className="text-xs font-bold text-foreground uppercase tracking-wider mb-3">{title}</h3>
+    {children}
+  </div>
+);
+
+const CheckboxPill = ({ checked, onClick, label }: { checked: boolean; onClick: () => void; label: string }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+      checked
+        ? "bg-primary text-primary-foreground border-primary"
+        : "bg-card text-muted-foreground border-border/60 hover:border-primary/40"
+    }`}
+  >
+    {label}
+  </button>
+);
+
+
 export default function FindANannyClient({ allNannies }: { allNannies: NannyProfilePublic[] }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [favIds, setFavIds] = useState<Set<string>>(new Set());
@@ -64,8 +86,7 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
       results = results.filter(
         (n) =>
           n.name.toLowerCase().includes(q) ||
-          n.bio.toLowerCase().includes(q) ||
-          n.suburb.toLowerCase().includes(q)
+          n.bio.toLowerCase().includes(q)
       );
     }
 
@@ -168,26 +189,7 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
     setMaxRate(100);
   };
 
-  const FilterSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <div className="border-b border-border/30 py-5 first:pt-0 last:border-0">
-      <h3 className="text-xs font-bold text-foreground uppercase tracking-wider mb-3">{title}</h3>
-      {children}
-    </div>
-  );
 
-  const CheckboxPill = ({ checked, onClick, label }: { checked: boolean; onClick: () => void; label: string }) => (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
-        checked
-          ? "bg-primary text-primary-foreground border-primary"
-          : "bg-card text-muted-foreground border-border/60 hover:border-primary/40"
-      }`}
-    >
-      {label}
-    </button>
-  );
 
   const Sidebar = () => (
     <div className="flex flex-col">
@@ -212,7 +214,7 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
         <input
           type="search"
-          placeholder="Search name, suburb..."
+          placeholder="Search by nanny name or keyword..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-border/70 bg-card text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all"
@@ -247,7 +249,7 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
           type="text"
           value={suburb}
           onChange={(e) => setSuburb(e.target.value)}
-          placeholder="Type a suburb..."
+          placeholder="Filter by suburb or area..."
           className="w-full px-3 py-2 rounded-xl border border-border/70 bg-card text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all"
         />
       </FilterSection>
@@ -304,7 +306,7 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
       <FilterSection title="Rate Range">
         <div className="flex items-center gap-3">
           <input
-            type="range" min={0} max={100} step={5} value={minRate}
+            type="range" min={0} max={100} step={1} value={minRate}
             onChange={(e) => setMinRate(Number(e.target.value))}
             className="flex-1 accent-primary h-1 bg-secondary rounded-lg appearance-none cursor-pointer"
             aria-label="Minimum hourly rate"
@@ -313,7 +315,7 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
             ${minRate}–${maxRate}/hr
           </span>
           <input
-            type="range" min={0} max={100} step={5} value={maxRate}
+            type="range" min={0} max={100} step={1} value={maxRate}
             onChange={(e) => setMaxRate(Number(e.target.value))}
             className="flex-1 accent-primary h-1 bg-secondary rounded-lg appearance-none cursor-pointer"
             aria-label="Maximum hourly rate"
@@ -383,7 +385,7 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
         {/* Desktop Sidebar */}
         <aside className="hidden lg:block w-72 flex-shrink-0">
           <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto pr-2 pb-4">
-            <Sidebar />
+            {Sidebar()}
           </div>
         </aside>
 
@@ -395,7 +397,7 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
                 <X className="w-5 h-5 text-muted-foreground" />
               </button>
               <div className="mt-8">
-                <Sidebar />
+                {Sidebar()}
               </div>
             </div>
           </div>
