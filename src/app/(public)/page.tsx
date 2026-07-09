@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Accordion } from "@/components/ui/Accordion";
+import { FaqGroups } from "@/components/FaqGroups";
 import { Badge, VerificationBadge } from "@/components/ui/Badge";
 import {
   Heart,
@@ -390,6 +391,9 @@ export default function HomePage() {
           </div>
           <Reveal>
             <Accordion items={faqItems} />
+          </Reveal>
+          <Reveal className="mt-10">
+            <FaqGroups />
           </Reveal>
           <div className="text-center mt-8">
             <Link href="/how-it-works" className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary-light transition-colors">

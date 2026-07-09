@@ -7,6 +7,7 @@ import {
   UserPlus, ClipboardCheck, Upload, CheckCircle, HelpCircle,
 } from "lucide-react";
 import { ImageBand } from "@/components/ui/ImageBand";
+import { FaqGroups } from "@/components/FaqGroups";
 import { ShinyText } from "@/components/ui/ShinyText";
 
 export const metadata: Metadata = {
@@ -194,6 +195,24 @@ export default function HowItWorksPage() {
               <ArrowRight className="w-5 h-5 ml-2" aria-hidden="true" />
             </Button>
           </Link>
+        </div>
+      </section>
+
+      {/* ===== FAQ ===== */}
+      <section className="py-16 md:py-24 border-t border-border/20">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-3">
+              <span>FAQ</span>
+            </div>
+            <h2 className="font-heading text-3xl sm:text-4xl text-foreground">
+              Frequently asked questions
+            </h2>
+            <p className="text-muted-foreground text-sm sm:text-base mt-3">
+              Employment, payroll, and day-to-day answers for families and nannies.
+            </p>
+          </div>
+          <FaqGroups />
         </div>
       </section>
     </div>
