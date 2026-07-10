@@ -63,6 +63,12 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
     }).catch(() => {});
   }, []);
 
+  // Lock background scroll while the mobile filter sheet is open.
+  useEffect(() => {
+    document.body.style.overflow = sidebarOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [sidebarOpen]);
+
   const [search, setSearch] = useState("");
   const [careTypes, setCareTypes] = useState<string[]>([]);
   const [region, setRegion] = useState("");
@@ -191,23 +197,25 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
 
 
 
-  const Sidebar = () => (
+  const Sidebar = ({ hideHeader = false }: { hideHeader?: boolean } = {}) => (
     <div className="flex flex-col">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="font-heading text-lg font-bold text-foreground flex items-center gap-2">
-          <SlidersHorizontal className="w-4 h-4 text-primary" />
-          Filters
-        </h2>
-        {activeFilterCount > 0 && (
-          <button
-            onClick={clearFilters}
-            className="text-xs font-bold text-accent hover:text-accent-light transition-colors cursor-pointer flex items-center gap-1"
-          >
-            <X className="w-3.5 h-3.5" />
-            Clear all
-          </button>
-        )}
-      </div>
+      {!hideHeader && (
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-heading text-lg font-bold text-foreground flex items-center gap-2">
+            <SlidersHorizontal className="w-4 h-4 text-primary" />
+            Filters
+          </h2>
+          {activeFilterCount > 0 && (
+            <button
+              onClick={clearFilters}
+              className="text-xs font-bold text-accent hover:text-accent-light transition-colors cursor-pointer flex items-center gap-1"
+            >
+              <X className="w-3.5 h-3.5" />
+              Clear all
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Search */}
       <div className="relative mb-2">
@@ -389,15 +397,36 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
           </div>
         </aside>
 
-        {/* Mobile Sidebar Drawer */}
+        {/* Mobile Sidebar Drawer — sticky header + scroll body + sticky "Show results" footer */}
         {sidebarOpen && (
-          <div className="lg:hidden fixed inset-0 z-50 bg-background/80 backdrop-blur-sm" onClick={() => setSidebarOpen(false)}>
-            <div className="absolute right-0 top-0 bottom-0 w-80 max-w-[85vw] bg-card border-l border-border/40 shadow-2xl overflow-y-auto p-5 animate-slide-in-right" onClick={(e) => e.stopPropagation()}>
-              <button onClick={() => setSidebarOpen(false)} className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-secondary/50">
-                <X className="w-5 h-5 text-muted-foreground" />
-              </button>
-              <div className="mt-8">
-                {Sidebar()}
+          <div className="lg:hidden fixed inset-0 z-[60] flex" role="dialog" aria-modal="true" aria-label="Filters">
+            <div className="absolute inset-0 bg-background/70 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+            <div className="relative ml-auto w-full max-w-md h-full bg-card shadow-2xl flex flex-col animate-slide-in-right">
+              {/* Sticky header — close is always reachable */}
+              <div className="flex items-center justify-between px-5 py-4 border-b border-border/40 flex-shrink-0">
+                <h2 className="font-heading text-lg font-bold text-foreground flex items-center gap-2">
+                  <SlidersHorizontal className="w-4 h-4 text-primary" />
+                  Filters
+                  {activeFilterCount > 0 && (
+                    <span className="text-xs font-bold text-accent-foreground bg-accent rounded-full px-2 py-0.5">{activeFilterCount}</span>
+                  )}
+                </h2>
+                <button onClick={() => setSidebarOpen(false)} aria-label="Close filters" className="p-2 rounded-lg hover:bg-secondary/50">
+                  <X className="w-5 h-5 text-muted-foreground" />
+                </button>
+              </div>
+              {/* Scrollable filter body */}
+              <div className="flex-1 overflow-y-auto px-5 py-4">
+                {Sidebar({ hideHeader: true })}
+              </div>
+              {/* Sticky footer — the obvious way out */}
+              <div className="flex items-center gap-3 px-5 py-4 border-t border-border/40 flex-shrink-0 bg-card">
+                {activeFilterCount > 0 && (
+                  <Button variant="ghost" onClick={clearFilters} className="flex-shrink-0 rounded-full">Clear all</Button>
+                )}
+                <Button variant="primary" fullWidth onClick={() => setSidebarOpen(false)} className="rounded-full">
+                  Show {filteredNannies.length} result{filteredNannies.length === 1 ? "" : "s"}
+                </Button>
               </div>
             </div>
           </div>
