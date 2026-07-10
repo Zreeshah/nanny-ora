@@ -2,7 +2,8 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { NannyCard } from "@/components/cards/NannyCard";
-import { TagInput } from "@/components/ui/TagInput";
+import { SuburbAutocomplete } from "@/components/ui/SuburbAutocomplete";
+import { normSuburb, titleCaseSuburb } from "@/lib/suburbs";
 import { getFavouriteIds } from "@/server/actions/engagement";
 import type { NannyProfilePublic } from "@/types";
 import { Button } from "@/components/ui/Button";
@@ -85,6 +86,18 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
   const [minRate, setMinRate] = useState(0);
   const [maxRate, setMaxRate] = useState(100);
 
+  // Suggestion pool = suburbs/areas where nannies actually exist (deduped, tidied).
+  const suburbOptions = useMemo(() => {
+    const seen = new Map<string, string>(); // norm key -> display
+    for (const n of allNannies) {
+      for (const raw of [n.suburb, ...n.areasCovered]) {
+        const key = normSuburb(raw);
+        if (key && !seen.has(key)) seen.set(key, titleCaseSuburb(raw));
+      }
+    }
+    return [...seen.values()].sort((a, b) => a.localeCompare(b));
+  }, [allNannies]);
+
   const filteredNannies = useMemo(() => {
     let results = [...allNannies];
 
@@ -108,11 +121,14 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
     }
 
     if (suburbs.length > 0) {
-      // a nanny passes if she matches ANY added suburb (by her own suburb or an area she covers)
+      // a nanny passes if she matches ANY added suburb — by her own suburb or an area she
+      // covers. Normalized + bidirectional so "Forrest Hill" ~ "forrest hill", "Northshore"
+      // ~ "northshore", "West Auckland" ~ "west", etc.
+      const overlaps = (a: string, b: string) => a !== "" && b !== "" && (a.includes(b) || b.includes(a));
       results = results.filter((n) =>
         suburbs.some((sub) => {
-          const q = sub.trim().toLowerCase();
-          return q !== "" && (n.suburb.toLowerCase().includes(q) || n.areasCovered.some((a) => a.toLowerCase().includes(q)));
+          const q = normSuburb(sub);
+          return q !== "" && (overlaps(normSuburb(n.suburb), q) || n.areasCovered.some((a) => overlaps(normSuburb(a), q)));
         })
       );
     }
@@ -255,12 +271,13 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
             />
           ))}
         </div>
-        <TagInput
+        <SuburbAutocomplete
           value={suburbs}
           onChange={setSuburbs}
-          placeholder="Add a suburb, press Enter..."
-          helperText="Add one or more suburbs — shows nannies based there or covering that area."
+          options={suburbOptions}
+          placeholder="Type a suburb…"
         />
+        <p className="text-[11px] text-muted-foreground mt-1.5">Start typing — we suggest suburbs where nannies are available.</p>
       </FilterSection>
 
       <FilterSection title="Specialization">
