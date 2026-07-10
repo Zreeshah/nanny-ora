@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { NannyCard } from "@/components/cards/NannyCard";
+import { TagInput } from "@/components/ui/TagInput";
 import { getFavouriteIds } from "@/server/actions/engagement";
 import type { NannyProfilePublic } from "@/types";
 import { Button } from "@/components/ui/Button";
@@ -72,7 +73,7 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
   const [search, setSearch] = useState("");
   const [careTypes, setCareTypes] = useState<string[]>([]);
   const [region, setRegion] = useState("");
-  const [suburb, setSuburb] = useState("");
+  const [suburbs, setSuburbs] = useState<string[]>([]);
   const [specialistTags, setSpecialistTags] = useState<string[]>([]);
   const [languages, setLanguages] = useState<string[]>([]);
   const [ageRanges, setAgeRanges] = useState<string[]>([]);
@@ -106,12 +107,13 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
       });
     }
 
-    if (suburb) {
-      const q = suburb.toLowerCase();
-      results = results.filter(
-        (n) =>
-          n.suburb.toLowerCase().includes(q) ||
-          n.areasCovered.some((a) => a.toLowerCase().includes(q))
+    if (suburbs.length > 0) {
+      // a nanny passes if she matches ANY added suburb (by her own suburb or an area she covers)
+      results = results.filter((n) =>
+        suburbs.some((sub) => {
+          const q = sub.trim().toLowerCase();
+          return q !== "" && (n.suburb.toLowerCase().includes(q) || n.areasCovered.some((a) => a.toLowerCase().includes(q)));
+        })
       );
     }
 
@@ -157,12 +159,12 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
     });
 
     return results;
-  }, [search, region, suburb, careTypes, specialistTags, languages, ageRanges, verifiedOnly, availableOnly, eceExperience, firstAid, driverLicence, minRate, maxRate, allNannies]);
+  }, [search, region, suburbs, careTypes, specialistTags, languages, ageRanges, verifiedOnly, availableOnly, eceExperience, firstAid, driverLicence, minRate, maxRate, allNannies]);
 
   const activeFilterCount = [
     careTypes.length > 0,
     region,
-    suburb,
+    suburbs.length > 0,
     specialistTags.length > 0,
     languages.length > 0,
     ageRanges.length > 0,
@@ -182,7 +184,7 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
     setSearch("");
     setCareTypes([]);
     setRegion("");
-    setSuburb("");
+    setSuburbs([]);
     setSpecialistTags([]);
     setLanguages([]);
     setAgeRanges([]);
@@ -253,12 +255,11 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
             />
           ))}
         </div>
-        <input
-          type="text"
-          value={suburb}
-          onChange={(e) => setSuburb(e.target.value)}
-          placeholder="Filter by suburb or area..."
-          className="w-full px-3 py-2 rounded-xl border border-border/70 bg-card text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all"
+        <TagInput
+          value={suburbs}
+          onChange={setSuburbs}
+          placeholder="Add a suburb, press Enter..."
+          helperText="Add one or more suburbs — shows nannies based there or covering that area."
         />
       </FilterSection>
 
