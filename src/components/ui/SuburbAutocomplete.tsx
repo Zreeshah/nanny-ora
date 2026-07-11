@@ -14,11 +14,19 @@ export function SuburbAutocomplete({
   onChange,
   options,
   placeholder = "Type a suburb…",
+  label,
+  helperText,
+  required,
+  disabled,
 }: {
   value: string[];
   onChange: (v: string[]) => void;
   options: string[];
   placeholder?: string;
+  label?: string;
+  helperText?: string;
+  required?: boolean;
+  disabled?: boolean;
 }) {
   const [text, setText] = useState("");
   const [open, setOpen] = useState(false);
@@ -48,8 +56,14 @@ export function SuburbAutocomplete({
   };
 
   return (
-    <div className="relative">
-      <div className="flex flex-wrap gap-1.5 rounded-2xl border border-border/70 bg-card px-3 py-2.5 min-h-[46px] transition-all focus-within:ring-4 focus-within:ring-ring/8 focus-within:border-primary">
+    <div className="relative space-y-1.5">
+      {label && (
+        <label className="block text-sm font-medium text-foreground">
+          {label}
+          {required && <span className="text-destructive ml-0.5" aria-hidden="true">*</span>}
+        </label>
+      )}
+      <div className={`flex flex-wrap gap-1.5 rounded-2xl border border-border/70 bg-card px-3 py-2.5 min-h-[46px] transition-all focus-within:ring-4 focus-within:ring-ring/8 focus-within:border-primary ${disabled ? "opacity-50 pointer-events-none" : ""}`}>
         {value.map((tag) => (
           <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/5 border border-primary text-xs font-semibold text-primary">
             {tag}
@@ -65,9 +79,11 @@ export function SuburbAutocomplete({
           onFocus={() => setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 120)}
           placeholder={value.length === 0 ? placeholder : ""}
+          disabled={disabled}
           className="flex-1 min-w-[120px] bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none border-none p-0"
         />
       </div>
+      {helperText && <p className="text-sm text-muted-foreground">{helperText}</p>}
 
       {open && suggestions.length > 0 && (
         <ul className="absolute z-20 mt-1 w-full max-h-56 overflow-y-auto rounded-2xl border border-border/60 bg-card shadow-lg py-1">

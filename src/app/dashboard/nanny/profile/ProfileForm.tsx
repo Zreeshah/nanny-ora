@@ -8,7 +8,8 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { useToast } from "@/components/ui/Toast";
-import { TagInput } from "@/components/ui/TagInput";
+import { SuburbAutocomplete } from "@/components/ui/SuburbAutocomplete";
+import { AUCKLAND_SUBURBS_FULL } from "@/lib/suburbs";
 import {
   CARE_TYPES,
   SPECIALIST_TAGS,
@@ -338,8 +339,12 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
             value={suburb}
             onChange={(e) => setSuburb(e.target.value)}
             disabled={isPending}
-            placeholder="e.g. Remuera"
+            placeholder="Start typing…"
+            list="auckland-suburbs"
           />
+          <datalist id="auckland-suburbs">
+            {AUCKLAND_SUBURBS_FULL.map((s) => <option key={s} value={s} />)}
+          </datalist>
         </div>
       </Card>
 
@@ -419,14 +424,15 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
           Areas Covered & Availability
         </h2>
 
-        {/* Service Areas — free-text tag input */}
-        <TagInput
+        {/* Service Areas — suburb autocomplete (free entry allowed) */}
+        <SuburbAutocomplete
           label="Service Areas"
-          placeholder="Type a suburb and press Enter..."
+          placeholder="Start typing a suburb…"
           value={areasCovered}
           onChange={setAreasCovered}
+          options={AUCKLAND_SUBURBS_FULL}
           disabled={isPending}
-          helperText="Add all suburbs you cover."
+          helperText="Suburbs you cover. Type to search; not listed? just add it."
         />
 
         {/* Care Types Multi-Select */}
