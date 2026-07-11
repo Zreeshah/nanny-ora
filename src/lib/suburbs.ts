@@ -26,7 +26,7 @@ export const SUBURB_REGIONS: Record<string, string[]> = {
     "Albany", "Bayswater", "Bayview", "Beach Haven", "Belmont", "Birkdale", "Birkenhead",
     "Browns Bay", "Campbells Bay", "Castor Bay", "Chatswood", "Devonport", "Fairview Heights",
     "Forrest Hill", "Glenfield", "Greenhithe", "Hauraki", "Hillcrest", "Long Bay", "Mairangi Bay",
-    "Milford", "Northcote", "Northcote Point", "Northcross", "Oteha", "Pinehill", "Rosedale",
+    "Milford", "Murrays Bay", "Northcote", "Northcote Point", "Northcross", "Oteha", "Pinehill", "Rosedale",
     "Rothesay Bay", "Sunnynook", "Stanley Bay", "Stanley Point", "Takapuna", "Torbay",
     "Totara Vale", "Unsworth Heights", "Waiake", "Wairau Valley",
     // Rodney / Hibiscus Coast / Northwest
