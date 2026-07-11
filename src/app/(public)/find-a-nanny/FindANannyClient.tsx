@@ -3,14 +3,13 @@
 import { useState, useMemo, useEffect } from "react";
 import { NannyCard } from "@/components/cards/NannyCard";
 import { SuburbAutocomplete } from "@/components/ui/SuburbAutocomplete";
-import { normSuburb, titleCaseSuburb } from "@/lib/suburbs";
+import { normSuburb, titleCaseSuburb, regionOf, suburbMatches } from "@/lib/suburbs";
 import { getFavouriteIds } from "@/server/actions/engagement";
 import type { NannyProfilePublic } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import {
   AUCKLAND_REGIONS,
-  SUBURB_TO_REGION,
   CARE_TYPES,
   SPECIALIST_TAGS,
   LANGUAGE_TAGS,
@@ -111,25 +110,20 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
     }
 
     if (region) {
-      results = results.filter((n) => {
-        const nRegion = SUBURB_TO_REGION[n.suburb];
-        const coversRegion = n.areasCovered.some(
-          (a) => SUBURB_TO_REGION[a] === region
-        );
-        return nRegion === region || coversRegion;
-      });
+      // membership derived from the master list, so a nanny in Botany counts as East.
+      results = results.filter(
+        (n) => regionOf(n.suburb) === region || n.areasCovered.some((a) => regionOf(a) === region)
+      );
     }
 
     if (suburbs.length > 0) {
       // a nanny passes if she matches ANY added suburb — by her own suburb or an area she
-      // covers. Normalized + bidirectional so "Forrest Hill" ~ "forrest hill", "Northshore"
-      // ~ "northshore", "West Auckland" ~ "west", etc.
-      const overlaps = (a: string, b: string) => a !== "" && b !== "" && (a.includes(b) || b.includes(a));
+      // covers. Region-aware: "East Auckland" finds a nanny in Botany, "Forrest Hill" ~
+      // "forrest hill", a nanny listing "West Auckland" shows for a "New Lynn" search.
       results = results.filter((n) =>
-        suburbs.some((sub) => {
-          const q = normSuburb(sub);
-          return q !== "" && (overlaps(normSuburb(n.suburb), q) || n.areasCovered.some((a) => overlaps(normSuburb(a), q)));
-        })
+        suburbs.some(
+          (sub) => suburbMatches(sub, n.suburb) || n.areasCovered.some((a) => suburbMatches(sub, a))
+        )
       );
     }
 

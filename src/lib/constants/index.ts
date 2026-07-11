@@ -250,14 +250,7 @@ export const AUCKLAND_REGIONS = [
   { value: "south", label: "South Auckland" },
 ] as const;
 
-export const SUBURB_TO_REGION: Record<string, string> = {
-  Remuera: "central", Newmarket: "central", Epsom: "central", Parnell: "central",
-  "Mount Eden": "central", Ponsonby: "central", "Grey Lynn": "central",
-  "Herne Bay": "central", "Mt Albert": "central", Ellerslie: "central",
-  "Mission Bay": "east", "St Heliers": "east", Meadowbank: "east", Kohimarama: "east",
-  Devonport: "north", Takapuna: "north", Albany: "north", Birkenhead: "north",
-  Henderson: "west", Titirangi: "west",
-};
+// suburb→region membership now lives in src/lib/suburbs.ts (derived from the master list)
 
 // --- Language Immersion Tags (bilingual / immersion nannies) ---
 export const LANGUAGE_TAGS = [
