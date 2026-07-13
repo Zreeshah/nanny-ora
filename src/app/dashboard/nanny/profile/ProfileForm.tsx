@@ -432,7 +432,7 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
           onChange={setAreasCovered}
           options={AUCKLAND_SUBURBS_ALL}
           disabled={isPending}
-          helperText="Suburbs you cover. Type to search; not listed? just add it."
+          helperText="Type a suburb, then tap it in the list — or press Enter — to add it as a tag. Repeat for each area you cover. Not listed? Type it and press Enter. Only tagged suburbs are saved."
         />
 
         {/* Care Types Multi-Select */}
