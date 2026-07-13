@@ -149,7 +149,7 @@ This is the middleware (named `proxy` per Next.js 16 convention). Uses `getToken
 nannyora/
 ├── prisma/
 │   ├── schema.prisma          # PostgreSQL schema (8 models)
-│   ├── seed.ts                # Seeds demo admin/nanny/parent + sample data
+│   ├── seed.ts                # No-op (demo data removed; real accounts only)
 │   └── dev.db                 # Local SQLite (gitignored, legacy)
 ├── public/
 │   ├── logo-wordmark.png      # Clean wordmark logo (no baked-in tagline)
@@ -212,14 +212,15 @@ nannyora/
 │   ├── components/
 │   │   ├── providers/Providers.tsx   # SessionProvider + ToastProvider
 │   │   ├── layout/                   # Header, Footer, MobileBottomNav
-│   │   ├── cards/NannyCard.tsx       # Nanny listing card
+│   │   ├── cards/NannyCard.tsx       # Nanny listing card (shows PlacementBadge when not AVAILABLE)
 │   │   ├── cards/FavouriteButton.tsx # Optimistic heart toggle (PARENT only)
+│   │   ├── FaqGroups.tsx             # Grouped parent + nanny FAQ (reused on home + how-it-works)
 │   │   ├── home/                     # InteractiveHero, BentoFeatures, MarqueeTestimonials, StatsTicker, TrustStrip, TrustStandard, SpecialistExpertise, DayInLife, LifestyleGallery
 │   │   ├── messaging/                # ConversationList (inbox), ConversationThread (chat view)
-│   │   └── ui/                       # Button, Input, Select, Textarea, Card, Badge (+VerificationBadge), Accordion, Toast (+useToast hook), Reveal, ShinyText, BorderBeam, ImageBand, TagInput
+│   │   └── ui/                       # Button, Input, Select, Textarea, Card, Badge (+VerificationBadge +PlacementBadge +SpecialistTag), Accordion, Toast (+useToast hook), Reveal, ShinyText, BorderBeam, ImageBand, TagInput, SuburbAutocomplete
 │   ├── lib/
 │   │   ├── utils.ts                  # cn(), formatRate(), getInitials()
-│   │   ├── constants/index.ts        # All enums, lists, options (care types, suburbs, safety checks, regions, language tags, etc.)
+│   │   ├── constants/index.ts        # All enums, lists, options (care types, safety checks, regions, language tags, placement statuses, etc.)
 │   │   ├── validations/index.ts      # Zod schemas (parentIntake, nannyApplication, jobPost, enquiry, referee)
 │   │   ├── auth/auth.ts             # NextAuth config
 │   │   ├── db/prisma.ts             # Prisma client singleton
@@ -227,9 +228,10 @@ nannyora/
 │   │   ├── email/                    # Resend lifecycle email system (sendEmail + 13 lifecycle templates + escapeHtml + emailShell)
 │   │   ├── sms/                      # Twilio SMS via plain REST (sendSms) + NZ phone normaliser (toE164NZ)
 │   │   ├── moderation.ts            # detectContactInfo() — flags email/phone in messages (de-obfuscates "at"/"dot"/spelled digits)
+│   │   ├── suburbs.ts               # ~160 Auckland suburbs by region + normSuburb/titleCaseSuburb/regionOf/suburbMatches — source of truth for suburb→region
+│   │   ├── faq.ts                    # parentFaqs (4) + nannyFaqs (5) — payroll, employment, holidays, privacy Q&A
 │   │   ├── images.ts                # Tagged local image library + pickImages() deterministic seeded picker
-│   │   ├── data/sample-nannies.ts   # Dev sample data (10 mock nannies + filterNannies + NannyFilters type)
-│   │   └── data/nannies.ts          # DB-backed public nanny directory (getPublicNannies, getPublicNannyById, getNannyReviews) — falls back to sample data
+│   │   └── data/nannies.ts          # DB-backed public nanny directory (getPublicNannies, getPublicNannyById, getNannyReviews, filterNannies, NannyFilters) — no sample fallback, returns [] on DB error
 │   └── server/actions/              # Server Actions (all use "use server")
 │       ├── auth.ts                  # Exports ActionResult type only (registerUser deleted; signups via registerParent/applyAsNanny)
 │       ├── nanny.ts                 # applyAsNanny, updateNannyProfile, uploadNannyDocument, deleteNannyDocument, getNannyDocuments, uploadProfilePhoto, setProRegApplicability
@@ -240,7 +242,7 @@ nannyora/
 │       ├── messages.ts              # getConversation, sendMessage, getMyConversations, getUnreadTotal
 │       ├── password.ts              # requestPasswordReset, resetPassword
 │       ├── reviews.ts               # createReview
-│       └── admin.ts                 # updateNannyStatus, updateVerificationLevel, reviewDocument, updateSafetyCheckStatus, getAdminStats, getAdminNannies, getDocumentDownloadUrl
+│       └── admin.ts                 # updateNannyStatus, updateVerificationLevel, reviewDocument, updateSafetyCheckStatus, getAdminStats, getAdminNannies, getDocumentDownloadUrl, updatePlacement
 ├── next.config.ts                   # serverActions.bodySizeLimit: 10mb, images, turbopack
 ├── postcss.config.mjs              # @tailwindcss/postcss (Tailwind v4)
 ├── package.json
@@ -304,6 +306,7 @@ Relations: `parentProfile?`, `nannyProfile?`, `jobPosts[]`, `enquiriesSent[]`, `
 | Admin status | `adminStatus` (default "SUBMITTED") | DRAFT/SUBMITTED/UNDER_REVIEW/APPROVED/VERIFIED/SPECIALIST/SUSPENDED/ARCHIVED |
 | **7 Safety checks** | `identityVerified`, `workHistoryVerified`, `proRegVerified`, `refereeCheckStatus`, `policeVetStatus`, `interviewStatus`, `riskAssessmentStatus` | Each: NOT_STARTED/SUBMITTED/VERIFIED/REJECTED/**NOT_APPLICABLE** (NOT_APPLICABLE only offered for `proRegVerified`) |
 | **Police vet auth** | `policeVetAuthorized` (Boolean), `policeVetAuthorizedAt` (DateTime?) | Children's Act 2014 consent |
+| **Placement** | `placementStatus` (default "AVAILABLE"), `trialDate?`, `placementStart?`, `placementEnd?`, `placementNote?`, `paidConfirmed` (Boolean, default false) | Admin-managed availability. AVAILABLE/TRIAL_PENDING/PLACED/CONTRACT_ENDING. `paidConfirmed` is internal, never public |
 | Timestamps | `createdAt`, `updatedAt` | |
 | Engagement | `favouritedBy` (Favourite[]), `views` (ProfileView[]), `jobApplications[]` | Relations |
 
@@ -524,6 +527,7 @@ Exports only the `ActionResult` type. `registerUser` was deleted — signups now
 | `getAdminStats()` | ADMIN | Returns dashboard counts |
 | `getAdminNannies(filters?)` | ADMIN | Returns all nanny profiles with user + documents. `take: 100` limit |
 | `getDocumentDownloadUrl(documentId)` | ADMIN | Generates 5-minute signed Storage URL |
+| `updatePlacement(nannyProfileId, data)` | ADMIN | Sets placement status (AVAILABLE/TRIAL_PENDING/PLACED/CONTRACT_ENDING) + trialDate, placementStart, placementEnd, placementNote, paidConfirmed |
 
 ### Messages (`src/server/actions/messages.ts`) (NEW — Fiverr-style in-app chat)
 | Function | Auth | Description |
@@ -582,10 +586,11 @@ Remuera, Mount Eden, Ponsonby, Grey Lynn, Devonport, Takapuna, Newmarket, Epsom,
 ID, REFERENCES, FIRST_AID_CERT, POLICE_VET, TEACHER_REGISTRATION, WORK_HISTORY, PROFESSIONAL_REGISTRATION, REFEREE_LETTER
 
 ### Status Enums
-- **Safety check statuses:** NOT_STARTED, SUBMITTED, VERIFIED, REJECTED
+- **Safety check statuses:** NOT_STARTED, SUBMITTED, VERIFIED, REJECTED, NOT_APPLICABLE (only for `proRegVerified`)
 - **Document review statuses:** PENDING, APPROVED, REJECTED
 - **Nanny admin statuses:** DRAFT, SUBMITTED, UNDER_REVIEW, APPROVED, VERIFIED, SPECIALIST, SUSPENDED, ARCHIVED
 - **Verification levels:** LISTED, VERIFIED, PREMIUM_VETTED, SPECIALIST
+- **Placement statuses:** AVAILABLE, TRIAL_PENDING, PLACED, CONTRACT_ENDING (admin-managed, orthogonal to verification)
 - **Job post statuses:** PENDING, APPROVED, CLOSED, REJECTED
 - **Enquiry statuses:** NEW, CONTACTED, MATCHED, CLOSED
 
@@ -644,13 +649,10 @@ Credentials are **not documented here by design** — they live only in `ADMIN_B
 
 Emergency admin access — works without a database. Enabled only when `ADMIN_BACKUP_EMAIL` and `ADMIN_BACKUP_PASSWORD` env vars are both set (fail closed, no hardcoded default). This is the only auth bypass; the old `demo1234` universal password was removed.
 
-### DB-Seeded Demo Accounts (require database)
-| Role | Email | Password |
-|---|---|---|
-| Nanny | `emma@nannyora.co.nz` | `demo1234` |
-| Parent | `parent@nannyora.co.nz` | `demo1234` |
+### DB-Seeded Demo Accounts (removed)
+The seed script (`prisma/seed.ts`) is now a **no-op** — all demo/sample data was removed. The platform is live with real accounts. Real nannies and parents sign up through the app. Admin access is via the env-backed backup admin only.
 
-Seeded by `prisma/seed.ts` with proper bcrypt hashes. These accounts require the database to be reachable — they use standard bcrypt password comparison, no bypass. The admin seed account (`admin@nannyora.co.nz`) also exists in the DB but the env-backed backup above takes priority if the DB is down.
+> **Note:** `npm run db:seed` still runs without error but does nothing. Do NOT recreate demo users in the seed script — real accounts exist in the DB.
 
 ---
 
@@ -707,6 +709,10 @@ npm run dev      # starts at http://localhost:3000
 21. **Reviews** — `Review` model now active. Parents rate nannies (1–5) after MATCHED/CLOSED enquiry. Upsert via unique `[parentId, nannyId]` — re-submitting updates
 22. **Job applications** — Nannies one-click apply to APPROVED jobs via `JobApplication` model. Idempotent per (job, nanny). Admin sees applicants in job list
 23. **Backup admin fail-closed** — Emergency admin account exists only when BOTH `ADMIN_BACKUP_EMAIL` + `ADMIN_BACKUP_PASSWORD` env vars are set. No hardcoded credentials in code
+24. **No sample/demo data** — `seed.ts` is a no-op; `sample-nannies.ts` deleted. The directory returns `[]` on DB error instead of mock data. The site looks empty (not fake) when the DB is down.
+25. **Placement/availability status** — Admin-managed `placementStatus` (AVAILABLE/TRIAL_PENDING/PLACED/CONTRACT_ENDING) orthogonal to verification. `PlacementBadge` on `NannyCard` shows when not AVAILABLE. `paidConfirmed` is internal-only, never exposed in `NannyProfilePublic`.
+26. **FAQ content** — `parentFaqs` (4) + `nannyFaqs` (5) in `src/lib/faq.ts`, rendered via `FaqGroups` on homepage + how-it-works. Covers NZ-specific payroll, employment, holidays, privacy.
+27. **Suburb autocomplete** — `src/lib/suburbs.ts` holds ~160 Auckland suburbs grouped by 5 regions. `SuburbAutocomplete` component (chip input + dropdown suggestions). Region-aware matching: searching "East Auckland" finds Botany; nanny listing "East Auckland" matches searched "Botany".
 
 ---
 
@@ -719,10 +725,11 @@ npm run dev      # starts at http://localhost:3000
 - **`createEnquiry` / `createJobPost`** accept any logged-in role (should be PARENT-only); `contactEmail` comes from input, not session (spoofable)
 - **View throttle + message throttle + SMS throttle are in-memory** — won't survive restarts or work across serverless instances. Upgrade to Redis/Upstash if rate-limiting needs to be strict
 - **`SkillTag` model** exists in schema but is unused (specialist tags are hardcoded in constants, not DB-driven)
-- **No payment integration** — the pricing page is informational only
+- **No payment integration** — the pricing page is informational only; `paidConfirmed` is a manual admin flag, not a payment processor
 - **`lucide-react` v1.18.0** — unusual version pin (latest is v0.x); may have API differences
 - **Lint has ~574 errors** — mostly `@typescript-eslint/no-explicit-any` on `(session.user as any).role` patterns; not blocking builds
 - **SEO landing pages** (`/ece-nanny-auckland`, etc.) are statically rendered and don't pull from the database
+- **Stale comments in `nannies.ts`** — `getPublicNannies`/`getPublicNannyById` JSDoc still mentions "falls back to sample data" but sample data was deleted; they now return `[]` / `undefined` on DB error
 - **Logo tagline** — the tagline "Curated Care. Warm Hearts." is now rendered as CSS text below the `logo-wordmark.png` wordmark in Header, Footer, login page, and admin header. The old `logo.png` (with baked-in raster tagline) is retired but still in `public/`.
 
 ---
@@ -757,14 +764,14 @@ The following changes were made after the initial `project_context.md` was writt
 ### Filter Sidebar + Language Immersion (find-a-nanny redesign)
 - **Sidebar layout** — moved filters from collapsible panel to sticky left sidebar (desktop) / slide-out drawer (mobile) on `/find-a-nanny`
 - **Multi-select filters** — care types, specialist tags, language tags, and age ranges changed from single-select dropdowns to checkbox pills (multi-select)
-- **Auckland regions** — new `AUCKLAND_REGIONS` + `SUBURB_TO_REGION` mapping in constants; filter by Central / East / North Shore / West / South
+- **Auckland regions** — `AUCKLAND_REGIONS` in constants; `SUBURB_TO_REGION` mapping was in constants but later moved to `src/lib/suburbs.ts` (`SUBURB_REGIONS`). Filter by Central / East / North Shore / West / South
 - **Language immersion** — new `LANGUAGE_TAGS` constant (Mandarin, Cantonese, Korean, Japanese, Spanish, Te Reo Māori); new `languages: string[]` field on `NannyProfilePublic`; language immersion badges rendered on `NannyCard`
 - **Child age filter** — maps age ranges to existing specialist tags via heuristic (`AGE_TO_TAG` — newborn/infant/toddler→`baby_experience`, preschool→`ece_background`, school_age/teenager→`after_school_care`)
 - **Childcare support note** — replaced government funding note with softer "Childcare Support Options" info box linking to `/childcare-support`
 - **Sample data** — added `languages` to all 10 sample nannies (Lily Chen→Mandarin, Grace Taylor→Korean, Hannah Patel→Te Reo Māori, Rachel Foster→Spanish, others→empty)
 
 ### DB-Backed Nanny Directory (`src/lib/data/nannies.ts`)
-- **New data layer** — `getPublicNannies()` queries Prisma for APPROVED/VERIFIED/SPECIALIST nannies, falls back to sample data when DB is empty or unreachable
+- **New data layer** — `getPublicNannies()` queries Prisma for APPROVED/VERIFIED/SPECIALIST nannies. Originally fell back to sample data when DB was empty; sample data later removed (returns `[]` on error)
 - **`getPublicNannyById()`** — single nanny lookup, DB first then sample data fallback
 - **`toPublic()`** — maps Prisma `NannyProfile` row → `NannyProfilePublic` type (parses JSON string arrays)
 - **`languages`** now read from DB via `parseJsonArray(row.languages)` — the `ponytail:` shortcut is resolved (column added to schema)
@@ -797,7 +804,7 @@ The following changes were made after the initial `project_context.md` was writt
 ### Suburb Free-Text Inputs + TagInput Component
 - **All suburb dropdowns replaced** — `AUCKLAND_SUBURBS` select dropdowns replaced with free-text `<Input>` (single-suburb fields) and `<TagInput>` (multi-suburb fields) across all 5 forms (apply-as-nanny, ProfileForm, register-family, post-a-job, find-a-nanny filter sidebar)
 - **New `TagInput` component** (`src/components/ui/TagInput.tsx`, 104 lines) — type + Enter to add chip, Backspace to remove last, dedup, onBlur commits
-- **`AUCKLAND_SUBURBS`** removed from imports in all 5 form files; stays in `constants/index.ts` (SEO pages + `SUBURB_TO_REGION` still reference it)
+- **`AUCKLAND_SUBURBS`** removed from imports in all 5 form files; stays in `constants/index.ts` for SEO pages. `SUBURB_TO_REGION` was later replaced by `SUBURB_REGIONS` in `src/lib/suburbs.ts`
 
 ### Police Vet Admin-Only
 - **`policeVetStatus`** changed from `nannyUploadable: true` → `false` — NannyOra obtains its own police vet; vets from other services cannot be shared
@@ -911,3 +918,36 @@ Comprehensive read-only audit across 7 vulnerability classes, followed by fixes:
 ### Other UI Fixes
 - **Mobile/tablet responsiveness** (commit `ddcf10d`) — header breakpoint fix + parent stat tile layout
 - **Select chevron overlap** (commit `8950d0b`) — fixed dropdown arrow overlap
+
+### Nanny Placement Status + Demo Data Removal (commit `4e1c8a9`)
+- **New DB fields on `NannyProfile`:** `placementStatus` (AVAILABLE/TRIAL_PENDING/PLACED/CONTRACT_ENDING), `trialDate?`, `placementStart?`, `placementEnd?`, `placementNote?`, `paidConfirmed` (Boolean, admin-only internal flag)
+- **New `PLACEMENT_STATUSES` + `PLACEMENT_STATUS_LABELS`** in `src/lib/constants/index.ts`
+- **New `PlacementBadge` component** in `Badge.tsx` — shows "Available" / "Trial Pending" / "Placed" / "Available from {date}" on `NannyCard` (only when status ≠ AVAILABLE)
+- **New `updatePlacement(nannyProfileId, data)`** in `admin.ts` — ADMIN-only, validates placement status value
+- **`NannyProfilePublic` type** includes all placement fields except `paidConfirmed` (intentionally excluded — internal only)
+- **Admin nannies page** shows placement management UI
+- **Sample/demo data removed:**
+  - `src/lib/data/sample-nannies.ts` DELETED (288 lines, 10 mock nannies)
+  - `prisma/seed.ts` is now a no-op (241 → 14 lines)
+  - `src/lib/data/nannies.ts` — no more sample fallback; returns `[]` on DB error
+  - `NannyFilters` type + `filterNannies()` function moved from `sample-nannies.ts` to `nannies.ts`
+  - Login page — demo quick-login buttons removed (46 lines)
+
+### FAQ (commit `3aa65bf`)
+- **New `src/lib/faq.ts`** — `parentFaqs` (4: payroll, job description, public holidays/sick leave, 90-day trial) + `nannyFaqs` (5: employee vs contractor, mileage reimbursement, privacy/social media, sick child procedure, cooking duties)
+- **New `src/components/FaqGroups.tsx`** — grouped FAQ renderer (For Parents + For Nannies), reuses `Accordion`
+- Added to homepage + how-it-works page
+
+### Suburb Autocomplete + Region-Aware Search (commits `f89109a`, `344035b`, `9d643bb`, `50a2c7c`, `15d79e7`)
+- **New `src/lib/suburbs.ts`** (137 lines) — master Auckland suburb list (~160 suburbs grouped by 5 regions), `normSuburb()` (normalise for matching), `titleCaseSuburb()`, `regionOf()`, `suburbMatches()` (region-aware: "East Auckland" finds Botany; "Botany" finds a nanny listing "East Auckland")
+- **New `src/components/ui/SuburbAutocomplete.tsx`** (107 lines) — chip input + dropdown suggestions, free entry still allowed, Enter picks top suggestion or typed text
+- **`SUBURB_TO_REGION` removed** from `constants/index.ts` — suburb→region membership now derived from `SUBURB_REGIONS` in `suburbs.ts`
+- **Find-a-nanny Location filter** — changed to add-any-suburb chip input (`SuburbAutocomplete`); suggestions only suburbs where nannies actually exist
+- **Nanny forms** — apply form + profile editor both use `SuburbAutocomplete` for "Suburbs You Cover"; suggestions include region umbrellas ("North Shore") then specific suburbs
+- **Added Murrays Bay** to North Shore, ~65 more suburbs across all regions
+
+### Find-a-Nanny Filter UX Fixes (commits `0ea4b61`, `1ffb5f2`)
+- Fixed inputs losing focus per keystroke (state management issue)
+- Fixed slider step values
+- Fixed dual search roles (parent searching vs nanny searching)
+- Fixed mobile filter sheet UX
