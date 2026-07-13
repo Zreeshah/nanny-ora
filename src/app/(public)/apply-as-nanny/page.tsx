@@ -328,7 +328,7 @@ export default function ApplyAsNannyPage() {
                 value={selectedSuburbs}
                 onChange={setSelectedSuburbs}
                 options={AUCKLAND_SUBURBS_ALL}
-                helperText="Pick the Auckland suburbs you travel to. Type to search; not listed? just add it."
+                helperText="Type a suburb, then tap it in the list — or press Enter — to add it as a tag. Repeat for each area you cover. Not listed? Type it and press Enter. Only tagged suburbs are saved."
               />
               {selectedSuburbs.map(s => (
                 <input key={s} type="hidden" name="areasCovered" value={s} />
