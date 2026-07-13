@@ -8,7 +8,7 @@ import { applyAsNanny } from "@/server/actions/nanny";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import { SuburbAutocomplete } from "@/components/ui/SuburbAutocomplete";
-import { AUCKLAND_SUBURBS_FULL } from "@/lib/suburbs";
+import { AUCKLAND_SUBURBS_ALL } from "@/lib/suburbs";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import {
@@ -313,7 +313,7 @@ export default function ApplyAsNannyPage() {
                 <Input name="phone" label="Phone Number" type="tel" required placeholder="021 123 4567" className="rounded-2xl" />
                 <Input name="suburb" label="Home Suburb" required placeholder="Start typing…" list="auckland-suburbs" className="rounded-2xl" />
                 <datalist id="auckland-suburbs">
-                  {AUCKLAND_SUBURBS_FULL.map((s) => <option key={s} value={s} />)}
+                  {AUCKLAND_SUBURBS_ALL.map((s) => <option key={s} value={s} />)}
                 </datalist>
                 <Input name="password" label="Choose Password" type="password" required placeholder="••••••••" className="rounded-2xl" />
                 <Input name="confirmPassword" label="Confirm Password" type="password" required placeholder="••••••••" className="rounded-2xl" />
@@ -327,7 +327,7 @@ export default function ApplyAsNannyPage() {
                 placeholder="Start typing a suburb…"
                 value={selectedSuburbs}
                 onChange={setSelectedSuburbs}
-                options={AUCKLAND_SUBURBS_FULL}
+                options={AUCKLAND_SUBURBS_ALL}
                 helperText="Pick the Auckland suburbs you travel to. Type to search; not listed? just add it."
               />
               {selectedSuburbs.map(s => (

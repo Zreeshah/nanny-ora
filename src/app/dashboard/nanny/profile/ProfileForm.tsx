@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { useToast } from "@/components/ui/Toast";
 import { SuburbAutocomplete } from "@/components/ui/SuburbAutocomplete";
-import { AUCKLAND_SUBURBS_FULL } from "@/lib/suburbs";
+import { AUCKLAND_SUBURBS_ALL } from "@/lib/suburbs";
 import {
   CARE_TYPES,
   SPECIALIST_TAGS,
@@ -343,7 +343,7 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
             list="auckland-suburbs"
           />
           <datalist id="auckland-suburbs">
-            {AUCKLAND_SUBURBS_FULL.map((s) => <option key={s} value={s} />)}
+            {AUCKLAND_SUBURBS_ALL.map((s) => <option key={s} value={s} />)}
           </datalist>
         </div>
       </Card>
@@ -430,7 +430,7 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
           placeholder="Start typing a suburb…"
           value={areasCovered}
           onChange={setAreasCovered}
-          options={AUCKLAND_SUBURBS_FULL}
+          options={AUCKLAND_SUBURBS_ALL}
           disabled={isPending}
           helperText="Suburbs you cover. Type to search; not listed? just add it."
         />

@@ -21,6 +21,8 @@ export const SUBURB_REGIONS: Record<string, string[]> = {
     "Onehunga", "Orakei", "Otahuhu", "Parnell", "Point Chevalier", "Ponsonby", "Remuera",
     "Royal Oak", "Saint Johns", "Saint Marys Bay", "Sandringham", "Three Kings", "Waterview",
     "Western Springs", "Westmere",
+    "Ellerslie", "Freemans Bay", "Hillsborough", "Lynfield", "Penrose", "Oranga", "Te Papapa",
+    "Owairaka", "Waikowhai", "Wesley", "Saint Lukes",
   ],
   north: [
     "Albany", "Bayswater", "Bayview", "Beach Haven", "Belmont", "Birkdale", "Birkenhead",
@@ -33,12 +35,17 @@ export const SUBURB_REGIONS: Record<string, string[]> = {
     "Coatesville", "Dairy Flat", "Gulf Harbour", "Helensville", "Hobsonville", "Huapai", "Kumeu",
     "Milldale", "Millwater", "Orewa", "Paremoremo", "Red Beach", "Redvale", "Riverhead",
     "Silverdale", "Stanmore Bay", "Taupaki", "Waimauku", "Wainui", "Whangaparāoa",
+    "Waiwera", "Hatfields Beach", "Army Bay", "Manly", "Arkles Bay",
+    "Tindalls Beach", "Warkworth", "Snells Beach", "Matakana", "Puhoi", "Wellsford",
+    "Kaukapakapa", "Parakai", "Windsor Park", "Schnapper Rock", "Okura", "Waitoki",
   ],
   east: [
     "Beachlands", "Botany Downs", "Bucklands Beach", "Dannemora", "Eastern Beach", "Farm Cove",
     "Flat Bush", "Glendowie", "Golflands", "Half Moon Bay", "Highland Park", "Howick", "Maraetai",
     "Meadowlands", "Mellons Bay", "Mission Bay", "Ormiston", "Pakuranga", "Panmure",
     "Point England", "Shelly Park", "Stonefields", "Sunnyhills", "Whitford",
+    "Botany", "Saint Heliers", "Kohimarama", "Meadowbank", "Glen Innes", "Tamaki", "Cockle Bay",
+    "Northpark", "Point View", "Burswood", "Chapel Downs",
   ],
   south: [
     "Airport Oaks", "Alfriston", "Clover Park", "East Tamaki", "Favona", "Goodwood Heights",
@@ -48,17 +55,33 @@ export const SUBURB_REGIONS: Record<string, string[]> = {
     // Franklin
     "Bombay", "Drury", "Karaka", "Pahurehure", "Papakura", "Patumahoe", "Pukekohe", "Tuakau",
     "Waiuku",
+    "Conifer Grove", "Opaheke", "Rosehill", "Clevedon", "Ardmore", "Ramarama", "Kingseat",
+    "Waiau Pa", "Clarks Beach", "Glenbrook", "Buckland",
   ],
   west: [
     "Avondale", "Blockhouse Bay", "Glen Eden", "Glendene", "Green Bay", "Henderson",
     "Henderson Valley", "Kelston", "Laingholm", "Massey", "New Lynn", "New Windsor", "Oratia",
     "Ranui", "Sunnyvale", "Swanson", "Te Atatu Peninsula", "Te Atatu South", "Titirangi",
     "Waiatarua", "Waitakere",
+    "Piha", "Karekare", "Bethells Beach", "Te Henga", "Huia", "Cornwallis", "Parau",
+    "French Bay", "Wood Bay", "Western Heights", "McLaren Park", "Woodlands Park", "Konini",
+    "Fruitvale", "Rosebank", "Waima",
   ],
 };
 
+/** Region umbrella terms — so a nanny typing "North Shore" gets a suggestion, not
+ *  just specific suburbs. These resolve to regions via REGION_ALIASES, so the
+ *  parent filter matches them too. */
+export const AUCKLAND_REGION_LABELS: string[] = [
+  "Central Auckland", "North Shore", "East Auckland", "South Auckland", "West Auckland",
+];
+
 /** Flat suggestion list for the suburb pickers (free entry still allowed). */
 export const AUCKLAND_SUBURBS_FULL: string[] = Object.values(SUBURB_REGIONS).flat();
+
+/** What the nanny forms suggest: region umbrellas first (so "North Shore" surfaces),
+ *  then every specific suburb. Free entry still allowed for anything off-list. */
+export const AUCKLAND_SUBURBS_ALL: string[] = [...AUCKLAND_REGION_LABELS, ...AUCKLAND_SUBURBS_FULL];
 
 /** Region words people actually type → region key. Exact-normalized match only
  *  (substring on short words like "west" would wrongly catch "Westmere"). */
