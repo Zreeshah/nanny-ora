@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { stripe } from "@/lib/payments/stripe";
 import { activateMembership, recordPayment, setMembershipStatus } from "@/lib/payments/activate";
+import { settleStripeBooking } from "@/server/actions/booking";
 import type { PlanId } from "@/lib/membership";
 
 // Stripe needs the raw body to verify the signature.
@@ -28,11 +29,22 @@ export async function POST(req: Request) {
 
   try {
     switch (event.type) {
-      // Checkout finished — grant access immediately. Money is NOT recorded here:
-      // invoice.paid fires for the same charge and is the single source of truth for
-      // payments, so recording in both would double-count the purchase.
+      // Checkout finished — either a membership subscription or a one-time booking.
       case "checkout.session.completed": {
         const s = event.data.object as Stripe.Checkout.Session;
+
+        // One-time booking payment (mode=payment): settle the booking + record the fee.
+        if (s.metadata?.kind === "BOOKING" && s.metadata?.bookingId) {
+          await settleStripeBooking({
+            bookingId: s.metadata.bookingId,
+            providerRef: s.id,
+            amountCents: s.amount_total ?? 0,
+          });
+          break;
+        }
+
+        // Membership: grant access immediately. Money is NOT recorded here — invoice.paid
+        // fires for the same charge and is the single source of truth for payments.
         const userId = s.metadata?.userId;
         const planId = s.metadata?.planId as PlanId | undefined;
         if (!userId || !planId) break;

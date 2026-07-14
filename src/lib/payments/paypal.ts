@@ -1,5 +1,5 @@
 import "server-only";
-import type { PaymentProvider, CheckoutRequest } from "./types";
+import type { PaymentProvider, CheckoutRequest, BookingCheckoutRequest } from "./types";
 import type { Plan } from "@/lib/membership";
 
 // ponytail: PayPal's REST API over fetch — the official SDK adds a dependency for
@@ -146,4 +146,58 @@ export const paypalProvider: PaymentProvider = {
       body: JSON.stringify({ reason: "Cancelled by member" }),
     });
   },
+
+  async createBookingCheckout({ bookingId, amountCents, nannyName, successUrl, cancelUrl }: BookingCheckoutRequest) {
+    if (!configured()) throw new Error("PayPal is not configured.");
+
+    // Orders v2, intent CAPTURE — funds are captured on return (captureBookingOrder).
+    const order = await paypalFetch("/v2/checkout/orders", {
+      method: "POST",
+      body: JSON.stringify({
+        intent: "CAPTURE",
+        purchase_units: [
+          {
+            custom_id: bookingId, // echoed back so we can match the booking
+            description: `Booking with ${nannyName}`.slice(0, 127),
+            amount: { currency_code: "NZD", value: (amountCents / 100).toFixed(2) },
+          },
+        ],
+        application_context: {
+          brand_name: "NannyOra",
+          user_action: "PAY_NOW",
+          shipping_preference: "NO_SHIPPING",
+          return_url: successUrl,
+          cancel_url: cancelUrl,
+        },
+      }),
+    });
+
+    const approve = (order.links ?? []).find((l: any) => l.rel === "approve" || l.rel === "payer-action");
+    if (!approve?.href) throw new Error("PayPal did not return an approval URL.");
+    return { url: approve.href, ref: order.id };
+  },
 };
+
+/** Capture an approved booking order on return. Returns { captured, bookingId, amountCents, captureId }. */
+export async function captureBookingOrder(orderId: string): Promise<{
+  captured: boolean;
+  bookingId: string | null;
+  amountCents: number;
+  captureId: string | null;
+}> {
+  const res = await paypalFetch(`/v2/checkout/orders/${orderId}/capture`, { method: "POST" });
+  const pu = (res.purchase_units ?? [])[0];
+  const capture = pu?.payments?.captures?.[0];
+  const amount = capture?.amount?.value ?? pu?.amount?.value ?? "0";
+  return {
+    captured: res.status === "COMPLETED",
+    bookingId: pu?.custom_id ?? capture?.custom_id ?? null,
+    amountCents: Math.round(parseFloat(amount) * 100),
+    captureId: capture?.id ?? null,
+  };
+}
+
+/** Read an order's status/custom_id without capturing (idempotency check). */
+export async function getBookingOrder(orderId: string): Promise<any> {
+  return paypalFetch(`/v2/checkout/orders/${orderId}`);
+}

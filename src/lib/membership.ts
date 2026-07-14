@@ -62,8 +62,7 @@ export const MEMBERSHIP_BENEFITS = [
   "Priority support",
 ];
 
-/** Platform service fee on bookings (spec: 8–12%). */
-export const SERVICE_FEE_PCT = 0.1;
+export { SERVICE_FEE_PCT } from "@/lib/booking"; // canonical lives in booking.ts (pure)
 
 export const getPlan = (id: string): Plan | undefined =>
   MEMBERSHIP_PLANS.find((p) => p.id === id);

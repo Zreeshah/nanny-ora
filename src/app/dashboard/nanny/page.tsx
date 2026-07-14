@@ -66,11 +66,18 @@ export default function NannyDashboard() {
             Here is the current activity overview for your NannyOra carer profile.
           </p>
         </div>
-        <Link href="/dashboard/nanny/profile" className="relative z-10 flex-shrink-0">
-          <Button variant="accent" size="md" className="rounded-full shadow-md shadow-accent/15">
-            Update Profile
-          </Button>
-        </Link>
+        <div className="relative z-10 flex-shrink-0 flex gap-2">
+          <Link href="/dashboard/nanny/bookings">
+            <Button variant="secondary" size="md" className="rounded-full shadow-md">
+              Bookings
+            </Button>
+          </Link>
+          <Link href="/dashboard/nanny/profile">
+            <Button variant="accent" size="md" className="rounded-full shadow-md shadow-accent/15">
+              Update Profile
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Stats Cards Grid */}

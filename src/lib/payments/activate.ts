@@ -59,14 +59,19 @@ type PaymentArgs = {
   amountCents: number;
   kind?: string;
   description?: string;
+  feeCents?: number;
+  bookingId?: string;
 };
 
-/** Record one charge. Unique on providerRef, so webhook retries can't double-bill. */
-export async function recordPayment(args: PaymentArgs): Promise<void> {
-  const { userId, provider, providerRef, amountCents, kind = "MEMBERSHIP", description } = args;
+/**
+ * Record one charge. Unique on providerRef, so webhook retries can't double-bill.
+ * Returns true if it created a new row, false if this charge was already recorded.
+ */
+export async function recordPayment(args: PaymentArgs): Promise<boolean> {
+  const { userId, provider, providerRef, amountCents, kind = "MEMBERSHIP", description, feeCents, bookingId } = args;
 
   const seen = await prisma.payment.findUnique({ where: { providerRef } });
-  if (seen) return;
+  if (seen) return false;
 
   await prisma.payment.create({
     data: {
@@ -75,11 +80,14 @@ export async function recordPayment(args: PaymentArgs): Promise<void> {
       provider,
       providerRef,
       amountCents,
+      feeCents: feeCents ?? 0,
+      bookingId: bookingId ?? null,
       currency: "NZD",
       status: "PAID",
       description: description ?? "Membership",
     },
   });
+  return true;
 }
 
 /** Flip a membership out of ACTIVE (cancelled / expired / payment failed). */

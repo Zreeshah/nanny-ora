@@ -1,6 +1,6 @@
 import "server-only";
 import Stripe from "stripe";
-import type { PaymentProvider, CheckoutRequest } from "./types";
+import type { PaymentProvider, CheckoutRequest, BookingCheckoutRequest } from "./types";
 
 const key = process.env.STRIPE_SECRET_KEY;
 
@@ -46,5 +46,31 @@ export const stripeProvider: PaymentProvider = {
   async cancelMembership(providerSubscriptionId: string) {
     if (!stripe) throw new Error("Stripe is not configured.");
     await stripe.subscriptions.update(providerSubscriptionId, { cancel_at_period_end: true });
+  },
+
+  async createBookingCheckout({ bookingId, email, amountCents, nannyName, successUrl, cancelUrl }: BookingCheckoutRequest) {
+    if (!stripe) throw new Error("Stripe is not configured.");
+
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment", // one-time, not a subscription
+      customer_email: email,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      line_items: [
+        {
+          quantity: 1,
+          price_data: {
+            currency: "nzd",
+            unit_amount: amountCents,
+            product_data: { name: `Booking with ${nannyName} (incl. service fee)` },
+          },
+        },
+      ],
+      metadata: { bookingId, kind: "BOOKING" },
+      payment_intent_data: { metadata: { bookingId, kind: "BOOKING" } },
+    });
+
+    if (!session.url) throw new Error("Stripe did not return a checkout URL.");
+    return { url: session.url, ref: session.id };
   },
 };
