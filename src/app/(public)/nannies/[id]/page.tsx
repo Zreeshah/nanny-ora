@@ -8,6 +8,7 @@ import { prisma } from "@/lib/db/prisma";
 import { formatRate, getInitials } from "@/lib/utils";
 import { CARE_TYPES, LANGUAGE_TAGS } from "@/lib/constants";
 import EnquiryForm from "./EnquiryForm";
+import { getMembership } from "@/lib/membership";
 import ViewTracker from "./ViewTracker";
 import {
   MapPin, Clock, Shield, Car, Heart, GraduationCap,
@@ -52,6 +53,7 @@ export default async function NannyProfilePage({
   const nanny = await getPublicNannyById(id);
   if (!nanny) notFound();
   const { reviews, avg } = await getNannyReviews(nanny.id);
+  const { isMember } = await getMembership();
 
   const careLabels = nanny.careTypes
     .map((ct) => CARE_TYPES.find((c) => c.value === ct)?.label)
@@ -271,7 +273,7 @@ export default async function NannyProfilePage({
           )}
 
           {/* Enquiry CTA */}
-          <EnquiryForm nannyId={nanny.id} firstName={nanny.name.split(" ")[0]} placementStatus={nanny.placementStatus} />
+          <EnquiryForm nannyId={nanny.id} firstName={nanny.name.split(" ")[0]} placementStatus={nanny.placementStatus} isMember={isMember} />
 
           {/* Availability */}
           <Card>

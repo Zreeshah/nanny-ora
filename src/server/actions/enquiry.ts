@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth/auth";
 import { enquirySchema, type EnquiryInput } from "@/lib/validations";
 import { detectContactInfo } from "@/lib/moderation";
 import { sendEnquiryReceipt, notifyAdminNewEnquiry, sendEnquiryStatusUpdate } from "@/lib/email";
+import { requireMembership } from "@/lib/membership";
 import type { ActionResult } from "./auth";
 
 export async function createEnquiry(input: EnquiryInput): Promise<ActionResult> {
@@ -13,6 +14,10 @@ export async function createEnquiry(input: EnquiryInput): Promise<ActionResult> 
     if (!session?.user?.id) {
       return { success: false, error: "You must be logged in to send an enquiry." };
     }
+
+    // Contacting a nanny is a member-only feature.
+    const gate = await requireMembership();
+    if (gate) return gate;
 
     const parsed = enquirySchema.safeParse(input);
     if (!parsed.success) {

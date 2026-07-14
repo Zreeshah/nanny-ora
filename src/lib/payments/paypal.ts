@@ -1,0 +1,149 @@
+import "server-only";
+import type { PaymentProvider, CheckoutRequest } from "./types";
+import type { Plan } from "@/lib/membership";
+
+// ponytail: PayPal's REST API over fetch — the official SDK adds a dependency for
+// what is four endpoints. Auth token is short-lived and re-fetched as needed.
+
+const CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
+const CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET;
+
+export const PAYPAL_BASE =
+  process.env.PAYPAL_ENV === "live" ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
+
+const configured = () => Boolean(CLIENT_ID && CLIENT_SECRET);
+
+async function token(): Promise<string> {
+  const res = await fetch(`${PAYPAL_BASE}/v1/oauth2/token`, {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString("base64")}`,
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: "grant_type=client_credentials",
+  });
+  if (!res.ok) throw new Error(`PayPal auth failed: ${res.status}`);
+  return (await res.json()).access_token;
+}
+
+export async function paypalFetch(path: string, init: RequestInit = {}): Promise<any> {
+  const res = await fetch(`${PAYPAL_BASE}${path}`, {
+    ...init,
+    headers: {
+      Authorization: `Bearer ${await token()}`,
+      "Content-Type": "application/json",
+      ...(init.headers ?? {}),
+    },
+  });
+  const text = await res.text();
+  if (!res.ok) throw new Error(`PayPal ${path} → ${res.status}: ${text}`);
+  return text ? JSON.parse(text) : {};
+}
+
+// --- Product + billing plans, created on first use and reused thereafter ---------
+// Avoids making the operator pre-create anything in the PayPal dashboard. Cached in
+// module scope; on a cold start we look the existing ones up by name instead of
+// creating duplicates.
+
+const PRODUCT_NAME = "NannyOra Membership";
+const planIdCache = new Map<string, string>();
+let productIdCache: string | null = null;
+
+async function getOrCreateProduct(): Promise<string> {
+  if (productIdCache) return productIdCache;
+
+  const list = await paypalFetch("/v1/catalogs/products?page_size=20");
+  const found = (list.products ?? []).find((p: any) => p.name === PRODUCT_NAME);
+  if (found) return (productIdCache = found.id);
+
+  const created = await paypalFetch("/v1/catalogs/products", {
+    method: "POST",
+    body: JSON.stringify({
+      name: PRODUCT_NAME,
+      description: "Parent membership for the NannyOra platform",
+      type: "SERVICE",
+      category: "SOFTWARE",
+    }),
+  });
+  return (productIdCache = created.id);
+}
+
+const paypalPlanName = (plan: Plan) => `NannyOra ${plan.name} Membership`;
+
+async function getOrCreatePlan(plan: Plan): Promise<string> {
+  const cached = planIdCache.get(plan.id);
+  if (cached) return cached;
+
+  const productId = await getOrCreateProduct();
+  const list = await paypalFetch(`/v1/billing/plans?product_id=${productId}&page_size=20`);
+  const found = (list.plans ?? []).find(
+    (p: any) => p.name === paypalPlanName(plan) && p.status === "ACTIVE"
+  );
+  if (found) {
+    planIdCache.set(plan.id, found.id);
+    return found.id;
+  }
+
+  const created = await paypalFetch("/v1/billing/plans", {
+    method: "POST",
+    body: JSON.stringify({
+      product_id: productId,
+      name: paypalPlanName(plan),
+      status: "ACTIVE",
+      billing_cycles: [
+        {
+          tenure_type: "REGULAR",
+          sequence: 1,
+          total_cycles: 0, // renew indefinitely
+          frequency: {
+            interval_unit: plan.interval === "year" ? "YEAR" : "MONTH",
+            interval_count: plan.intervalCount,
+          },
+          pricing_scheme: {
+            fixed_price: { value: (plan.priceCents / 100).toFixed(2), currency_code: "NZD" },
+          },
+        },
+      ],
+      payment_preferences: { auto_bill_outstanding: true, setup_fee_failure_action: "CONTINUE" },
+    }),
+  });
+  planIdCache.set(plan.id, created.id);
+  return created.id;
+}
+
+export const paypalProvider: PaymentProvider = {
+  id: "PAYPAL",
+
+  isConfigured: configured,
+
+  async createMembershipCheckout({ userId, email, plan, successUrl, cancelUrl }: CheckoutRequest) {
+    if (!configured()) throw new Error("PayPal is not configured.");
+
+    const planId = await getOrCreatePlan(plan);
+    const sub = await paypalFetch("/v1/billing/subscriptions", {
+      method: "POST",
+      body: JSON.stringify({
+        plan_id: planId,
+        subscriber: { email_address: email },
+        custom_id: `${userId}:${plan.id}`, // echoed back on the webhook
+        application_context: {
+          brand_name: "NannyOra",
+          user_action: "SUBSCRIBE_NOW",
+          return_url: successUrl,
+          cancel_url: cancelUrl,
+        },
+      }),
+    });
+
+    const approve = (sub.links ?? []).find((l: any) => l.rel === "approve");
+    if (!approve?.href) throw new Error("PayPal did not return an approval URL.");
+    return { url: approve.href };
+  },
+
+  async cancelMembership(providerSubscriptionId: string) {
+    await paypalFetch(`/v1/billing/subscriptions/${providerSubscriptionId}/cancel`, {
+      method: "POST",
+      body: JSON.stringify({ reason: "Cancelled by member" }),
+    });
+  },
+};

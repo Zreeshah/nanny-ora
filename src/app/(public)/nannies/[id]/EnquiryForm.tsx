@@ -7,12 +7,24 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
-import { Send, CheckCircle } from "lucide-react";
+import { Send, CheckCircle, Lock, CalendarHeart } from "lucide-react";
 import { createEnquiry } from "@/server/actions/enquiry";
+import { UpgradeModal } from "@/components/membership/UpgradeGate";
 
-export default function EnquiryForm({ nannyId, firstName, placementStatus }: { nannyId: string; firstName: string; placementStatus?: string }) {
+export default function EnquiryForm({
+  nannyId,
+  firstName,
+  placementStatus,
+  isMember = false,
+}: {
+  nannyId: string;
+  firstName: string;
+  placementStatus?: string;
+  isMember?: boolean;
+}) {
   const { data: session, status } = useSession();
   const role = (session?.user as any)?.role;
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
@@ -34,6 +46,50 @@ export default function EnquiryForm({ nannyId, firstName, placementStatus }: { n
             Send Enquiry
           </Button>
         </Link>
+      </Card>
+    );
+  }
+
+  // Signed-in free parent: contacting is member-only.
+  if (status !== "loading" && role === "PARENT" && !isMember) {
+    return (
+      <Card className="sticky top-24 border-l-4 border-l-primary">
+        <h3 className="font-semibold text-foreground mb-2">Interested in {firstName}?</h3>
+        <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
+          {firstName} is fully vetted and ready to hear from you. Membership unlocks direct
+          messaging, meet-and-greets and secure bookings.
+        </p>
+
+        <div className="space-y-2">
+          <Button
+            variant="primary"
+            fullWidth
+            onClick={() => setUpgradeOpen(true)}
+            className="rounded-full shadow-lg shadow-primary/10"
+          >
+            <Lock className="w-4 h-4 mr-2 flex-shrink-0" aria-hidden="true" />
+            Become a Member to Contact
+          </Button>
+          <Button
+            variant="outline"
+            fullWidth
+            onClick={() => setUpgradeOpen(true)}
+            className="rounded-full"
+          >
+            <CalendarHeart className="w-4 h-4 mr-2 flex-shrink-0" aria-hidden="true" />
+            Request Meet &amp; Greet
+          </Button>
+        </div>
+
+        <p className="text-[11px] text-muted-foreground text-center mt-3">
+          From NZ$39/month · Cancel anytime
+        </p>
+
+        <UpgradeModal
+          open={upgradeOpen}
+          onClose={() => setUpgradeOpen(false)}
+          feature={`contact ${firstName}`}
+        />
       </Card>
     );
   }

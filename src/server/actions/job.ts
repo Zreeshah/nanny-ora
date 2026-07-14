@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth/auth";
 import { jobPostSchema, type JobPostInput } from "@/lib/validations";
 import { notifyAdminNewJob, sendJobStatusUpdate, notifyAdminJobApplication } from "@/lib/email";
+import { requireMembership } from "@/lib/membership";
 import type { ActionResult } from "./auth";
 
 export async function createJobPost(input: JobPostInput): Promise<ActionResult> {
@@ -12,6 +13,10 @@ export async function createJobPost(input: JobPostInput): Promise<ActionResult> 
     if (!session?.user?.id) {
       return { success: false, error: "You must be logged in to post a job." };
     }
+
+    // Posting a job is a member-only feature.
+    const gate = await requireMembership();
+    if (gate) return gate;
 
     const parsed = jobPostSchema.safeParse(input);
     if (!parsed.success) {

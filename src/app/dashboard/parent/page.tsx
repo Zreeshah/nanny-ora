@@ -118,12 +118,13 @@ export default function ParentDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
           { label: "Find a Nanny", icon: Search, color: "text-primary", href: "/find-a-nanny", bg: "bg-primary/5 border-primary/10" },
           { label: "Post a Job", icon: PlusCircle, color: "text-accent", href: "/post-a-job", bg: "bg-accent/5 border-accent/10" },
           { label: "My Enquiries", icon: Send, color: "text-blue-600", href: "#enquiries", bg: "bg-blue-50 border-blue-100/30" },
           { label: "Saved Nannies", icon: Heart, color: "text-rose-500", href: "#saved", bg: "bg-rose-50 border-rose-100/30" },
+          { label: "Membership", icon: Sparkles, color: "text-primary", href: "/dashboard/parent/membership", bg: "bg-primary/5 border-primary/10" },
         ].map((action) => (
           <Link key={action.label} href={action.href}>
             <Card hover className={`text-center cursor-pointer rounded-2xl border p-5 ${action.bg}`}>

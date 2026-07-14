@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth/auth";
 import { SAFETY_CHECKS } from "@/lib/constants";
+import { requireMembership } from "@/lib/membership";
 import type { ActionResult } from "./auth";
 
 // The 7 vetting checks that make up "verification progress" (single source: SAFETY_CHECKS).
@@ -27,6 +28,10 @@ export async function toggleFavourite(nannyId: string): Promise<ActionResult> {
     if (!parentId || (session.user as any).role !== "PARENT") {
       return { success: false, error: "Please sign in as a family to save nannies." };
     }
+
+    // Shortlisting is a member-only feature.
+    const gate = await requireMembership();
+    if (gate) return gate;
 
     const existing = await prisma.favourite.findUnique({
       where: { parentId_nannyId: { parentId, nannyId } },

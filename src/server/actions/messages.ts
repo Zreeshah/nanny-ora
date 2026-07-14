@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth/auth";
 import { detectContactInfo } from "@/lib/moderation";
 import { sendNewMessageNotification } from "@/lib/email";
 import { sendSms } from "@/lib/sms";
+import { requireMembership } from "@/lib/membership";
 import type { ActionResult } from "./auth";
 
 const SITE_URL = process.env.NEXTAUTH_URL || "https://www.nannyora.co.nz";
@@ -90,6 +91,10 @@ export async function sendMessage(enquiryId: string, body: string): Promise<Acti
     if ("error" in p) return { success: false, error: p.error };
     const { enquiry, myRole, userId } = p;
     if (myRole === "ADMIN") return { success: false, error: "Admins can view but not post in conversations." };
+
+    // Messaging is member-only for parents (requireMembership lets nannies through).
+    const gate = await requireMembership();
+    if (gate) return gate;
 
     const text = (body || "").trim();
     if (!text) return { success: false, error: "Message can't be empty." };

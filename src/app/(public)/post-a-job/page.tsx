@@ -12,6 +12,7 @@ import { CARE_TYPES } from "@/lib/constants";
 import { CheckCircle, Briefcase, Shield, LogIn } from "lucide-react";
 import { ImageBand } from "@/components/ui/ImageBand";
 import { createJobPost } from "@/server/actions/job";
+import { UpgradeModal } from "@/components/membership/UpgradeGate";
 import type { JobPostInput } from "@/lib/validations";
 
 export default function PostAJobPage() {
@@ -19,6 +20,7 @@ export default function PostAJobPage() {
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -71,6 +73,11 @@ export default function PostAJobPage() {
     setIsLoading(false);
 
     if (!res.success) {
+      // Posting a job is member-only — offer the upgrade rather than a bare error.
+      if (res.upgradeRequired) {
+        setUpgradeOpen(true);
+        return;
+      }
       setErrors({ form: res.error || "Something went wrong. Please try again." });
       return;
     }
@@ -235,6 +242,12 @@ export default function PostAJobPage() {
           </div>
         </form>
       </Card>
+
+      <UpgradeModal
+        open={upgradeOpen}
+        onClose={() => setUpgradeOpen(false)}
+        feature="post childcare jobs"
+      />
     </div>
   );
 }
