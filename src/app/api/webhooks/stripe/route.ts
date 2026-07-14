@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { stripe } from "@/lib/payments/stripe";
-import { activateMembership, setMembershipStatus } from "@/lib/payments/activate";
+import { activateMembership, recordPayment, setMembershipStatus } from "@/lib/payments/activate";
 import type { PlanId } from "@/lib/membership";
 
 // Stripe needs the raw body to verify the signature.
@@ -28,7 +28,9 @@ export async function POST(req: Request) {
 
   try {
     switch (event.type) {
-      // First payment — subscription created via Checkout.
+      // Checkout finished — grant access immediately. Money is NOT recorded here:
+      // invoice.paid fires for the same charge and is the single source of truth for
+      // payments, so recording in both would double-count the purchase.
       case "checkout.session.completed": {
         const s = event.data.object as Stripe.Checkout.Session;
         const userId = s.metadata?.userId;
@@ -41,13 +43,12 @@ export async function POST(req: Request) {
           provider: "STRIPE",
           providerCustomerId: typeof s.customer === "string" ? s.customer : null,
           providerSubscriptionId: typeof s.subscription === "string" ? s.subscription : null,
-          amountCents: s.amount_total ?? 0,
-          providerRef: s.id,
         });
         break;
       }
 
-      // Renewals (and the recurring charges after the first).
+      // Every successful charge — the first one AND renewals. Extends access and is
+      // the only place a membership Payment row is written.
       case "invoice.paid": {
         const inv = event.data.object as Stripe.Invoice & { subscription?: string };
         const subId = typeof inv.subscription === "string" ? inv.subscription : null;
@@ -67,9 +68,16 @@ export async function POST(req: Request) {
           providerCustomerId: typeof sub.customer === "string" ? sub.customer : null,
           providerSubscriptionId: subId,
           periodEnd: periodEndUnix ? new Date(periodEndUnix * 1000) : null,
-          amountCents: inv.amount_paid ?? 0,
+        });
+
+        await recordPayment({
+          userId,
+          provider: "STRIPE",
           providerRef: inv.id ?? `${subId}:${inv.created}`,
-          description: "Membership renewal",
+          amountCents: inv.amount_paid ?? 0,
+          description: inv.billing_reason === "subscription_create"
+            ? `${planId.charAt(0) + planId.slice(1).toLowerCase()} membership`
+            : "Membership renewal",
         });
         break;
       }

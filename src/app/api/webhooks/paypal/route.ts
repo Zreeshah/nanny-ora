@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { paypalFetch } from "@/lib/payments/paypal";
-import { activateMembership, setMembershipStatus } from "@/lib/payments/activate";
+import { activateMembership, recordPayment, setMembershipStatus } from "@/lib/payments/activate";
 import { getPlan, type PlanId } from "@/lib/membership";
 
 export const runtime = "nodejs";
@@ -54,11 +54,12 @@ export async function POST(req: Request) {
 
   try {
     switch (event.event_type) {
-      // Subscriber approved — membership starts.
+      // Subscriber approved — grant access. Money is NOT recorded here:
+      // PAYMENT.SALE.COMPLETED fires for the same charge and is the single source of
+      // truth for payments, so recording in both would double-count the purchase.
       case "BILLING.SUBSCRIPTION.ACTIVATED": {
         const ids = parseCustomId(resource.custom_id);
         if (!ids) break;
-        const plan = getPlan(ids.planId);
 
         await activateMembership({
           userId: ids.userId,
@@ -69,27 +70,34 @@ export async function POST(req: Request) {
           periodEnd: resource.billing_info?.next_billing_time
             ? new Date(resource.billing_info.next_billing_time)
             : null,
-          amountCents: plan?.priceCents ?? 0,
-          providerRef: `paypal_sub_${resource.id}`,
         });
         break;
       }
 
-      // Each recurring charge (including renewals).
+      // Every successful charge — the first one AND renewals. Extends access and is
+      // the only place a membership Payment row is written.
       case "PAYMENT.SALE.COMPLETED": {
         const ids = parseCustomId(resource.custom_id);
         const subId = resource.billing_agreement_id;
         if (!ids || !subId) break;
 
-        const amountCents = Math.round(parseFloat(resource.amount?.total ?? "0") * 100);
+        const plan = getPlan(ids.planId);
+        const amountCents =
+          Math.round(parseFloat(resource.amount?.total ?? "0") * 100) || plan?.priceCents || 0;
+
         await activateMembership({
           userId: ids.userId,
           planId: ids.planId,
           provider: "PAYPAL",
           providerSubscriptionId: subId,
-          amountCents,
+        });
+
+        await recordPayment({
+          userId: ids.userId,
+          provider: "PAYPAL",
           providerRef: `paypal_sale_${resource.id}`,
-          description: "Membership renewal",
+          amountCents,
+          description: `${plan?.name ?? ids.planId} membership`,
         });
         break;
       }

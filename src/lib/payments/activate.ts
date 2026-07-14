@@ -19,62 +19,65 @@ type ActivateArgs = {
   providerCustomerId?: string | null;
   /** From the provider when known; otherwise derived from the plan span. */
   periodEnd?: Date | null;
-  amountCents: number;
-  /** Provider's charge id — the idempotency key. A replayed webhook is a no-op. */
-  providerRef: string;
-  description?: string;
 };
 
 /**
- * Mark a membership active and record the payment. Safe to call twice with the same
- * providerRef (webhooks retry) — the Payment row is unique on providerRef, and the
- * Membership is an upsert.
+ * Grant/extend access. Provisioning ONLY — deliberately does not touch money.
+ *
+ * Providers emit two events per purchase (Stripe: checkout.session.completed +
+ * invoice.paid; PayPal: SUBSCRIPTION.ACTIVATED + PAYMENT.SALE.COMPLETED). Both
+ * mean "this person is a member", so both call this — it's an idempotent upsert.
+ * Only the invoice/sale event calls recordPayment(), so one charge = one row.
  */
 export async function activateMembership(args: ActivateArgs): Promise<void> {
-  const {
-    userId, planId, provider, providerSubscriptionId, providerCustomerId,
-    periodEnd, amountCents, providerRef, description,
-  } = args;
-
-  // Idempotency: if we've already booked this charge, do nothing.
-  const seen = await prisma.payment.findUnique({ where: { providerRef } });
-  if (seen) return;
+  const { userId, planId, provider, providerSubscriptionId, providerCustomerId, periodEnd } = args;
 
   const renewsAt = periodEnd ?? addPlanSpan(new Date(), planId);
 
+  const fields = {
+    plan: planId,
+    status: "ACTIVE",
+    provider,
+    providerCustomerId: providerCustomerId ?? undefined,
+    providerSubscriptionId: providerSubscriptionId ?? undefined,
+    currentPeriodEnd: renewsAt,
+    cancelAtPeriodEnd: false,
+  };
+
   await prisma.membership.upsert({
     where: { userId },
-    create: {
-      userId,
-      plan: planId,
-      status: "ACTIVE",
-      provider,
-      providerCustomerId: providerCustomerId ?? undefined,
-      providerSubscriptionId: providerSubscriptionId ?? undefined,
-      currentPeriodEnd: renewsAt,
-      cancelAtPeriodEnd: false,
-    },
-    update: {
-      plan: planId,
-      status: "ACTIVE",
-      provider,
-      providerCustomerId: providerCustomerId ?? undefined,
-      providerSubscriptionId: providerSubscriptionId ?? undefined,
-      currentPeriodEnd: renewsAt,
-      cancelAtPeriodEnd: false,
-    },
+    create: { userId, ...fields },
+    update: fields,
   });
+}
+
+type PaymentArgs = {
+  userId: string;
+  provider: ProviderId;
+  /** The provider's charge id — the idempotency key. A replayed webhook is a no-op. */
+  providerRef: string;
+  amountCents: number;
+  kind?: string;
+  description?: string;
+};
+
+/** Record one charge. Unique on providerRef, so webhook retries can't double-bill. */
+export async function recordPayment(args: PaymentArgs): Promise<void> {
+  const { userId, provider, providerRef, amountCents, kind = "MEMBERSHIP", description } = args;
+
+  const seen = await prisma.payment.findUnique({ where: { providerRef } });
+  if (seen) return;
 
   await prisma.payment.create({
     data: {
       userId,
-      kind: "MEMBERSHIP",
+      kind,
       provider,
       providerRef,
       amountCents,
       currency: "NZD",
       status: "PAID",
-      description: description ?? `${getPlan(planId)?.name ?? planId} membership`,
+      description: description ?? "Membership",
     },
   });
 }
