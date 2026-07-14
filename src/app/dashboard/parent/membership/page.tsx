@@ -1,12 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getMembershipDashboard } from "@/server/actions/membership";
+import { getMembershipDashboard, confirmPaypalSubscription } from "@/server/actions/membership";
 import { MembershipPanel } from "./MembershipPanel";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = { title: "Membership" };
 
-export default async function ParentMembershipPage() {
+export default async function ParentMembershipPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ subscription_id?: string; checkout?: string }>;
+}) {
+  // PayPal redirects back with ?subscription_id=I-XXX — confirm it synchronously
+  // rather than waiting on the (sometimes-delayed) webhook.
+  const sp = await searchParams;
+  if (sp.subscription_id) {
+    await confirmPaypalSubscription(sp.subscription_id);
+  }
+
   const res = await getMembershipDashboard();
   const data = res.data as any;
 

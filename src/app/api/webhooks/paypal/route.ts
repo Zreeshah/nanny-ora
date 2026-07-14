@@ -11,6 +11,15 @@ async function verify(headers: Headers, rawBody: string): Promise<boolean> {
   const webhookId = process.env.PAYPAL_WEBHOOK_ID;
   if (!webhookId) return false;
 
+  // Guard: an empty/garbage body (health checks, probes) must fail cleanly, not throw.
+  let parsedEvent: unknown;
+  try {
+    parsedEvent = JSON.parse(rawBody);
+  } catch {
+    return false;
+  }
+  if (!headers.get("paypal-transmission-sig")) return false;
+
   const res = await paypalFetch("/v1/notifications/verify-webhook-signature", {
     method: "POST",
     body: JSON.stringify({
@@ -20,7 +29,7 @@ async function verify(headers: Headers, rawBody: string): Promise<boolean> {
       transmission_sig: headers.get("paypal-transmission-sig"),
       cert_url: headers.get("paypal-cert-url"),
       auth_algo: headers.get("paypal-auth-algo"),
-      webhook_event: JSON.parse(rawBody),
+      webhook_event: parsedEvent,
     }),
   });
   return res.verification_status === "SUCCESS";
