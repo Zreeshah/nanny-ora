@@ -34,6 +34,12 @@ export async function startMembershipCheckout(
     if (userId.startsWith("demo-") || userId.startsWith("backup-")) {
       return { success: false, error: "This account cannot purchase a membership." };
     }
+    // Stale session (account deleted while logged in) — the checkout would succeed but
+    // activation would fail on a missing user. Tell them to refresh their session.
+    const exists = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
+    if (!exists) {
+      return { success: false, error: "Your session is out of date. Please sign out and sign in again." };
+    }
 
     const plan = getPlan(planId);
     if (!plan) return { success: false, error: "Unknown plan." };

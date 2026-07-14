@@ -32,6 +32,14 @@ type ActivateArgs = {
 export async function activateMembership(args: ActivateArgs): Promise<void> {
   const { userId, planId, provider, providerSubscriptionId, providerCustomerId, periodEnd } = args;
 
+  // Guard: a stale session (or a deleted account) can carry a userId that no longer
+  // has a User row. Skip cleanly instead of a foreign-key crash / endless webhook retry.
+  const userExists = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
+  if (!userExists) {
+    console.warn(`activateMembership: user ${userId} no longer exists — skipping.`);
+    return;
+  }
+
   const renewsAt = periodEnd ?? addPlanSpan(new Date(), planId);
 
   const fields = {
@@ -72,6 +80,13 @@ export async function recordPayment(args: PaymentArgs): Promise<boolean> {
 
   const seen = await prisma.payment.findUnique({ where: { providerRef } });
   if (seen) return false;
+
+  // Same stale-session guard as activateMembership (payment.userId is a FK).
+  const userExists = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
+  if (!userExists) {
+    console.warn(`recordPayment: user ${userId} no longer exists — skipping.`);
+    return false;
+  }
 
   await prisma.payment.create({
     data: {
