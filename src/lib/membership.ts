@@ -131,6 +131,14 @@ export async function getMembership(): Promise<MembershipInfo> {
 
 export const isMember = async (): Promise<boolean> => (await getMembership()).isMember;
 
+/**
+ * Master switch for the gate. OFF by default so the system can ship and be tested
+ * in production (checkout + dashboard fully work) WITHOUT locking existing free
+ * parents out of messaging/shortlisting. Set MEMBERSHIP_ENFORCED=true (with live
+ * payment keys in place) to actually enforce — takes effect with no redeploy.
+ */
+export const membershipEnforced = (): boolean => process.env.MEMBERSHIP_ENFORCED === "true";
+
 /** The message shown wherever a locked feature is hit. */
 export const UPGRADE_MESSAGE =
   "Become a member to unlock this. Membership includes unlimited messaging, full profiles, shortlisting, meet-and-greets and secure bookings.";
@@ -149,6 +157,8 @@ export async function requireMembership(): Promise<
   if (!session?.user?.id) {
     return { success: false, error: "Please sign in to continue." };
   }
+  // Soft-launch: until enforcement is switched on, no one is gated.
+  if (!membershipEnforced()) return null;
   // Nannies and admins are never blocked by a parent membership.
   const role = (session.user as any).role;
   if (role === "ADMIN" || role === "NANNY") return null;

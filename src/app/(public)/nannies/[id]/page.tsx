@@ -8,7 +8,7 @@ import { prisma } from "@/lib/db/prisma";
 import { formatRate, getInitials } from "@/lib/utils";
 import { CARE_TYPES, LANGUAGE_TAGS } from "@/lib/constants";
 import EnquiryForm from "./EnquiryForm";
-import { getMembership } from "@/lib/membership";
+import { getMembership, membershipEnforced } from "@/lib/membership";
 import ViewTracker from "./ViewTracker";
 import {
   MapPin, Clock, Shield, Car, Heart, GraduationCap,
@@ -54,6 +54,8 @@ export default async function NannyProfilePage({
   if (!nanny) notFound();
   const { reviews, avg } = await getNannyReviews(nanny.id);
   const { isMember } = await getMembership();
+  // During soft launch (enforcement off) everyone has effective access — no locked CTA.
+  const canContact = isMember || !membershipEnforced();
 
   const careLabels = nanny.careTypes
     .map((ct) => CARE_TYPES.find((c) => c.value === ct)?.label)
@@ -273,7 +275,7 @@ export default async function NannyProfilePage({
           )}
 
           {/* Enquiry CTA */}
-          <EnquiryForm nannyId={nanny.id} firstName={nanny.name.split(" ")[0]} placementStatus={nanny.placementStatus} isMember={isMember} />
+          <EnquiryForm nannyId={nanny.id} firstName={nanny.name.split(" ")[0]} placementStatus={nanny.placementStatus} isMember={canContact} />
 
           {/* Availability */}
           <Card>
