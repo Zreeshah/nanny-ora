@@ -14,7 +14,7 @@ const LAYERS = [
   { icon: Video, title: "Video or In-Person Interview", desc: "A real conversation to understand character, warmth, and approach." },
   { icon: PhoneCall, title: "Reference Calls", desc: "We personally call previous families and employers — no forms alone." },
   { icon: ShieldCheck, title: "Police Vetting", desc: "NZ Police vetting under the Children's Act 2014 for every carer." },
-  { icon: GraduationCap, title: "Qualification Review", desc: "ECE, first aid, and specialist training verified against certificates." },
+  { icon: GraduationCap, title: "Qualification Review", desc: "First aid readiness assessed — carers receive baseline induction and gain certification within 4 months. Any ECE, teaching, or specialist certificates verified against issuing bodies." },
   { icon: CalendarCheck, title: "Trial Session", desc: "A short paid trial so you see the fit with your children first-hand." },
   { icon: Heart, title: "Parent Feedback Monitoring", desc: "Ongoing family feedback keeps standards high, long after matching." },
 ];

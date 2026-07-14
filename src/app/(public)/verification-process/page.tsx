@@ -47,14 +47,14 @@ const CHECKS = [
   {
     icon: ShieldCheck,
     title: "NZ Police Vetting",
-    what: "A New Zealand Police vet under the Children's Act 2014 for premium and specialist carers.",
+    what: "A New Zealand Police vet under the Children's Act 2014, obtained by NannyOra for every carer. Each service must obtain its own report — vets from other employers cannot be shared.",
     why: "It's the legal safeguarding standard for anyone working with children in NZ.",
     protects: "Serious history is caught by the same check schools and ECE centres use.",
   },
   {
     icon: GraduationCap,
     title: "Qualification Review",
-    what: "ECE degrees, teaching registrations, first-aid, and specialist certificates checked against issuing bodies.",
+    what: "First aid readiness assessed at induction — carers gain full certification within 4 months. Any ECE, teaching, or specialist certificates verified against issuing bodies.",
     why: "Anyone can list a qualification — we confirm it's real and current.",
     protects: "Specialist and ECE claims on a profile are verified, not assumed.",
   },

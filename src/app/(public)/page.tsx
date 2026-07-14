@@ -84,7 +84,7 @@ const faqItems = [
   {
     question: "How are nannies verified on NannyOra?",
     answer:
-      "All nannies go through a multi-step review process. We check references, review qualifications, and verify identity documents. Our verification levels range from Listed to Specialist Care Nanny, so you can see exactly what checks have been completed.",
+      "All nannies go through a multi-step review process. We verify identity documents, obtain a NZ Police vet under the Children's Act 2014, assess first aid readiness, check references by phone, and review qualifications. Our verification levels range from Listed to Specialist Care Nanny, so you can see exactly what checks have been completed.",
   },
   {
     question: "What is a sensory-aware or specialist care nanny?",
