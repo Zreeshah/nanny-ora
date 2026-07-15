@@ -7,6 +7,16 @@ const key = process.env.STRIPE_SECRET_KEY;
 /** Null when unconfigured, so the app boots (and the UI hides Stripe) without keys. */
 export const stripe = key ? new Stripe(key) : null;
 
+/** Refund a one-time Stripe payment (booking) by its checkout session id. */
+export async function refundStripe(sessionId: string): Promise<string> {
+  if (!stripe) throw new Error("Stripe is not configured.");
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+  const pi = typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id;
+  if (!pi) throw new Error("No payment intent to refund on this session.");
+  const refund = await stripe.refunds.create({ payment_intent: pi });
+  return refund.id;
+}
+
 export const stripeProvider: PaymentProvider = {
   id: "STRIPE",
 

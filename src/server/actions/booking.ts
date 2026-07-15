@@ -5,7 +5,8 @@ import { auth } from "@/lib/auth/auth";
 import { requireMembership } from "@/lib/membership";
 import { getProvider, appUrl } from "@/lib/payments";
 import type { ProviderId } from "@/lib/payments";
-import { captureBookingOrder } from "@/lib/payments/paypal";
+import { captureBookingOrder, refundPaypalCapture } from "@/lib/payments/paypal";
+import { refundStripe } from "@/lib/payments/stripe";
 import { recordPayment } from "@/lib/payments/activate";
 import {
   quoteBooking,
@@ -179,6 +180,40 @@ export async function settleStripeBooking(args: {
   });
 }
 
+/**
+ * Refund a paid booking whose payment is still HELD (nanny declined / someone
+ * cancelled). Idempotent: claims payoutStatus HELD→REFUNDED first, so it can't
+ * double-refund, and rolls back if the provider refund fails so it can retry.
+ */
+async function refundBooking(bookingId: string): Promise<void> {
+  const payment = await prisma.payment.findFirst({
+    where: { bookingId, kind: "BOOKING", status: "PAID" },
+  });
+  if (!payment || !payment.providerRef) return; // never paid → nothing to refund
+  const providerRef = payment.providerRef;
+
+  const claim = await prisma.booking.updateMany({
+    where: { id: bookingId, payoutStatus: "HELD" },
+    data: { payoutStatus: "REFUNDED" },
+  });
+  if (claim.count === 0) return; // already refunded or paid out
+
+  try {
+    if (payment.provider === "STRIPE") {
+      await refundStripe(providerRef);
+    } else if (payment.provider === "PAYPAL") {
+      await refundPaypalCapture(providerRef.replace("paypal_capture_", ""));
+    }
+    await prisma.payment.update({ where: { id: payment.id }, data: { status: "REFUNDED" } });
+  } catch (err) {
+    // ponytail: on failure, roll the claim back to HELD so a retry/admin can refund
+    // later rather than the booking looking refunded when the money never moved.
+    await prisma.booking.updateMany({ where: { id: bookingId, payoutStatus: "REFUNDED" }, data: { payoutStatus: "HELD" } }).catch(() => {});
+    console.error(`refund failed for booking ${bookingId}:`, err);
+    throw err;
+  }
+}
+
 /** Advance a booking (nanny accept/decline, parent cancel/approve). Validated. */
 export async function updateBookingStatus(bookingId: string, to: string): Promise<ActionResult> {
   try {
@@ -210,6 +245,17 @@ export async function updateBookingStatus(bookingId: string, to: string): Promis
     }
 
     await prisma.booking.update({ where: { id: bookingId }, data });
+
+    // Nanny declined or someone cancelled a paid booking → refund the parent.
+    if (to === "DECLINED" || to === "CANCELLED") {
+      try {
+        await refundBooking(bookingId);
+      } catch {
+        // status change stands; refund will be retried / handled by admin.
+        return { success: true, data: { status: to, refundPending: true } };
+      }
+    }
+
     return { success: true, data: { status: to } };
   } catch (error) {
     console.error("updateBookingStatus error:", error);

@@ -231,6 +231,12 @@ export async function getBookingOrder(orderId: string): Promise<any> {
   return paypalFetch(`/v2/checkout/orders/${orderId}`);
 }
 
+/** Refund a captured PayPal payment (booking) by its capture id. */
+export async function refundPaypalCapture(captureId: string): Promise<string> {
+  const res = await paypalFetch(`/v2/payments/captures/${captureId}/refund`, { method: "POST" });
+  return res.id ?? captureId;
+}
+
 /**
  * Send a nanny her earnings via PayPal Payouts. Draws from the platform PayPal
  * balance. `senderItemId` is our idempotency key (PayPal rejects a duplicate),
