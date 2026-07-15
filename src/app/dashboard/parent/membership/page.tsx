@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getMembershipDashboard, confirmPaypalSubscription } from "@/server/actions/membership";
+import { getMembershipDashboard, confirmPaypalSubscription, confirmStripeMembership } from "@/server/actions/membership";
 import { MembershipPanel } from "./MembershipPanel";
 import { ArrowLeft } from "lucide-react";
 
@@ -9,13 +9,15 @@ export const metadata: Metadata = { title: "Membership" };
 export default async function ParentMembershipPage({
   searchParams,
 }: {
-  searchParams: Promise<{ subscription_id?: string; checkout?: string }>;
+  searchParams: Promise<{ subscription_id?: string; session_id?: string; checkout?: string }>;
 }) {
-  // PayPal redirects back with ?subscription_id=I-XXX — confirm it synchronously
-  // rather than waiting on the (sometimes-delayed) webhook.
+  // Confirm the payment synchronously on return, as a fallback to the webhooks:
+  // PayPal returns ?subscription_id=I-XXX, Stripe returns ?session_id=cs_XXX.
   const sp = await searchParams;
   if (sp.subscription_id) {
     await confirmPaypalSubscription(sp.subscription_id);
+  } else if (sp.session_id) {
+    await confirmStripeMembership(sp.session_id);
   }
 
   const res = await getMembershipDashboard();

@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth/auth";
 import { getPlan, getMembership, MEMBERSHIP_PLANS, type PlanId } from "@/lib/membership";
 import { getProvider, configuredProviders, appUrl } from "@/lib/payments";
 import { paypalFetch } from "@/lib/payments/paypal";
+import { stripe } from "@/lib/payments/stripe";
 import { activateMembership, recordPayment } from "@/lib/payments/activate";
 import type { ProviderId } from "@/lib/payments";
 import type { ActionResult } from "./auth";
@@ -49,11 +50,14 @@ export async function startMembershipCheckout(
       return { success: false, error: "You already have an active membership." };
     }
 
+    // {CHECKOUT_SESSION_ID} is filled by Stripe → lets the return page confirm the
+    // payment directly as a fallback if the webhook is delayed/misconfigured. PayPal
+    // ignores the extra param and uses its own subscription_id return flow.
     const { url } = await getProvider(provider).createMembershipCheckout({
       userId,
       email,
       plan,
-      successUrl: `${appUrl()}/dashboard/parent/membership?checkout=success`,
+      successUrl: `${appUrl()}/dashboard/parent/membership?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancelUrl: `${appUrl()}/membership?checkout=cancelled`,
     });
 
@@ -140,6 +144,49 @@ export async function confirmPaypalSubscription(subscriptionId: string): Promise
   } catch (error) {
     console.error("confirmPaypalSubscription error:", error);
     return { success: false, error: "Could not confirm your PayPal subscription." };
+  }
+}
+
+/**
+ * Confirm a Stripe membership on return, as a fallback to the webhook. Grants access
+ * (activateMembership is an idempotent upsert); the payment row is still written by
+ * the invoice.paid webhook, so this never double-counts money.
+ */
+export async function confirmStripeMembership(sessionId: string): Promise<ActionResult> {
+  try {
+    const session = await auth();
+    const userId = session?.user?.id;
+    if (!userId) return { success: false, error: "Please sign in." };
+    if (!sessionId.startsWith("cs_")) return { success: false, error: "Invalid session." };
+
+    const s = await stripe!.checkout.sessions.retrieve(sessionId);
+    // Must be paid, and belong to THIS user (metadata is set at creation).
+    if (s.payment_status !== "paid" || s.metadata?.userId !== userId) {
+      return { success: false, error: "Payment not confirmed for your account." };
+    }
+
+    const planId = s.metadata?.planId as PlanId | undefined;
+    if (!planId) return { success: false, error: "Missing plan." };
+
+    let periodEnd: Date | null = null;
+    if (typeof s.subscription === "string") {
+      const sub = await stripe!.subscriptions.retrieve(s.subscription);
+      const end = (sub as any).current_period_end as number | undefined;
+      if (end) periodEnd = new Date(end * 1000);
+    }
+
+    await activateMembership({
+      userId,
+      planId,
+      provider: "STRIPE",
+      providerCustomerId: typeof s.customer === "string" ? s.customer : null,
+      providerSubscriptionId: typeof s.subscription === "string" ? s.subscription : null,
+      periodEnd,
+    });
+    return { success: true, data: { activated: true } };
+  } catch (error) {
+    console.error("confirmStripeMembership error:", error);
+    return { success: false, error: "Could not confirm your membership." };
   }
 }
 
