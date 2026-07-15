@@ -3,6 +3,7 @@ import type Stripe from "stripe";
 import { stripe } from "@/lib/payments/stripe";
 import { activateMembership, recordPayment, setMembershipStatus } from "@/lib/payments/activate";
 import { settleStripeBooking } from "@/server/actions/booking";
+import { settleStripeTier } from "@/server/actions/tier";
 import type { PlanId } from "@/lib/membership";
 
 // Stripe needs the raw body to verify the signature.
@@ -37,6 +38,17 @@ export async function POST(req: Request) {
         if (s.metadata?.kind === "BOOKING" && s.metadata?.bookingId) {
           await settleStripeBooking({
             bookingId: s.metadata.bookingId,
+            providerRef: s.id,
+            amountCents: s.amount_total ?? 0,
+          });
+          break;
+        }
+
+        // One-time nanny tier purchase.
+        if (s.metadata?.kind === "TIER" && s.metadata?.nannyProfileId && s.metadata?.tierId) {
+          await settleStripeTier({
+            nannyProfileId: s.metadata.nannyProfileId,
+            tierId: s.metadata.tierId,
             providerRef: s.id,
             amountCents: s.amount_total ?? 0,
           });

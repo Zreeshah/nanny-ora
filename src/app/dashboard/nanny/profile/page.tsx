@@ -74,6 +74,7 @@ export default async function NannyProfilePage() {
     languages: parseJsonArray(profile?.languages),
     availabilitySummary: profile?.availabilitySummary || "",
     profileImageUrl: profile?.profileImageUrl || "",
+    payoutPaypalEmail: profile?.payoutPaypalEmail || "",
     refereeData: parseJsonArray(profile?.refereeData),
   };
 

@@ -14,7 +14,7 @@ import { configuredProviders } from "@/lib/payments";
 import ViewTracker from "./ViewTracker";
 import {
   MapPin, Clock, Shield, Car, Heart, GraduationCap,
-  CheckCircle, Calendar, Star, ArrowLeft,
+  CheckCircle, Calendar, Star, ArrowLeft, Lock,
 } from "lucide-react";
 
 export const revalidate = 300;
@@ -79,19 +79,25 @@ export default async function NannyProfilePage({
       {/* Profile Header */}
       <Card className="mb-6" padding="lg">
         <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6">
-          {/* Avatar */}
+          {/* Avatar — the photo is a member perk; non-members see initials + a lock so the
+              page still ranks (bio/quals/badges stay public) but the photo is gated. */}
           <div className="flex-shrink-0">
-            {nanny.profileImageUrl ? (
+            {canContact && nanny.profileImageUrl ? (
               <img
                 src={nanny.profileImageUrl}
                 alt={nanny.name}
                 className="w-24 h-24 rounded-3xl object-cover ring-4 ring-primary/5 shadow-md"
               />
             ) : (
-              <div className="w-24 h-24 rounded-3xl bg-primary/10 flex items-center justify-center shadow-inner">
-                <span className="text-primary font-bold text-2xl">
-                  {getInitials(nanny.name)}
-                </span>
+              <div className="relative w-24 h-24 rounded-3xl bg-primary/10 flex items-center justify-center shadow-inner">
+                <span className="text-primary font-bold text-2xl">{getInitials(nanny.name)}</span>
+                {!canContact && nanny.profileImageUrl && (
+                  <div className="absolute inset-0 rounded-3xl bg-foreground/5 flex items-center justify-center">
+                    <span className="flex items-center gap-1 text-[10px] font-semibold text-foreground/70 bg-card/90 px-2 py-1 rounded-full border border-border/40">
+                      <Lock className="w-3 h-3" aria-hidden="true" /> Members
+                    </span>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -108,6 +114,7 @@ export default async function NannyProfilePage({
                 </div>
                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
                   <VerificationBadge level={nanny.verificationLevel as any} />
+                  {nanny.tier === "PREMIUM" && <Badge variant="premium">Verified Premium</Badge>}
                   {nanny.placementStatus && nanny.placementStatus !== "AVAILABLE" && (
                     <PlacementBadge status={nanny.placementStatus} placementEnd={nanny.placementEnd} />
                   )}

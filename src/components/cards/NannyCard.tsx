@@ -61,6 +61,7 @@ export function NannyCard({ nanny, className, favourited }: NannyCardProps) {
             </div>
             <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
               <VerificationBadge level={nanny.verificationLevel as any} />
+              {nanny.tier === "PREMIUM" && <Badge variant="premium" size="sm">Verified Premium</Badge>}
               {nanny.placementStatus && nanny.placementStatus !== "AVAILABLE" && (
                 <PlacementBadge status={nanny.placementStatus} placementEnd={nanny.placementEnd} />
               )}

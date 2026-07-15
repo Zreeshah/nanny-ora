@@ -19,6 +19,16 @@ export type BookingCheckoutRequest = {
   cancelUrl: string;
 };
 
+export type TierCheckoutRequest = {
+  nannyProfileId: string;
+  tierId: string;
+  tierName: string;
+  email: string;
+  amountCents: number;
+  successUrl: string;
+  cancelUrl: string;
+};
+
 /**
  * The one interface every payment provider implements. Adding a provider (or a
  * new flow like booking payments / compliance deposits) means adding a method
@@ -38,4 +48,6 @@ export interface PaymentProvider {
    * Returns the redirect URL and the provider reference to persist on the payment.
    */
   createBookingCheckout(req: BookingCheckoutRequest): Promise<{ url: string; ref: string }>;
+  /** One-time nanny tier purchase ($50 Listed / $200 Premium). */
+  createTierCheckout(req: TierCheckoutRequest): Promise<{ url: string; ref: string }>;
 }

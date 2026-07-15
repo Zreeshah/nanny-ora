@@ -211,6 +211,7 @@ export async function updateNannyProfile(
           specialistTags: JSON.stringify(updates.specialistTags || []),
           languages: JSON.stringify(updates.languages || []),
           availabilitySummary: updates.availabilitySummary || "",
+          payoutPaypalEmail: updates.payoutPaypalEmail || null,
           refereeData: JSON.stringify(updates.refereeData || []),
         },
         update: {
@@ -229,6 +230,7 @@ export async function updateNannyProfile(
           ...(updates.specialistTags && { specialistTags: JSON.stringify(updates.specialistTags) }),
           ...(updates.languages && { languages: JSON.stringify(updates.languages) }),
           ...(updates.availabilitySummary !== undefined && { availabilitySummary: updates.availabilitySummary }),
+          ...(updates.payoutPaypalEmail !== undefined && { payoutPaypalEmail: updates.payoutPaypalEmail || null }),
           ...(updates.refereeData !== undefined && { refereeData: JSON.stringify(updates.refereeData) }),
         },
       });

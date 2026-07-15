@@ -54,6 +54,8 @@ export const nannyApplicationSchema = z.object({
   specialistTags: z.array(z.enum(specialistTagValues)).optional().default([]),
   languages: z.array(z.string()).optional().default([]),
   availabilitySummary: z.string().optional().default(""),
+  // Where booking earnings are paid out (PayPal Payouts). Money-critical → validate email.
+  payoutPaypalEmail: z.string().email("Enter a valid PayPal email").or(z.literal("")).optional(),
   // Referee data for safety check #4
   refereeData: z.array(refereeSchema).optional().default([]),
 });

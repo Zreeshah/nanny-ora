@@ -67,6 +67,11 @@ export default function NannyDashboard() {
           </p>
         </div>
         <div className="relative z-10 flex-shrink-0 flex gap-2">
+          <Link href="/dashboard/nanny/tier">
+            <Button variant="secondary" size="md" className="rounded-full shadow-md">
+              My Tier
+            </Button>
+          </Link>
           <Link href="/dashboard/nanny/bookings">
             <Button variant="secondary" size="md" className="rounded-full shadow-md">
               Bookings

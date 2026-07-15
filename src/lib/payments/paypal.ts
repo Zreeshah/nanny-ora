@@ -1,5 +1,5 @@
 import "server-only";
-import type { PaymentProvider, CheckoutRequest, BookingCheckoutRequest } from "./types";
+import type { PaymentProvider, CheckoutRequest, BookingCheckoutRequest, TierCheckoutRequest } from "./types";
 import type { Plan } from "@/lib/membership";
 
 // ponytail: PayPal's REST API over fetch — the official SDK adds a dependency for
@@ -176,6 +176,35 @@ export const paypalProvider: PaymentProvider = {
     if (!approve?.href) throw new Error("PayPal did not return an approval URL.");
     return { url: approve.href, ref: order.id };
   },
+
+  async createTierCheckout({ nannyProfileId, tierId, tierName, amountCents, successUrl, cancelUrl }: TierCheckoutRequest) {
+    if (!configured()) throw new Error("PayPal is not configured.");
+
+    const order = await paypalFetch("/v2/checkout/orders", {
+      method: "POST",
+      body: JSON.stringify({
+        intent: "CAPTURE",
+        purchase_units: [
+          {
+            custom_id: `tier:${nannyProfileId}:${tierId}`, // parsed on return
+            description: `NannyOra ${tierName}`.slice(0, 127),
+            amount: { currency_code: "NZD", value: (amountCents / 100).toFixed(2) },
+          },
+        ],
+        application_context: {
+          brand_name: "NannyOra",
+          user_action: "PAY_NOW",
+          shipping_preference: "NO_SHIPPING",
+          return_url: successUrl,
+          cancel_url: cancelUrl,
+        },
+      }),
+    });
+
+    const approve = (order.links ?? []).find((l: any) => l.rel === "approve" || l.rel === "payer-action");
+    if (!approve?.href) throw new Error("PayPal did not return an approval URL.");
+    return { url: approve.href, ref: order.id };
+  },
 };
 
 /** Capture an approved booking order on return. Returns { captured, bookingId, amountCents, captureId }. */
@@ -200,4 +229,42 @@ export async function captureBookingOrder(orderId: string): Promise<{
 /** Read an order's status/custom_id without capturing (idempotency check). */
 export async function getBookingOrder(orderId: string): Promise<any> {
   return paypalFetch(`/v2/checkout/orders/${orderId}`);
+}
+
+/**
+ * Send a nanny her earnings via PayPal Payouts. Draws from the platform PayPal
+ * balance. `senderItemId` is our idempotency key (PayPal rejects a duplicate),
+ * so a retried cron run can't double-pay. Returns the payout batch id.
+ */
+export async function sendPayout(args: {
+  email: string;
+  amountCents: number;
+  senderItemId: string;
+  note?: string;
+}): Promise<{ batchId: string }> {
+  if (!configured()) throw new Error("PayPal is not configured.");
+
+  const res = await paypalFetch("/v1/payments/payouts", {
+    method: "POST",
+    body: JSON.stringify({
+      sender_batch_header: {
+        sender_batch_id: args.senderItemId,
+        email_subject: "You've been paid for a NannyOra booking",
+        email_message: args.note ?? "Your booking earnings from NannyOra.",
+      },
+      items: [
+        {
+          recipient_type: "EMAIL",
+          amount: { value: (args.amountCents / 100).toFixed(2), currency: "NZD" },
+          receiver: args.email,
+          sender_item_id: args.senderItemId,
+          note: args.note ?? "NannyOra booking earnings",
+        },
+      ],
+    }),
+  });
+
+  const batchId = res.batch_header?.payout_batch_id;
+  if (!batchId) throw new Error("PayPal did not return a payout batch id.");
+  return { batchId };
 }

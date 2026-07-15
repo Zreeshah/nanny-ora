@@ -5,6 +5,7 @@
 
 import type { NannyProfile } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
+import { tierRank } from "@/lib/tiers";
 import type { NannyProfilePublic } from "@/types";
 
 
@@ -67,6 +68,7 @@ function toPublic(row: NannyProfile & { user: { name: string } }): NannyProfileP
     specialistTags: parseJsonArray(row.specialistTags) as NannyProfilePublic["specialistTags"],
     languages: parseJsonArray(row.languages),
     verificationLevel: row.verificationLevel as NannyProfilePublic["verificationLevel"],
+    tier: row.tier,
     profileImageUrl: row.profileImageUrl ?? undefined,
     createdAt: row.createdAt,
     placementStatus: row.placementStatus,
@@ -89,7 +91,9 @@ export async function getPublicNannies(filters?: NannyFilters): Promise<NannyPro
       orderBy: { createdAt: "desc" },
       take: 100,
     });
-    return filterNannies(rows.map(toPublic), filters);
+    // Priority placement: Premium above Listed above unpaid, newest-first within a tier.
+    const ordered = rows.map(toPublic).sort((a, b) => tierRank(b.tier) - tierRank(a.tier));
+    return filterNannies(ordered, filters);
   } catch (error) {
     console.error("getPublicNannies DB error:", error);
     return [];

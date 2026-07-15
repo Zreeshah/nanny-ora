@@ -127,9 +127,11 @@ model Booking {
   // plus DECLINED, CANCELLED
   status String @default("REQUESTED")
 
-  // Funds held by the platform until completion; payout automation comes later.
-  payoutStatus String  @default("HELD") // HELD, RELEASED, REFUNDED
-  notes        String  @default("")
+  // Funds held by the platform until completion, then auto-paid to the nanny's PayPal.
+  payoutStatus    String    @default("HELD") // HELD, RELEASED, REFUNDED
+  payoutReleaseAt DateTime? // set on parent approval = completedAt + hold window; cron pays out after this
+  payoutRef       String?   // PayPal Payouts batch id (idempotency — one payout per booking)
+  notes           String    @default("")
 
   payments  Payment[]
   createdAt DateTime @default(now())
@@ -205,6 +207,11 @@ model NannyProfile {
   // Police vetting authorization (Children's Act 2014 consent)
   policeVetAuthorized     Boolean  @default(false)
   policeVetAuthorizedAt   DateTime?
+
+  // --- Nanny pricing tier (one-time upfront) + payout details ---
+  tier              String    @default("NONE") // NONE, LISTED ($50), PREMIUM ($200 incl. First Aid)
+  tierPaidAt        DateTime?
+  payoutPaypalEmail String?   // where booking earnings are auto-paid (PayPal Payouts)
 
   // --- Placement / availability (admin-managed; orthogonal to adminStatus & verificationLevel) ---
   placementStatus        String   @default("AVAILABLE") // AVAILABLE, TRIAL_PENDING, PLACED, CONTRACT_ENDING

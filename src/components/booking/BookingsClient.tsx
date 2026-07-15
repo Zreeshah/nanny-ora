@@ -73,7 +73,8 @@ export function BookingsClient({ bookings: initial, role }: { bookings: Booking[
     <div className="space-y-4">
       {bookings.map((b) => {
         const other = role === "parent" ? b.nannyName : b.parentName;
-        const amount = role === "nanny" ? b.subtotalCents : b.totalCents;
+        // Nanny nets subtotal − platform fee; parent pays the total (= subtotal).
+        const amount = role === "nanny" ? b.subtotalCents - b.feeCents : b.totalCents;
         const amountLabel = role === "nanny" ? "Your earnings" : "You paid";
 
         return (
@@ -105,7 +106,7 @@ export function BookingsClient({ bookings: initial, role }: { bookings: Booking[
             </div>
             {role === "nanny" && (
               <p className="text-[11px] text-muted-foreground mt-1 text-right">
-                Family paid {centsToNzd(b.totalCents)} (incl. platform fee)
+                Family paid {centsToNzd(b.totalCents)} · {centsToNzd(b.feeCents)} platform fee deducted
               </p>
             )}
 

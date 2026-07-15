@@ -7,13 +7,7 @@ import { Input } from "@/components/ui/Input";
 import { CalendarCheck, Lock, Minus, Plus, CreditCard } from "lucide-react";
 import { UpgradeModal } from "@/components/membership/UpgradeGate";
 import { createBooking } from "@/server/actions/booking";
-import {
-  quoteBooking,
-  centsToNzd,
-  MIN_BOOKING_HOURS,
-  MAX_BOOKING_HOURS,
-  SERVICE_FEE_PCT,
-} from "@/lib/booking";
+import { quoteBooking, centsToNzd, MIN_BOOKING_HOURS, MAX_BOOKING_HOURS } from "@/lib/booking";
 import type { ProviderId } from "@/lib/payments/types";
 
 const PROVIDER_LABEL: Record<ProviderId, string> = { STRIPE: "Pay by card", PAYPAL: "PayPal" };
@@ -133,7 +127,8 @@ export function BookingWidget({
           </div>
         </div>
 
-        {/* Transparent summary — fee shown before payment */}
+        {/* Summary — the parent pays the rate × hours; the platform fee is taken from
+            the nanny, not added on top, so there's no surprise surcharge here. */}
         <div className="rounded-2xl bg-secondary/30 border border-border/30 p-4 space-y-2 text-sm">
           <div className="flex justify-between text-muted-foreground">
             <span>Hourly rate</span>
@@ -142,14 +137,6 @@ export function BookingWidget({
           <div className="flex justify-between text-muted-foreground">
             <span>Hours</span>
             <span>{hours}</span>
-          </div>
-          <div className="flex justify-between text-foreground">
-            <span>Subtotal</span>
-            <span>{centsToNzd(quote.subtotalCents)}</span>
-          </div>
-          <div className="flex justify-between text-muted-foreground">
-            <span>Platform service fee ({Math.round(SERVICE_FEE_PCT * 100)}%)</span>
-            <span>{centsToNzd(quote.feeCents)}</span>
           </div>
           <div className="flex justify-between font-bold text-foreground pt-2 border-t border-border/40">
             <span>Total</span>

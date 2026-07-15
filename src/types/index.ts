@@ -31,6 +31,7 @@ export interface NannyProfilePublic {
   specialistTags: SpecialistTagValue[];
   languages: string[];
   verificationLevel: VerificationLevel;
+  tier: string; // NONE, LISTED, PREMIUM — drives the Premium badge + search priority
   profileImageUrl?: string;
   createdAt: Date;
   // placement/availability (admin-managed; paidConfirmed intentionally excluded — internal)

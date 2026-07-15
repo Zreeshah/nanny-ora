@@ -12,6 +12,7 @@ import {
   canTransition,
   MIN_BOOKING_HOURS,
   MAX_BOOKING_HOURS,
+  PAYOUT_HOLD_HOURS,
 } from "@/lib/booking";
 import type { ActionResult } from "./auth";
 
@@ -201,7 +202,14 @@ export async function updateBookingStatus(bookingId: string, to: string): Promis
       return { success: false, error: "That change isn't allowed for this booking." };
     }
 
-    await prisma.booking.update({ where: { id: bookingId }, data: { status: to } });
+    // On parent approval, schedule the payout: held for PAYOUT_HOLD_HOURS so a
+    // late quality dispute can still block it (fix #6). The cron releases it after.
+    const data: { status: string; payoutReleaseAt?: Date } = { status: to };
+    if (to === "COMPLETED") {
+      data.payoutReleaseAt = new Date(Date.now() + PAYOUT_HOLD_HOURS * 60 * 60 * 1000);
+    }
+
+    await prisma.booking.update({ where: { id: bookingId }, data });
     return { success: true, data: { status: to } };
   } catch (error) {
     console.error("updateBookingStatus error:", error);

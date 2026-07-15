@@ -85,6 +85,7 @@ interface ProfileFormProps {
     languages: string[];
     availabilitySummary: string;
     profileImageUrl: string;
+    payoutPaypalEmail: string;
     refereeData: string[];
   };
   safetyChecks: Record<string, string>;
@@ -117,6 +118,7 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
   const [specialistTags, setSpecialistTags] = useState<string[]>(initialData.specialistTags);
   const [languages, setLanguages] = useState<string[]>(initialData.languages);
   const [availabilitySummary, setAvailabilitySummary] = useState(initialData.availabilitySummary);
+  const [payoutPaypalEmail, setPayoutPaypalEmail] = useState(initialData.payoutPaypalEmail);
   const [photoUrl, setPhotoUrl] = useState(initialData.profileImageUrl);
   const [photoUploading, setPhotoUploading] = useState(false);
 
@@ -260,6 +262,7 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
         specialistTags,
         languages,
         availabilitySummary,
+        payoutPaypalEmail,
         refereeData: referees.filter(r => r.name.trim()) as any,
       });
 
@@ -377,6 +380,15 @@ export function ProfileForm({ initialData, safetyChecks, documents: initialDocum
             helperText="Minimum rate is $20/hr, maximum is $150/hr."
           />
         </div>
+        <Input
+          label="PayPal email for payouts"
+          type="email"
+          value={payoutPaypalEmail}
+          onChange={(e) => setPayoutPaypalEmail(e.target.value)}
+          placeholder="you@email.com"
+          disabled={isPending}
+          helperText="Booking earnings (after the 10% platform fee) are paid here automatically, 48 hours after each session is approved."
+        />
         <Input
           label="ECE or Specialist Qualifications (Comma separated or plain text)"
           value={qualifications}

@@ -1,6 +1,6 @@
 import "server-only";
 import Stripe from "stripe";
-import type { PaymentProvider, CheckoutRequest, BookingCheckoutRequest } from "./types";
+import type { PaymentProvider, CheckoutRequest, BookingCheckoutRequest, TierCheckoutRequest } from "./types";
 
 const key = process.env.STRIPE_SECRET_KEY;
 
@@ -68,6 +68,32 @@ export const stripeProvider: PaymentProvider = {
       ],
       metadata: { bookingId, kind: "BOOKING" },
       payment_intent_data: { metadata: { bookingId, kind: "BOOKING" } },
+    });
+
+    if (!session.url) throw new Error("Stripe did not return a checkout URL.");
+    return { url: session.url, ref: session.id };
+  },
+
+  async createTierCheckout({ nannyProfileId, tierId, tierName, email, amountCents, successUrl, cancelUrl }: TierCheckoutRequest) {
+    if (!stripe) throw new Error("Stripe is not configured.");
+
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      customer_email: email,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      line_items: [
+        {
+          quantity: 1,
+          price_data: {
+            currency: "nzd",
+            unit_amount: amountCents,
+            product_data: { name: `NannyOra ${tierName}` },
+          },
+        },
+      ],
+      metadata: { kind: "TIER", tierId, nannyProfileId },
+      payment_intent_data: { metadata: { kind: "TIER", tierId, nannyProfileId } },
     });
 
     if (!session.url) throw new Error("Stripe did not return a checkout URL.");

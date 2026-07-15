@@ -7,16 +7,37 @@ export const SERVICE_FEE_PCT = 0.1;
 export const MIN_BOOKING_HOURS = 1;
 export const MAX_BOOKING_HOURS = 12;
 
-export type Quote = { subtotalCents: number; feeCents: number; totalCents: number };
+/** Hold a payout this long after parent approval, so a late dispute can block it. */
+export const PAYOUT_HOLD_HOURS = 48;
+
+// self-check (run: npx tsx src/lib/booking.ts) — browser-safe guard so importing
+// this module in a client component never touches process.argv.
+// NZ$30/hr × 5h → parent pays $150, platform keeps $15, nanny nets $135.
+if (typeof process !== "undefined" && process.argv?.[1]?.endsWith("booking.ts")) {
+  const q = quoteBooking(30, 5);
+  console.assert(q.subtotalCents === 15000 && q.totalCents === 15000, "parent pays subtotal");
+  console.assert(q.feeCents === 1500, "10% fee");
+  console.assert(q.earningsCents === 13500, "nanny nets subtotal − fee");
+  console.assert(quoteBooking(27.5, 3).earningsCents === 7425, "fractional rate");
+  console.log("booking quote self-check passed");
+}
+
+export type Quote = {
+  subtotalCents: number; // rate × hours — what the PARENT pays (no surcharge)
+  feeCents: number; // platform's 10% cut, deducted from the nanny
+  earningsCents: number; // what the NANNY receives = subtotal − fee
+  totalCents: number; // == subtotal; the amount actually charged to the parent
+};
 
 /**
- * Price a booking from a nanny's NZD/hr rate and a number of hours.
- * Fee is rounded to the cent; total is subtotal + fee.
+ * Price a booking from a nanny's NZD/hr rate and hours.
+ * The parent pays the subtotal; the 10% platform fee comes OUT of the nanny's
+ * earnings (fee-from-earnings model), so the nanny nets subtotal − fee.
  */
 export function quoteBooking(hourlyRateNzd: number, hours: number): Quote {
   const subtotalCents = Math.round(hourlyRateNzd * 100) * hours;
   const feeCents = Math.round(subtotalCents * SERVICE_FEE_PCT);
-  return { subtotalCents, feeCents, totalCents: subtotalCents + feeCents };
+  return { subtotalCents, feeCents, earningsCents: subtotalCents - feeCents, totalCents: subtotalCents };
 }
 
 export const centsToNzd = (cents: number): string =>
