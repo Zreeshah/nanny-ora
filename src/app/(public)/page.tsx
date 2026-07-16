@@ -18,6 +18,9 @@ import {
   Sparkles,
 } from "lucide-react";
 import { formatRate } from "@/lib/utils";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { organizationSchema, websiteSchema, localBusinessSchema, faqSchema } from "@/lib/seo";
+import { parentFaqs, nannyFaqs } from "@/lib/faq";
 import InteractiveHero from "@/components/home/InteractiveHero";
 import TrustStrip from "@/components/home/TrustStrip";
 import TrustStandard from "@/components/home/TrustStandard";
@@ -106,6 +109,14 @@ const faqItems = [
 export default function HomePage() {
   return (
     <div className="space-y-4 md:space-y-8">
+      <JsonLd
+        data={[
+          organizationSchema(),
+          websiteSchema(),
+          localBusinessSchema(),
+          faqSchema([...parentFaqs, ...nannyFaqs]),
+        ]}
+      />
       {/* ===== HERO SECTION ===== */}
       <InteractiveHero />
 

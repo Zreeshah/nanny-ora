@@ -11,6 +11,8 @@ import EnquiryForm from "./EnquiryForm";
 import { BookingWidget } from "./BookingWidget";
 import { getMembership, membershipEnforced } from "@/lib/membership";
 import { configuredProviders } from "@/lib/payments";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { personSchema, breadcrumbSchema } from "@/lib/seo";
 import ViewTracker from "./ViewTracker";
 import {
   MapPin, Clock, Shield, Car, Heart, GraduationCap,
@@ -43,6 +45,14 @@ export async function generateMetadata({
   return {
     title: `${nanny.name} — Nanny in ${nanny.suburb}`,
     description: `${nanny.name} is a ${nanny.verificationLevel.toLowerCase().replace("_", " ")} nanny in ${nanny.suburb}, Auckland. ${nanny.bio.slice(0, 150)}`,
+    alternates: { canonical: `/nannies/${nanny.slug}` },
+    openGraph: {
+      type: "profile",
+      title: `${nanny.name} — Nanny in ${nanny.suburb}`,
+      description: nanny.bio.slice(0, 200),
+      url: `/nannies/${nanny.slug}`,
+      images: nanny.profileImageUrl ? [{ url: nanny.profileImageUrl }] : undefined,
+    },
   };
 }
 
@@ -68,6 +78,24 @@ export default async function NannyProfilePage({
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <JsonLd
+        data={[
+          personSchema({
+            name: nanny.name,
+            slug: nanny.slug,
+            bio: nanny.bio,
+            suburb: nanny.suburb,
+            profileImageUrl: canContact ? nanny.profileImageUrl : undefined,
+            avg: avg || undefined,
+            reviewCount: reviews.length || undefined,
+          }),
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Find a Nanny", path: "/find-a-nanny" },
+            { name: nanny.name, path: `/nannies/${nanny.slug}` },
+          ]),
+        ]}
+      />
       <ViewTracker nannyId={nanny.id} />
       {/* Back Link */}
       <Link

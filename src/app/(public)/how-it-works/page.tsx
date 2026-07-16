@@ -9,6 +9,9 @@ import {
 import { ImageBand } from "@/components/ui/ImageBand";
 import { FaqGroups } from "@/components/FaqGroups";
 import { ShinyText } from "@/components/ui/ShinyText";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { faqSchema, breadcrumbSchema } from "@/lib/seo";
+import { parentFaqs, nannyFaqs } from "@/lib/faq";
 
 export const metadata: Metadata = {
   title: "How NannyOra Works — Childcare Connected with Trust",
@@ -18,6 +21,15 @@ export const metadata: Metadata = {
 export default function HowItWorksPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <JsonLd
+        data={[
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "How it works", path: "/how-it-works" },
+          ]),
+          faqSchema([...parentFaqs, ...nannyFaqs]),
+        ]}
+      />
       {/* Header Banner */}
       <div className="text-center max-w-3xl mx-auto mb-20 animate-fade-in">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4">
