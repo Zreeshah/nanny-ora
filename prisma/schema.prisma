@@ -172,6 +172,7 @@ model NannyProfile {
   id                     String   @id @default(cuid())
   userId                 String   @unique
   user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slug                   String?  @unique // name-based permalink, e.g. "jessie-wu"
   suburb                 String
   areasCovered           String   // JSON array stored as string
   yearsExperience        Int

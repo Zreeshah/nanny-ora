@@ -132,7 +132,7 @@ export function NannyCard({ nanny, className, favourited }: NannyCardProps) {
 
       {/* CTA */}
       <div className="px-5 pb-5 pt-0 mt-auto">
-        <Link href={`/nannies/${nanny.id}`}>
+        <Link href={`/nannies/${nanny.slug}`}>
           <Button variant="outline" fullWidth size="sm" className="rounded-full">
             View Profile
           </Button>

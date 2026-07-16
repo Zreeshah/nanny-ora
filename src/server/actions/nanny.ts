@@ -5,8 +5,22 @@ import { auth } from "@/lib/auth/auth";
 import { nannyApplicationSchema, type NannyApplicationInput } from "@/lib/validations";
 import { supabaseServer, SUPABASE_BUCKET } from "@/lib/supabase/server";
 import { sendRefereeRequests, sendNannyWelcome, notifyAdminNewNanny } from "@/lib/email";
+import { slugify } from "@/lib/slug";
 import type { ActionResult } from "./auth";
 import bcrypt from "bcryptjs";
+
+/** A unique name-slug: "jessie-wu", then "jessie-wu-2" on collision. */
+export async function uniqueNannySlug(name: string, excludeProfileId?: string): Promise<string> {
+  const base = slugify(name);
+  for (let n = 1; ; n++) {
+    const slug = n === 1 ? base : `${base}-${n}`;
+    const clash = await prisma.nannyProfile.findFirst({
+      where: { slug, ...(excludeProfileId ? { id: { not: excludeProfileId } } : {}) },
+      select: { id: true },
+    });
+    if (!clash) return slug;
+  }
+}
 
 const DOC_MAX_BYTES = 5 * 1024 * 1024; // 5MB
 const DOC_ALLOWED_TYPES: Record<string, boolean> = {
@@ -71,6 +85,8 @@ export async function applyAsNanny(
       }
     }
 
+    const slug = await uniqueNannySlug(data.name);
+
     const result = await prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
         data: {
@@ -104,6 +120,7 @@ export async function applyAsNanny(
       const profile = await tx.nannyProfile.create({
         data: {
           userId: user.id,
+          slug,
           suburb: data.suburb,
           areasCovered: JSON.stringify(data.areasCovered),
           yearsExperience: data.yearsExperience,

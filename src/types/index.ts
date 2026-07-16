@@ -32,6 +32,7 @@ export interface NannyProfilePublic {
   languages: string[];
   verificationLevel: VerificationLevel;
   tier: string; // NONE, LISTED, PREMIUM — drives the Premium badge + search priority
+  slug: string; // name-based URL segment (falls back to id if unset)
   profileImageUrl?: string;
   createdAt: Date;
   // placement/availability (admin-managed; paidConfirmed intentionally excluded — internal)

@@ -159,10 +159,11 @@ export default function EnquiryForm({
         <Input
           name="contactEmail"
           type="email"
-          label="Contact email"
+          label="Your email"
           value={email || session?.user?.email || ""}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@email.com"
+          helperText={`So ${firstName} can reply. Your details stay private and on-platform.`}
           className="rounded-2xl"
         />
         {error && <p className="text-xs text-destructive" role="alert">{error}</p>}

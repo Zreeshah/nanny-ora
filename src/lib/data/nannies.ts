@@ -69,6 +69,7 @@ function toPublic(row: NannyProfile & { user: { name: string } }): NannyProfileP
     languages: parseJsonArray(row.languages),
     verificationLevel: row.verificationLevel as NannyProfilePublic["verificationLevel"],
     tier: row.tier,
+    slug: row.slug ?? row.id, // fall back to id so links always work
     profileImageUrl: row.profileImageUrl ?? undefined,
     createdAt: row.createdAt,
     placementStatus: row.placementStatus,
@@ -100,11 +101,11 @@ export async function getPublicNannies(filters?: NannyFilters): Promise<NannyPro
   }
 }
 
-/** Single public nanny by profile id — DB first, then sample data. */
-export async function getPublicNannyById(id: string): Promise<NannyProfilePublic | undefined> {
+/** Single public nanny by slug OR profile id (old cuid links still resolve). */
+export async function getPublicNannyById(slugOrId: string): Promise<NannyProfilePublic | undefined> {
   try {
-    const row = await prisma.nannyProfile.findUnique({
-      where: { id },
+    const row = await prisma.nannyProfile.findFirst({
+      where: { OR: [{ slug: slugOrId }, { id: slugOrId }] },
       include: { user: { select: { name: true } } },
     });
     if (row && PUBLIC_STATUSES.includes(row.adminStatus)) return toPublic(row);

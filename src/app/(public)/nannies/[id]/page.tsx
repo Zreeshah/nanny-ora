@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge, VerificationBadge, SpecialistTag, PlacementBadge } from "@/components/ui/Badge";
@@ -23,10 +23,10 @@ export async function generateStaticParams() {
   try {
     const rows = await prisma.nannyProfile.findMany({
       where: { adminStatus: { in: ["APPROVED", "VERIFIED", "SPECIALIST"] } },
-      select: { id: true },
+      select: { id: true, slug: true },
       take: 100,
     });
-    return rows.map((n) => ({ id: n.id }));
+    return rows.map((n) => ({ id: n.slug ?? n.id }));
   } catch {
     return []; // pages still render on-demand via revalidate
   }
@@ -54,6 +54,8 @@ export default async function NannyProfilePage({
   const { id } = await params;
   const nanny = await getPublicNannyById(id);
   if (!nanny) notFound();
+  // Canonicalise: an old cuid URL 301s to the pretty name URL.
+  if (id !== nanny.slug && nanny.slug) redirect(`/nannies/${nanny.slug}`);
   const { reviews, avg } = await getNannyReviews(nanny.id);
   const { isMember } = await getMembership();
   // During soft launch (enforcement off) everyone has effective access — no locked CTA.
