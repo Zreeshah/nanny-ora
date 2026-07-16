@@ -35,6 +35,7 @@ This document is the authoritative reference for the NannyOra codebase — archi
 | Utilities | clsx + tailwind-merge | — |
 | Email | Resend | ^6.16.0 |
 | SMS | Twilio (plain REST, no SDK) | — |
+| Payments | Stripe (SDK) + PayPal (plain REST) | ^22.3.1 |
 | Server-only guard | `server-only` | ^0.0.1 |
 
 ### Build Scripts
@@ -76,6 +77,13 @@ postinstall       → prisma generate
 | `ADMIN_EMAIL` | Server-only | Comma-separated admin notification recipients (default: `admin@nannyora.co.nz,nannyora.agency@gmail.com`) |
 | `ADMIN_BACKUP_EMAIL` | Server-only | Backup admin email — emergency access without DB (no default; unset = disabled) |
 | `ADMIN_BACKUP_PASSWORD` | Server-only | Backup admin password — emergency access without DB (no default; unset = disabled) |
+| `STRIPE_SECRET_KEY` | Server-only | Stripe API secret key (memberships, bookings, tiers) |
+| `PAYPAL_CLIENT_ID` | Server-only | PayPal REST client ID (bookings, tiers, payouts) |
+| `PAYPAL_CLIENT_SECRET` | Server-only | PayPal REST secret |
+| `PAYPAL_ENV` | Server-only | `live` or `sandbox` (default sandbox) |
+| `NEXT_PUBLIC_APP_URL` | **Public** | Absolute base URL for payment return links (falls back to `VERCEL_PROJECT_PRODUCTION_URL` / localhost) |
+| `CRON_SECRET` | Server-only | Bearer token for `/api/cron/payouts` (Vercel Cron sends this) |
+| `MEMBERSHIP_ENFORCED` | Server-only | `true` to gate member-only features. Off by default (soft-launch) |
 
 ### Vercel Production Env Vars
 Set on Vercel project `nanny-ora` for the Production environment:
@@ -84,6 +92,8 @@ Set on Vercel project `nanny-ora` for the Production environment:
 - `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_FROM_VERIFICATION`, `EMAIL_FROM_ADMIN`, `ADMIN_EMAIL`
 - `ADMIN_BACKUP_EMAIL`, `ADMIN_BACKUP_PASSWORD`
 - `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM`
+- `STRIPE_SECRET_KEY`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_ENV`
+- `NEXT_PUBLIC_APP_URL`, `CRON_SECRET`, `MEMBERSHIP_ENFORCED`
 
 > **`AUTH_SECRET` is required** — `auth.ts` throws on startup if unset. No hardcoded fallback.
 
@@ -168,21 +178,29 @@ nannyora/
 │   │   ├── forgot-password/page.tsx  # Password reset request form (CLIENT)
 │   │   ├── reset-password/page.tsx   # Set new password with token (CLIENT)
 │   │   ├── icon.png, apple-icon.png, favicon.ico  # Brand favicon (tan heart on navy)
+│   │   ├── robots.ts            # robots.txt (disallow /dashboard, /admin, /api, login routes)
+│   │   ├── sitemap.ts           # sitemap.xml (static + suburb SEO pages + approved nanny profiles)
+│   │   ├── opengraph-image.tsx  # Dynamic OG image (NannyOra brand, ImageResponse)
 │   │   ├── api/auth/[...nextauth]/route.ts  # Auth handlers (3 lines)
+│   │   ├── api/webhooks/stripe/route.ts     # Stripe webhook (membership + booking + tier activation)
+│   │   ├── api/webhooks/paypal/route.ts     # PayPal webhook (membership + booking + tier activation)
+│   │   ├── api/cron/payouts/route.ts        # Daily payout cron (CRON_SECRET-gated, releases due nanny earnings)
 │   │   ├── (public)/          # Public marketing + listing pages
 │   │   │   ├── layout.tsx     # Shared public layout
 │   │   │   ├── page.tsx       # Homepage (SERVER)
-│   │   │   ├── apply-as-nanny/page.tsx    # Nanny application form (CLIENT, 844 lines)
-│   │   │   ├── register-family/page.tsx   # Parent registration (CLIENT)
+│   │   │   ├── apply-as-nanny/page.tsx + layout.tsx    # Nanny application form (CLIENT, 844 lines)
+│   │   │   ├── register-family/page.tsx + layout.tsx  # Parent registration (CLIENT)
 │   │   │   ├── find-a-nanny/page.tsx             # Nanny directory wrapper (SERVER, 16 lines, metadata + revalidate=300)
 │   │   │   ├── find-a-nanny/FindANannyClient.tsx # Filter sidebar + results grid (CLIENT, 455 lines)
-│   │   │   ├── post-a-job/page.tsx        # Job posting form (CLIENT)
+│   │   │   ├── post-a-job/page.tsx + layout.tsx  # Job posting form (CLIENT)
+│   │   │   ├── membership/page.tsx + PlanCards.tsx  # Parent membership plans (SERVER + CLIENT)
 │   │   │   ├── pricing/page.tsx           # Pricing (SERVER)
 │   │   │   ├── how-it-works/page.tsx      # How it works (SERVER)
 │   │   │   ├── trust-and-safety/page.tsx  # Trust & safety (SERVER)
 │   │   │   ├── verification-process/page.tsx  # Detailed 7-layer verification process (SERVER, 232 lines)
 │   │   │   ├── childcare-support/page.tsx    # Childcare support options info page (SERVER, 81 lines)
-│   │   │   ├── nannies/[id]/page.tsx      # Nanny detail (SERVER, 264 lines)
+│   │   │   ├── nannies/[id]/page.tsx      # Nanny detail (SERVER, slug-based URL + cuid fallback)
+│   │   │   ├── nannies/[id]/BookingWidget.tsx  # Booking date/hours/payment widget (CLIENT)
 │   │   │   ├── nannies/[id]/EnquiryForm.tsx  # Parent enquiry sidebar form (CLIENT, 107 lines)
 │   │   │   ├── nannies/[id]/ViewTracker.tsx  # Invisible view-tracking pixel (CLIENT, 12 lines)
 │   │   │   ├── nannies/auckland/page.tsx  # SEO listing (SERVER)
@@ -197,23 +215,31 @@ nannyora/
 │   │   │   ├── nannies/page.tsx  # Nanny moderation — warm card design (CLIENT, 519 lines)
 │   │   │   ├── jobs/page.tsx     # Job management — warm card design (CLIENT)
 │   │   │   ├── enquiries/page.tsx # Enquiry inbox — parent→nanny flow, flagged badges (CLIENT)
-│   │   │   └── enquiries/[id]/page.tsx # Admin conversation viewer (CLIENT, ConversationThread wrapper)
+│   │   │   ├── enquiries/[id]/page.tsx # Admin conversation viewer (CLIENT, ConversationThread wrapper)
+│   │   │   └── money/page.tsx     # Admin money dashboard — revenue, payouts, recent payments (CLIENT)
 │   │   └── dashboard/         # User dashboards (role-guarded)
 │   │       ├── layout.tsx     # Shared dashboard shell — unread message badge in nav (CLIENT)
 │   │       ├── nanny/page.tsx # Nanny dashboard — live stats from getNannyDashboard (CLIENT)
 │   │       ├── nanny/enquiries/page.tsx    # Nanny message inbox (ConversationList wrapper)
 │   │       ├── nanny/enquiries/[id]/page.tsx # Nanny conversation thread (ConversationThread wrapper)
+│   │       ├── nanny/bookings/page.tsx     # Nanny bookings list (CLIENT)
+│   │       ├── nanny/tier/page.tsx + TierCards.tsx  # Nanny tier purchase ($50/$200) (SERVER + CLIENT)
 │   │       ├── nanny/profile/page.tsx      # Profile editor wrapper (SERVER, 133 lines)
 │   │       ├── nanny/profile/ProfileForm.tsx # Profile editor form (CLIENT, 816 lines)
 │   │       ├── parent/page.tsx # Parent dashboard — live stats from getParentDashboard (CLIENT)
 │   │       ├── parent/messages/page.tsx    # Parent message inbox (ConversationList wrapper)
 │   │       ├── parent/messages/[id]/page.tsx # Parent conversation thread (ConversationThread wrapper)
+│   │       ├── parent/bookings/page.tsx   # Parent bookings list (CLIENT)
+│   │       ├── parent/membership/page.tsx + MembershipPanel.tsx  # Parent membership management (SERVER + CLIENT)
 │   │       └── parent/profile/page.tsx # Parent profile editor (CLIENT, 142 lines)
 │   ├── components/
 │   │   ├── providers/Providers.tsx   # SessionProvider + ToastProvider
 │   │   ├── layout/                   # Header, Footer, MobileBottomNav
 │   │   ├── cards/NannyCard.tsx       # Nanny listing card (shows PlacementBadge when not AVAILABLE)
-│   │   ├── cards/FavouriteButton.tsx # Optimistic heart toggle (PARENT only)
+│   │   ├── cards/FavouriteButton.tsx # Optimistic heart toggle (PARENT only, member-gated)
+│   │   ├── booking/BookingsClient.tsx # Shared bookings list + status actions (nanny/parent)
+│   │   ├── membership/UpgradeGate.tsx  # Upgrade modal — shown when action returns upgradeRequired
+│   │   ├── seo/JsonLd.tsx             # Injects schema.org JSON-LD into page <head>
 │   │   ├── FaqGroups.tsx             # Grouped parent + nanny FAQ (reused on home + how-it-works)
 │   │   ├── home/                     # InteractiveHero, BentoFeatures, MarqueeTestimonials, StatsTicker, TrustStrip, TrustStandard, SpecialistExpertise, DayInLife, LifestyleGallery
 │   │   ├── messaging/                # ConversationList (inbox), ConversationThread (chat view)
@@ -231,19 +257,36 @@ nannyora/
 │   │   ├── suburbs.ts               # ~160 Auckland suburbs by region + normSuburb/titleCaseSuburb/regionOf/suburbMatches — source of truth for suburb→region
 │   │   ├── faq.ts                    # parentFaqs (4) + nannyFaqs (5) — payroll, employment, holidays, privacy Q&A
 │   │   ├── images.ts                # Tagged local image library + pickImages() deterministic seeded picker
-│   │   └── data/nannies.ts          # DB-backed public nanny directory (getPublicNannies, getPublicNannyById, getNannyReviews, filterNannies, NannyFilters) — no sample fallback, returns [] on DB error
+│   │   ├── slug.ts                  # slugify(name) → "jessie-wu" (accent-stripping), looksLikeCuid() — pure, client+server
+│   │   ├── seo.ts                   # schema.org builders: Organization, WebSite, ChildCare LocalBusiness, Breadcrumb, Person (nanny), FAQPage
+│   │   ├── booking.ts              # PURE booking logic (client+server): SERVICE_FEE_PCT=0.1, quoteBooking(), BookingStatus workflow + transitions, self-check
+│   │   ├── membership.ts           # Plans (MONTHLY/QUARTERLY/ANNUAL), MEMBERSHIP_BENEFITS, getMembership(), requireMembership() gate (MEMBERSHIP_ENFORCED soft-launch)
+│   │   ├── tiers.ts                # NANNY_TIERS (LISTED $50 / PREMIUM $200), tierRank() — pure, client+server
+│   │   ├── payments/                # Provider-agnostic payment layer
+│   │   │   ├── index.ts             # getProvider(), configuredProviders(), appUrl() — provider registry
+│   │   │   ├── types.ts             # PaymentProvider interface, ProviderId, CheckoutRequest variants
+│   │   │   ├── stripe.ts            # Stripe provider (SDK): memberships, bookings, tiers, refundStripe()
+│   │   │   ├── paypal.ts            # PayPal provider (plain REST): memberships, bookings, tiers, captureBookingOrder(), refundPaypalCapture(), sendPayout()
+│   │   │   └── activate.ts         # activateMembership(), recordPayment(), deactivateMembership() — webhook handlers call these
+│   │   └── data/nannies.ts          # DB-backed public nanny directory (getPublicNannies tier-sorted, getPublicNannyById slug+cuid, getNannyReviews, filterNannies, NannyFilters) — no sample fallback, returns [] on DB error
 │   └── server/actions/              # Server Actions (all use "use server")
-│       ├── auth.ts                  # Exports ActionResult type only (registerUser deleted; signups via registerParent/applyAsNanny)
-│       ├── nanny.ts                 # applyAsNanny, updateNannyProfile, uploadNannyDocument, deleteNannyDocument, getNannyDocuments, uploadProfilePhoto, setProRegApplicability
+│       ├── auth.ts                  # Exports ActionResult type (+ upgradeRequired flag) — registerUser deleted; signups via registerParent/applyAsNanny
+│       ├── nanny.ts                 # applyAsNanny (+uniqueNannySlug), updateNannyProfile, uploadNannyDocument, deleteNannyDocument, getNannyDocuments, uploadProfilePhoto, setProRegApplicability
 │       ├── parent.ts                # registerParent, updateParentProfile, getMyParentProfile
-│       ├── job.ts                   # createJobPost, updateJobStatus, getJobPosts, applyToJob
-│       ├── enquiry.ts               # createEnquiry, updateEnquiryStatus, getEnquiries
-│       ├── engagement.ts            # toggleFavourite, getFavouriteIds, recordProfileView, getNannyDashboard, getParentDashboard, getMyNannyEnquiries
-│       ├── messages.ts              # getConversation, sendMessage, getMyConversations, getUnreadTotal
+│       ├── job.ts                   # createJobPost (member-gated), updateJobStatus, getJobPosts, applyToJob
+│       ├── enquiry.ts               # createEnquiry (member-gated), updateEnquiryStatus, getEnquiries
+│       ├── engagement.ts            # toggleFavourite (member-gated), getFavouriteIds, recordProfileView, getNannyDashboard, getParentDashboard, getMyNannyEnquiries
+│       ├── messages.ts              # getConversation (member-gated), sendMessage (member-gated), getMyConversations, getUnreadTotal
 │       ├── password.ts              # requestPasswordReset, resetPassword
 │       ├── reviews.ts               # createReview
+│       ├── booking.ts               # createBooking (member-gated), cancelBooking, acceptBooking, declineBooking, completeBooking, approveBooking, getMyBookings, getNannyBookings
+│       ├── membership.ts            # startMembershipCheckout, cancelMembership, getPaymentOptions, getMyMembership
+│       ├── tier.ts                  # startTierCheckout, getMyTier
+│       ├── payouts.ts                # releaseDuePayouts(limit=50) — called by cron; idempotent, claim-then-send pattern
+│       ├── money.ts                 # getMoneyOverview (ADMIN) — revenue, payouts owed/paid, recent payments, counts
 │       └── admin.ts                 # updateNannyStatus, updateVerificationLevel, reviewDocument, updateSafetyCheckStatus, getAdminStats, getAdminNannies, getDocumentDownloadUrl, updatePlacement
 ├── next.config.ts                   # serverActions.bodySizeLimit: 10mb, images, turbopack
+├── vercel.json                      # Vercel Cron: /api/cron/payouts daily at 03:00 UTC
 ├── postcss.config.mjs              # @tailwindcss/postcss (Tailwind v4)
 ├── package.json
 ├── tsconfig.json
@@ -259,7 +302,7 @@ nannyora/
 
 **Datasource:** PostgreSQL (Supabase). `url = env("DATABASE_URL")` (pooled), `directUrl = env("DIRECT_URL")` (direct for migrations).
 
-### Models
+### Models (16 total: User, Membership, Payment, Booking, ParentProfile, NannyProfile, NannyDocument, JobPost, Enquiry, Message, ConversationRead, JobApplication, Review, SkillTag, Favourite, ProfileView)
 
 #### `User` → table `users`
 | Field | Type | Notes |
@@ -275,7 +318,7 @@ nannyora/
 | `resetTokenExpiry` | DateTime? | 1-hour TTL; cleared on use |
 | `createdAt` / `updatedAt` | DateTime | |
 
-Relations: `parentProfile?`, `nannyProfile?`, `jobPosts[]`, `enquiriesSent[]`, `reviewsGiven[]`, `favourites[]` (FavouritesByParent), `profileViews[]` (ViewsByUser), `messagesSent[]` (MessagesSent), `conversationReads[]` (ConversationReads)
+Relations: `parentProfile?`, `nannyProfile?`, `jobPosts[]`, `enquiriesSent[]`, `reviewsGiven[]`, `favourites[]` (FavouritesByParent), `profileViews[]` (ViewsByUser), `messagesSent[]` (MessagesSent), `conversationReads[]` (ConversationReads), `membership?` (1:1), `payments[]` (PaymentsByUser), `bookings[]` (BookingsByParent — parent owns bookings)
 
 #### `ParentProfile` → table `parent_profiles`
 | Field | Type | Notes |
@@ -290,10 +333,10 @@ Relations: `parentProfile?`, `nannyProfile?`, `jobPosts[]`, `enquiriesSent[]`, `
 | `specialistNeeds` | String | Default "" |
 | `notes` | String | Default "" |
 
-#### `NannyProfile` → table `nanny_profiles` (core model, ~45 fields)
+#### `NannyProfile` → table `nanny_profiles` (core model, ~48 fields)
 | Field Group | Fields | Notes |
 |---|---|---|
-| Identity | `id`, `userId` (unique FK→User), `profileImageUrl?` | |
+| Identity | `id`, `userId` (unique FK→User), `slug` (unique?, name-based permalink e.g. "jessie-wu"), `profileImageUrl?` | `slug` null until `applyAsNanny` assigns via `uniqueNannySlug(name)`; old cuid links still resolve via `OR` lookup |
 | Location | `suburb`, `areasCovered` (JSON string) | |
 | Experience | `yearsExperience` (Int), `hourlyRate` (Int), `bio` | |
 | Care types | `careTypes` (JSON string), `qualifications` (JSON string) | |
@@ -306,11 +349,74 @@ Relations: `parentProfile?`, `nannyProfile?`, `jobPosts[]`, `enquiriesSent[]`, `
 | Admin status | `adminStatus` (default "SUBMITTED") | DRAFT/SUBMITTED/UNDER_REVIEW/APPROVED/VERIFIED/SPECIALIST/SUSPENDED/ARCHIVED |
 | **7 Safety checks** | `identityVerified`, `workHistoryVerified`, `proRegVerified`, `refereeCheckStatus`, `policeVetStatus`, `interviewStatus`, `riskAssessmentStatus` | Each: NOT_STARTED/SUBMITTED/VERIFIED/REJECTED/**NOT_APPLICABLE** (NOT_APPLICABLE only offered for `proRegVerified`) |
 | **Police vet auth** | `policeVetAuthorized` (Boolean), `policeVetAuthorizedAt` (DateTime?) | Children's Act 2014 consent |
+| **Pricing tier** | `tier` (default "NONE"), `tierPaidAt` (DateTime?) | NONE/LISTED ($50)/PREMIUM ($200 incl. First Aid). One-time upfront, no monthly fee. `tierRank()` orders search: Premium > Listed > unpaid |
+| **Payout** | `payoutPaypalEmail` (String?) | Where booking earnings are auto-paid (PayPal Payouts); null = held until added |
 | **Placement** | `placementStatus` (default "AVAILABLE"), `trialDate?`, `placementStart?`, `placementEnd?`, `placementNote?`, `paidConfirmed` (Boolean, default false) | Admin-managed availability. AVAILABLE/TRIAL_PENDING/PLACED/CONTRACT_ENDING. `paidConfirmed` is internal, never public |
 | Timestamps | `createdAt`, `updatedAt` | |
-| Engagement | `favouritedBy` (Favourite[]), `views` (ProfileView[]), `jobApplications[]` | Relations |
+| Engagement | `favouritedBy` (Favourite[]), `views` (ProfileView[]), `jobApplications[]`, `bookings[]` (BookingsOfNanny) | Relations |
 
 > **JSON-as-string pattern:** Arrays (careTypes, availability, specialistTags, areasCovered, refereeData, languages, etc.) are stored as `JSON.stringify()` strings in `String` columns, not native Postgres arrays. Read/write code must `JSON.parse()` / `JSON.stringify()`.
+
+#### `Membership` → table `memberships` (NEW — parent subscriptions, provider-agnostic)
+| Field | Type | Notes |
+|---|---|---|
+| `id` | String (cuid) | PK |
+| `userId` | String | Unique FK→User (cascade) — 1:1 |
+| `plan` | String | Default "MONTHLY" — MONTHLY/QUARTERLY/ANNUAL |
+| `status` | String | Default "INACTIVE" — ACTIVE/PAST_DUE/CANCELED/EXPIRED/INACTIVE |
+| `provider` | String? | STRIPE/PAYPAL (which provider holds the money relationship) |
+| `providerCustomerId` | String? | Stripe customer or PayPal payer id |
+| `providerSubscriptionId` | String? | Provider subscription id (for cancel-at-period-end) |
+| `currentPeriodEnd` | DateTime? | "Renewal date" shown in dashboard |
+| `cancelAtPeriodEnd` | Boolean | Default false |
+| `createdAt` / `updatedAt` | DateTime | |
+
+`@@index([status])`. A member is `status === "ACTIVE"` AND `currentPeriodEnd` not past. Activation only happens in the verified webhook (Stripe/PayPal), never on the success URL — a user can't self-grant access.
+
+#### `Payment` → table `payments` (NEW — one row per charge; doubles as invoice/history)
+| Field | Type | Notes |
+|---|---|---|
+| `id` | String (cuid) | PK |
+| `userId` | String | FK→User ("PaymentsByUser", cascade) |
+| `kind` | String | MEMBERSHIP/BOOKING/DEPOSIT/PLACEMENT |
+| `provider` | String | STRIPE/PAYPAL |
+| `providerRef` | String? | Unique — checkout session / order / invoice id (idempotency key) |
+| `amountCents` | Int | Gross charged |
+| `feeCents` | Int | Default 0 — platform service fee portion (bookings only) |
+| `currency` | String | Default "NZD" |
+| `status` | String | Default "PENDING" — PENDING/PAID/FAILED/REFUNDED |
+| `description` | String | Default "" |
+| `bookingId` | String? | FK→Booking (SetNull) — links booking payment to its booking |
+| `createdAt` / `updatedAt` | DateTime | |
+
+`@@index([userId])`. Covers memberships now, bookings next, deposits/placements later.
+
+#### `Booking` → table `bookings` (NEW — parent books nanny hours; funds held then auto-paid)
+| Field | Type | Notes |
+|---|---|---|
+| `id` | String (cuid) | PK |
+| `parentId` | String | FK→User ("BookingsByParent", cascade) |
+| `nannyId` | String | FK→NannyProfile ("BookingsOfNanny", cascade) |
+| `date` | String | yyyy-mm-dd (matches JobPost.startDate convention) |
+| `startTime` | String | Default "" |
+| `hours` | Int | MIN_BOOKING_HOURS (1) … MAX_BOOKING_HOURS (12) |
+| `hourlyRate` | Int | Snapshot of nanny's rate at booking time (NZD/hr, cents-free like NannyProfile) |
+| `subtotalCents` | Int | rate × hours — what PARENT pays (no surcharge) |
+| `feeCents` | Int | Platform's 10% cut (`SERVICE_FEE_PCT`), deducted from nanny earnings |
+| `totalCents` | Int | == subtotalCents (amount charged to parent) |
+| `status` | String | Default "REQUESTED" — see workflow below |
+| `payoutStatus` | String | Default "HELD" — HELD/RELEASED/REFUNDED |
+| `payoutReleaseAt` | DateTime? | Set on parent approval = completedAt + `PAYOUT_HOLD_HOURS` (48h) |
+| `payoutRef` | String? | PayPal Payouts batch id (idempotency — one payout per booking) |
+| `notes` | String | Default "" |
+| `payments` | Payment[] | Relation |
+| `createdAt` / `updatedAt` | DateTime | |
+
+`@@index([parentId])`, `@@index([nannyId])`, `@@index([status])`.
+
+**Booking status workflow:** `PENDING_PAYMENT → REQUESTED → ACCEPTED → UPCOMING → IN_PROGRESS → COMPLETED_BY_NANNY → AWAITING_PARENT_APPROVAL → COMPLETED → REVIEW_REQUESTED` (plus `DECLINED`, `CANCELLED`). `BOOKING_TRANSITIONS` in `booking.ts` enforces who (nanny/parent) can move to which next status via `canTransition(from, to, role)`.
+
+**Fee model (fee-from-earnings):** Parent pays subtotal; 10% fee comes OUT of nanny's earnings. Nanny nets `subtotal − fee`. `quoteBooking(rate, hours)` is the single source — pure, client+server.
 
 #### `NannyDocument` → table `nanny_documents`
 | Field | Type | Notes |
@@ -466,8 +572,13 @@ Relations: `parentProfile?`, `nannyProfile?`, `jobPosts[]`, `enquiriesSent[]`, `
 
 All server actions use `"use server"` directive and return `ActionResult` type:
 ```typescript
-type ActionResult = { success: boolean; error?: string; data?: any };
+type ActionResult = { success: boolean; error?: string; data?: any; upgradeRequired?: boolean };
 ```
+`upgradeRequired` is set when the action failed only because the user isn't a member — the UI shows the `UpgradeGate` modal instead of an error toast.
+
+### Membership Gate (`src/lib/membership.ts` — not a server action, but the choke point all member-only actions call)
+- `requireMembership()` — server-side gate. Returns `null` when allowed, or `{ success: false, error, upgradeRequired: true }` to return straight from the action. Checks: signed in → `MEMBERSHIP_ENFORCED` (off = no one gated, soft-launch) → role (ADMIN/NANNY never blocked) → `getMembership().isMember`. Every member-only server action calls this first.
+- `MEMBERSHIP_ENFORCED` env var — master switch. OFF by default so the system ships and tests in production WITHOUT locking existing free parents out. Flip to `true` (no redeploy) to enforce.
 
 ### Auth (`src/lib/auth/auth.ts`)
 Exports only the `ActionResult` type. `registerUser` was deleted — signups now flow through `registerParent` and `applyAsNanny`.
@@ -477,7 +588,7 @@ Exports only the `ActionResult` type. `registerUser` was deleted — signups now
 ### Nanny (`src/server/actions/nanny.ts`)
 | Function | Auth | Description |
 |---|---|---|
-| `applyAsNanny(input)` | Public | Validates, checks existing email, hashes password, validates doc files (5MB max, PDF/JPG/PNG/WebP), uploads docs to Supabase Storage, transactionally creates User + NannyProfile + NannyDocuments. Stores police vet authorization. Sends welcome + admin notification emails. |
+| `applyAsNanny(input)` | Public | Validates, checks existing email, hashes password, validates doc files (5MB max, PDF/JPG/PNG/WebP), uploads docs to Supabase Storage, transactionally creates User + NannyProfile + NannyDocuments. Assigns unique name-slug via `uniqueNannySlug(name)`. Stores police vet authorization. Sends welcome + admin notification emails |
 | `updateNannyProfile(updates)` | NANNY | Transactionally updates User (name/phone) + upserts NannyProfile |
 | `uploadNannyDocument(documentType, file)` | NANNY | Validates file (5MB max, PDF/JPG/PNG/WebP), uploads File to Storage, creates NannyDocument, auto-updates safety check status |
 | `deleteNannyDocument(documentId)` | NANNY | Verifies ownership, deletes PENDING docs only (DB record, not Storage file) |
@@ -495,7 +606,7 @@ Exports only the `ActionResult` type. `registerUser` was deleted — signups now
 ### Job (`src/server/actions/job.ts`)
 | Function | Auth | Description |
 |---|---|---|
-| `createJobPost(input)` | Logged in (any role) | Creates JobPost (PENDING), emails admin |
+| `createJobPost(input)` | Logged in (any role) + member-gated | Creates JobPost (PENDING), emails admin |
 | `updateJobStatus(jobId, status)` | ADMIN | Updates status, emails parent |
 | `getJobPosts(filters?)` | ADMIN | Returns job posts with optional filters. `take: 50` limit. Includes parent email PII + applications (with nanny names, `take: 20`) |
 | `applyToJob(jobId)` | NANNY | One-click application to an APPROVED job. Idempotent per (job, nanny). Notifies admin |
@@ -503,14 +614,14 @@ Exports only the `ActionResult` type. `registerUser` was deleted — signups now
 ### Enquiry (`src/server/actions/enquiry.ts`)
 | Function | Auth | Description |
 |---|---|---|
-| `createEnquiry(input)` | Logged in (any role) | Zod validates, flags contact info via `detectContactInfo()`, creates Enquiry (status NEW, `flagged` field), stores `contactEmail`/`contactPhone` (admin-only), emails parent receipt + notifies admin |
+| `createEnquiry(input)` | Logged in (any role) + member-gated | Zod validates, flags contact info via `detectContactInfo()`, creates Enquiry (status NEW, `flagged` field), stores `contactEmail`/`contactPhone` (admin-only), emails parent receipt + notifies admin |
 | `updateEnquiryStatus(enquiryId, status)` | ADMIN | Updates status, emails parent |
 | `getEnquiries(filters?)` | ADMIN | Returns enquiries with optional filters. `take: 50` limit. Includes parent name + email PII + flagged message counts |
 
 ### Engagement (`src/server/actions/engagement.ts`) (NEW)
 | Function | Auth | Description |
 |---|---|---|
-| `toggleFavourite(nannyId)` | PARENT | Saves/unsaves a nanny. Returns `{ favourited: boolean }` |
+| `toggleFavourite(nannyId)` | PARENT + member-gated | Saves/unsaves a nanny. Returns `{ favourited: boolean }` |
 | `getFavouriteIds()` | Soft (returns `[]` if no session) | Returns parent's saved nanny IDs for heart UI hydration |
 | `recordProfileView(nannyId)` | None (anonymous OK) | Best-effort view tracking. 30s throttle per nannyId (in-memory). NannyId existence check. Demo + backup admin IDs stored as null viewerId |
 | `getNannyDashboard()` | Soft | Aggregates: profile views, new/recent enquiries, matching jobs, 7 safety checks, verification level, review count + avg rating |
@@ -532,8 +643,8 @@ Exports only the `ActionResult` type. `registerUser` was deleted — signups now
 ### Messages (`src/server/actions/messages.ts`) (NEW — Fiverr-style in-app chat)
 | Function | Auth | Description |
 |---|---|---|
-| `getConversation(enquiryId)` | PARENT/NANNY/ADMIN (party to enquiry) | Returns seed message + all replies (oldest first, `take: 200`). Non-admin: marks conversation as read via `ConversationRead` upsert |
-| `sendMessage(enquiryId, body)` | PARENT/NANNY (not admin) | Validates body (max 2000 chars), 2s anti-spam throttle, flags contact info via `detectContactInfo()`, creates `Message`, bumps enquiry `updatedAt`. Notifies other party: email every message + SMS throttled to 10min digest |
+| `getConversation(enquiryId)` | PARENT/NANNY/ADMIN (party to enquiry) + member-gated | Returns seed message + all replies (oldest first, `take: 200`). Non-admin: marks conversation as read via `ConversationRead` upsert |
+| `sendMessage(enquiryId, body)` | PARENT/NANNY (not admin) + member-gated | Validates body (max 2000 chars), 2s anti-spam throttle, flags contact info via `detectContactInfo()`, creates `Message`, bumps enquiry `updatedAt`. Notifies other party: email every message + SMS throttled to 10min digest |
 | `getMyConversations()` | Logged in (role-branched) | Inbox list: last message, unread count (messages newer than `ConversationRead.lastReadAt`), flagged count. `take: 50` |
 | `getUnreadTotal()` | Logged in (not admin) | Total unread messages for nav badge. Cheap zeros on failure |
 
@@ -547,6 +658,42 @@ Exports only the `ActionResult` type. `registerUser` was deleted — signups now
 | Function | Auth | Description |
 |---|---|---|
 | `createReview(nannyProfileId, rating, comment)` | PARENT | Rates a nanny (1–5). Gated on having an enquiry in MATCHED or CLOSED status. Upsert via `@@unique([parentId, nannyId])` — re-submitting updates existing review. Max 1000-char comment |
+
+### Booking (`src/server/actions/booking.ts`) (NEW — Phase 2 paid bookings)
+| Function | Auth | Description |
+|---|---|---|
+| `createBooking(input)` | PARENT + member-gated | Creates booking (PENDING_PAYMENT), validates date (today+), hours (1–12), starts provider checkout. Returns `{ url }` to redirect to. Booking only becomes REQUESTED (visible to nanny) after the verified webhook confirms payment — user can't self-advance by hitting the success URL |
+| `acceptBooking(bookingId)` | NANNY | Transitions REQUESTED → ACCEPTED (via `canTransition`) |
+| `declineBooking(bookingId)` | NANNY | Transitions REQUESTED → DECLINED; refunds parent (Stripe refund / PayPal capture refund) |
+| `cancelBooking(bookingId)` | PARENT/NANNY | Transitions to CANCELLED; refunds parent if already paid |
+| `completeBooking(bookingId)` | NANNY | Transitions IN_PROGRESS → COMPLETED_BY_NANNY |
+| `approveBooking(bookingId)` | PARENT | Transitions COMPLETED_BY_NANNY → COMPLETED. Sets `payoutReleaseAt = now + PAYOUT_HOLD_HOURS` (48h) so the cron can release nanny earnings |
+| `getMyBookings()` | PARENT | Parent's bookings, newest first |
+| `getNannyBookings()` | NANNY | Nanny's bookings, newest first |
+
+### Membership (`src/server/actions/membership.ts`) (NEW — parent subscriptions)
+| Function | Auth | Description |
+|---|---|---|
+| `startMembershipCheckout(planId, provider)` | PARENT (not demo/backup) | Begins checkout. Returns `{ url }`. Stale-session check (user still exists in DB). Membership NOT activated here — only the verified webhook does that |
+| `cancelMembership()` | PARENT | Cancels at period end (keeps access until `currentPeriodEnd`). Calls provider cancel |
+| `getPaymentOptions()` | Any | Returns `configuredProviders()` — which providers have keys (plans page only offers these) |
+| `getMyMembership()` | PARENT | Returns membership state for the dashboard panel |
+
+### Tier (`src/server/actions/tier.ts`) (NEW — nanny one-time pricing tier)
+| Function | Auth | Description |
+|---|---|---|
+| `startTierCheckout(tierId, provider)` | NANNY (not demo/backup) | Begins tier purchase ($50 Listed / $200 Premium). Returns `{ url }`. Nanny must have a profile first |
+| `getMyTier()` | NANNY | Returns nanny's current tier + paid status |
+
+### Payouts (`src/server/actions/payouts.ts`) (NEW — cron-driven nanny payout release)
+| Function | Auth | Description |
+|---|---|---|
+| `releaseDuePayouts(limit=50)` | CRON_SECRET (via `/api/cron/payouts`) | Releases due booking payouts. A booking is due when COMPLETED, HELD, past `payoutReleaseAt`, and nanny has `payoutPaypalEmail`. Idempotent: claims row (HELD→RELEASED) before send, PayPal `senderItemId = booking_${id}` is the idempotency key. No PayPal email → skipped (admin/nanny prompted). On failure, rolls claim back to HELD for next run |
+
+### Money (`src/server/actions/money.ts`) (NEW — admin money dashboard)
+| Function | Auth | Description |
+|---|---|---|
+| `getMoneyOverview()` | ADMIN | Platform revenue (membership + tier + booking **fee**, not gross), gross processed, paid out to nannies, held for nannies, counts (active members, premium/listed nannies, bookings, payments), recent 12 payments |
 
 ---
 
@@ -593,6 +740,16 @@ ID, REFERENCES, FIRST_AID_CERT, POLICE_VET, TEACHER_REGISTRATION, WORK_HISTORY, 
 - **Placement statuses:** AVAILABLE, TRIAL_PENDING, PLACED, CONTRACT_ENDING (admin-managed, orthogonal to verification)
 - **Job post statuses:** PENDING, APPROVED, CLOSED, REJECTED
 - **Enquiry statuses:** NEW, CONTACTED, MATCHED, CLOSED
+- **Membership plans** (`src/lib/membership.ts`): MONTHLY ($39), QUARTERLY ($89, "Most Popular"), ANNUAL ($149, "Best Value") — NZD, provider-agnostic
+- **Membership statuses:** INACTIVE, ACTIVE, PAST_DUE, CANCELED, EXPIRED
+- **Nanny tiers** (`src/lib/tiers.ts`): NONE, LISTED ($50 one-time), PREMIUM ($200 one-time, incl. First Aid training, "Best for bookings"). `tierRank()`: PREMIUM=2, LISTED=1, NONE=0 — used for search priority sort
+- **Booking statuses** (`src/lib/booking.ts`): PENDING_PAYMENT, REQUESTED, ACCEPTED, UPCOMING, IN_PROGRESS, COMPLETED_BY_NANNY, AWAITING_PARENT_APPROVAL, COMPLETED, REVIEW_REQUESTED, DECLINED, CANCELLED. `BOOKING_TRANSITIONS` + `canTransition(from, to, role)` enforce valid moves
+- **Booking payout statuses:** HELD, RELEASED, REFUNDED
+- **Payment kinds:** MEMBERSHIP, BOOKING, DEPOSIT, PLACEMENT (DEPOSIT/PLACEMENT for future phases)
+- **Payment statuses:** PENDING, PAID, FAILED, REFUNDED
+- **Payment providers:** STRIPE, PAYPAL (both implement `PaymentProvider` interface)
+- **Service fee:** `SERVICE_FEE_PCT = 0.1` (10%, single source in `booking.ts`). Fee-from-earnings model: parent pays subtotal, 10% comes out of nanny earnings
+- **Payout hold:** `PAYOUT_HOLD_HOURS = 48` — funds held after parent approval before cron releases to nanny, so a late dispute can block it
 
 ---
 
@@ -663,13 +820,20 @@ The seed script (`prisma/seed.ts`) is now a **no-op** — all demo/sample data w
 - **Production URL:** https://nanny-ora.vercel.app
 - **Build command:** `next build` (with `postinstall: prisma generate`)
 - **Node version:** 24.x
+- **Vercel Cron** (`vercel.json`): `/api/cron/payouts` daily at `0 3 * * *` (03:00 UTC). Route is `CRON_SECRET`-gated — Vercel sends `Authorization: Bearer <CRON_SECRET>`, rejected otherwise so it can't be poked from outside to move money
+
+### SEO (Next.js Metadata Route Handlers)
+- **`src/app/robots.ts`** — `robots.txt`. Allows `/`, disallows `/dashboard/`, `/admin/`, `/api/`, `/login`, `/forgot-password`, `/reset-password`. Sitemap + host declared.
+- **`src/app/sitemap.ts`** — `sitemap.xml`. Static marketing + landing pages (priority-weighted) + suburb SEO pages (`SUBURB_SLUGS`) + approved nanny profiles (slug-based URLs, `take: 200`).
+- **`src/app/opengraph-image.tsx`** — dynamic OG image via `ImageResponse` (NannyOra brand card).
+- **`src/lib/seo.ts`** — schema.org builders: `organizationSchema`, `websiteSchema`, `localBusinessSchema` (ChildCare type for local-pack relevance), `breadcrumbSchema`, `personSchema` (nanny profiles + `aggregateRating`), `faqSchema`. Injected via `src/components/seo/JsonLd.tsx`.
 
 ### Database Management
 ```bash
 # Apply schema changes to Supabase
 npm run db:push
 
-# Seed demo data
+# Seed (no-op — demo data removed; real accounts live in DB)
 npm run db:seed
 
 # Generate Prisma client (auto-runs on npm install)
@@ -713,6 +877,15 @@ npm run dev      # starts at http://localhost:3000
 25. **Placement/availability status** — Admin-managed `placementStatus` (AVAILABLE/TRIAL_PENDING/PLACED/CONTRACT_ENDING) orthogonal to verification. `PlacementBadge` on `NannyCard` shows when not AVAILABLE. `paidConfirmed` is internal-only, never exposed in `NannyProfilePublic`.
 26. **FAQ content** — `parentFaqs` (4) + `nannyFaqs` (5) in `src/lib/faq.ts`, rendered via `FaqGroups` on homepage + how-it-works. Covers NZ-specific payroll, employment, holidays, privacy.
 27. **Suburb autocomplete** — `src/lib/suburbs.ts` holds ~160 Auckland suburbs grouped by 5 regions. `SuburbAutocomplete` component (chip input + dropdown suggestions). Region-aware matching: searching "East Auckland" finds Botany; nanny listing "East Auckland" matches searched "Botany".
+28. **Provider-agnostic payments** — `PaymentProvider` interface (in `src/lib/payments/types.ts`) with one implementation per provider. Adding a provider or flow = add a method + implement per provider, no call-site changes. `getProvider(id)` + `configuredProviders()` let the UI offer only providers with keys present.
+29. **Membership gate (soft-launch)** — `MEMBERSHIP_ENFORCED` env var, OFF by default. Checkout + dashboard fully work in production WITHOUT locking existing free parents out of messaging/shortlisting. Flip to `true` (no redeploy) to enforce. `requireMembership()` is the single choke point every member-only server action calls first — a new locked feature can't accidentally ship ungated.
+30. **Webhook-only activation** — Membership is NOT activated on the checkout success URL (user can't self-grant). Only the verified Stripe/PayPal webhook calls `activateMembership()`. Same for booking → REQUESTED and tier settlement.
+31. **Nanny pricing tiers** — One-time upfront payment (not monthly): LISTED $50, PREMIUM $200 (incl. First Aid training). `tierRank()` sorts search: Premium floats above Listed above unpaid. Stored on `NannyProfile.tier`.
+32. **Booking fee-from-earnings** — Parent pays the subtotal (no surcharge); the 10% platform fee comes OUT of the nanny's earnings. `quoteBooking(rate, hours)` is the single pure source (client + server share it). Nanny nets `subtotal − fee`.
+33. **Booking fund holding + auto-payout** — Funds land in the platform account and are HELD until the booking completes. After parent approval (`COMPLETED`), a 48h hold (`PAYOUT_HOLD_HOURS`) lets a late dispute block payout. Then the daily cron (`/api/cron/payouts`) releases to the nanny's PayPal email. Idempotent: claim-then-send with `booking_${id}` as the PayPal `senderItemId`.
+34. **Name-based nanny profile URLs** — `slugify(name)` → "jessie-wu" stored on `NannyProfile.slug` (unique). `uniqueNannySlug(name)` appends `-2`, `-3` on collision. `getPublicNannyById` looks up by `slug OR id` so old cuid links still resolve.
+35. **Technical SEO** — `robots.ts` + `sitemap.ts` (static + suburb SEO + approved profiles) + `opengraph-image.tsx` + schema.org JSON-LD (`src/lib/seo.ts` builders injected via `JsonLd.tsx`). `ChildCare` LocalBusiness schema for local-pack relevance. `Person` schema on nanny profiles with `aggregateRating`.
+36. **TrustStrip two-row layout** — Homepage trust strip split into baseline checks (every carer: Verified IDs, Police Vetted, Face-to-Face Interviewed, First Aid Ready) + advanced expertise (optional: ECE Qualified, Neurodiversity & Inclusive Practice, Baby Sleep Support, Maternity & Postnatal Care), separated by a divider.
 
 ---
 
@@ -725,9 +898,12 @@ npm run dev      # starts at http://localhost:3000
 - **`createEnquiry` / `createJobPost`** accept any logged-in role (should be PARENT-only); `contactEmail` comes from input, not session (spoofable)
 - **View throttle + message throttle + SMS throttle are in-memory** — won't survive restarts or work across serverless instances. Upgrade to Redis/Upstash if rate-limiting needs to be strict
 - **`SkillTag` model** exists in schema but is unused (specialist tags are hardcoded in constants, not DB-driven)
-- **No payment integration** — the pricing page is informational only; `paidConfirmed` is a manual admin flag, not a payment processor
+- **Membership enforcement is OFF by default** (`MEMBERSHIP_ENFORCED` unset) — checkout + dashboard work, but messaging/enquiries/shortlisting are NOT yet gated. Flip the env var (no redeploy) to enforce. The gate code (`requireMembership`) is wired into all member-only actions; it just returns `null` until the switch is on.
+- **PayPal Payouts require the nanny's PayPal email** — bookings with no `payoutPaypalEmail` stay HELD until the nanny adds one. The cron skips them (logged), admin/nanny is prompted.
+- **Booking UI is a subset of the full workflow** — `BOOKING_TRANSITIONS` models the complete flow (PENDING_PAYMENT → … → REVIEW_REQUESTED) but the active UI wires create → pay → accept/decline → complete → approve. The later stages (UPCOMING, IN_PROGRESS, REVIEW_REQUESTED) are valid status values ready to activate without a schema or type change.
+- **Payout cron is daily (Vercel Hobby plan limit)** — `/api/cron/payouts` runs once at 03:00 UTC. The 48h hold makes daily sweeps fine, but payouts can lag up to ~24h past `payoutReleaseAt`. Upgrade to Pro for more frequent runs if needed.
 - **`lucide-react` v1.18.0** — unusual version pin (latest is v0.x); may have API differences
-- **Lint has ~574 errors** — mostly `@typescript-eslint/no-explicit-any` on `(session.user as any).role` patterns; not blocking builds
+- **Lint has ~619 errors** — mostly `@typescript-eslint/no-explicit-any` on `(session.user as any).role` patterns; not blocking builds
 - **SEO landing pages** (`/ece-nanny-auckland`, etc.) are statically rendered and don't pull from the database
 - **Stale comments in `nannies.ts`** — `getPublicNannies`/`getPublicNannyById` JSDoc still mentions "falls back to sample data" but sample data was deleted; they now return `[]` / `undefined` on DB error
 - **Logo tagline** — the tagline "Curated Care. Warm Hearts." is now rendered as CSS text below the `logo-wordmark.png` wordmark in Header, Footer, login page, and admin header. The old `logo.png` (with baked-in raster tagline) is retired but still in `public/`.
@@ -951,3 +1127,84 @@ Comprehensive read-only audit across 7 vulnerability classes, followed by fixes:
 - Fixed slider step values
 - Fixed dual search roles (parent searching vs nanny searching)
 - Fixed mobile filter sheet UX
+
+### TrustStrip Two-Row Split + Verification Copy (commit `45a8545`)
+- **`TrustStrip.tsx`** rewritten — split 7 single-row items into two rows with a divider:
+  - Row 1 "Every NannyOra carer is" (baseline, 4): Verified IDs, Police Vetted, Face-to-Face Interviewed, First Aid Ready
+  - Row 2 "Looking for advanced educational expertise?" (advanced, 4): ECE Qualified Carers, Neurodiversity & Inclusive Practice, Baby Sleep Support, Maternity & Postnatal Care
+  - Dropped from baseline: Reference Checked, ECE Qualified (→advanced), Sensory-Aware Care (→advanced as Neurodiversity & Inclusive Practice). Added icons: `Moon`, `Baby`. Dropped: `PhoneCall`.
+- **`TrustStandard.tsx`** Layer 5 Qualification Review `desc` — first aid readiness assessed at induction; certification within 4 months
+- **`verification-process/page.tsx`** — Police Vetting `what` (obtained by NannyOra for every carer; vets not shareable across employers) + Qualification Review `what` (first aid induction + cert within 4 months)
+- **Homepage FAQ** `faqItems[0].answer` — verification summary now mentions police vet + first aid readiness
+
+### Phase 2 — Memberships + Bookings + Tiers + Payouts + SEO (commits `b7e50e5`–`de00ace`)
+
+**Membership system (parent subscriptions):**
+- **New `Membership` model** — 1:1 with User. Provider-agnostic (`provider`, `providerCustomerId`, `providerSubscriptionId`). `plan` (MONTHLY/QUARTERLY/ANNUAL), `status`, `currentPeriodEnd`, `cancelAtPeriodEnd`
+- **`src/lib/membership.ts`** — `MEMBERSHIP_PLANS` ($39/$89/$149 NZD), `MEMBERSHIP_BENEFITS`, `getMembership()`, `requireMembership()` gate, `membershipEnforced()` soft-launch switch (`MEMBERSHIP_ENFORCED` env, off by default)
+- **`src/server/actions/membership.ts`** — `startMembershipCheckout`, `cancelMembership`, `getPaymentOptions`, `getMyMembership`. Stale-session check (user exists in DB). Demo/backup IDs blocked from buying
+- **New pages:** `/membership` (public plans + `PlanCards.tsx`), `/dashboard/parent/membership` + `MembershipPanel.tsx` (manage/cancel)
+- **Webhook-only activation** — membership NOT activated on success URL; only the verified Stripe/PayPal webhook calls `activateMembership()`
+
+**Payment provider layer:**
+- **`src/lib/payments/types.ts`** — `PaymentProvider` interface (id, isConfigured, createMembershipCheckout, cancelMembership, createBookingCheckout, createTierCheckout). Adding a provider or flow = add a method + implement per provider
+- **`src/lib/payments/stripe.ts`** — Stripe SDK provider. `refundStripe()` for booking refunds
+- **`src/lib/payments/paypal.ts`** — PayPal plain-REST provider. `captureBookingOrder()`, `refundPaypalCapture()`, `sendPayout()` (PayPal Payouts API for nanny earnings)
+- **`src/lib/payments/activate.ts`** — `activateMembership()`, `recordPayment()`, `deactivateMembership()` — called only by webhooks
+- **`src/lib/payments/index.ts`** — `getProvider(id)`, `configuredProviders()`, `appUrl()`
+- **New webhooks:** `/api/webhooks/stripe/route.ts`, `/api/webhooks/paypal/route.ts` — verify + activate memberships, settle bookings (→ REQUESTED) + tiers
+- **New `Payment` model** — one row per charge, `kind` (MEMBERSHIP/BOOKING/DEPOSIT/PLACEMENT), `providerRef` (idempotency), `feeCents`, `status` (PENDING/PAID/FAILED/REFUNDED), `bookingId?`
+- **New deps:** `stripe ^22.3.1`
+- **New env vars:** `STRIPE_SECRET_KEY`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_ENV`, `NEXT_PUBLIC_APP_URL`, `CRON_SECRET`, `MEMBERSHIP_ENFORCED`
+
+**Booking system (paid bookings with held funds + auto-payout):**
+- **New `Booking` model** — parent books nanny hours. `subtotalCents`/`feeCents`/`totalCents`, full status workflow, `payoutStatus` (HELD/RELEASED/REFUNDED), `payoutReleaseAt`, `payoutRef`
+- **`src/lib/booking.ts`** (PURE, client+server) — `SERVICE_FEE_PCT = 0.1`, `quoteBooking(rate, hours)` (fee-from-earnings: parent pays subtotal, 10% out of nanny earnings), `BookingStatus` + `BOOKING_TRANSITIONS` + `canTransition(from, to, role)`, `PAYOUT_HOLD_HOURS = 48`, self-check
+- **`src/server/actions/booking.ts`** — `createBooking` (member-gated, PENDING_PAYMENT → webhook → REQUESTED), `acceptBooking`, `declineBooking` (refunds), `cancelBooking` (refunds), `completeBooking`, `approveBooking` (sets payoutReleaseAt), `getMyBookings`, `getNannyBookings`
+- **New `BookingWidget.tsx`** on nanny profile — date/hours/payment picker
+- **New `BookingsClient.tsx`** — shared bookings list + status actions (nanny/parent dashboards)
+- **New pages:** `/dashboard/nanny/bookings`, `/dashboard/parent/bookings`
+- **Refunds on decline/cancel** — Stripe refund / PayPal capture refund; parent gets money back
+
+**Nanny pricing tiers (one-time upfront):**
+- **New `NannyProfile` fields:** `tier` (NONE/LISTED/PREMIUM), `tierPaidAt`, `payoutPaypalEmail`
+- **`src/lib/tiers.ts`** — `NANNY_TIERS` (LISTED $50, PREMIUM $200 incl. First Aid), `tierRank()` (Premium=2, Listed=1, NONE=0) for search priority sort
+- **`src/server/actions/tier.ts`** — `startTierCheckout` (NANNY-only, not demo/backup), `getMyTier`
+- **New pages:** `/dashboard/nanny/tier` + `TierCards.tsx`
+- **Directory sort** — `getPublicNannies` now tier-sorts: Premium floats above Listed above unpaid, newest-first within a tier
+
+**Payouts (cron-driven nanny earnings release):**
+- **`src/server/actions/payouts.ts`** — `releaseDuePayouts(limit=50)`. Due = COMPLETED + HELD + past `payoutReleaseAt` + nanny has PayPal email. Idempotent: claim-then-send (HELD→RELEASED before PayPal call), `senderItemId = booking_${id}` is PayPal idempotency key. No email → skipped. Failure → rolls claim back to HELD
+- **`/api/cron/payouts/route.ts`** — `CRON_SECRET`-gated. Vercel Cron daily at 03:00 UTC (`vercel.json`)
+- **`src/server/actions/money.ts`** — `getMoneyOverview` (ADMIN): platform revenue (membership + tier + booking **fee**, not gross), gross processed, paid out, held for nannies, counts, recent 12 payments
+- **New page:** `/admin/money` — admin money dashboard
+
+**Name-based nanny profile URLs (slugs):**
+- **New `NannyProfile.slug`** — unique, name-based permalink ("jessie-wu")
+- **`src/lib/slug.ts`** — `slugify(name)` (accent-stripping), `looksLikeCuid()`. Pure, client+server
+- **`uniqueNannySlug(name)`** in `nanny.ts` — appends `-2`, `-3` on collision. Called in `applyAsNanny`
+- **`getPublicNannyById(slugOrId)`** — looks up by `slug OR id` so old cuid links still resolve
+- **`getPublicNannies`** returns `slug ?? id` so links always work
+
+**Member gating wired into existing actions:**
+- `requireMembership()` added to: `createEnquiry`, `toggleFavourite`, `createJobPost`, `getConversation`, `sendMessage`, `createBooking`. Off until `MEMBERSHIP_ENFORCED=true`
+- `ActionResult` gained `upgradeRequired?: boolean` — UI shows `UpgradeGate` modal instead of error toast
+- **`src/components/membership/UpgradeGate.tsx`** — upgrade modal, shown when action returns `upgradeRequired`
+
+**Comprehensive technical SEO (commit `de00ace`):**
+- **`src/app/robots.ts`** — robots.txt (disallow /dashboard, /admin, /api, login routes)
+- **`src/app/sitemap.ts`** — sitemap.xml (static pages + suburb SEO pages + approved nanny profiles, `take: 200`)
+- **`src/app/opengraph-image.tsx`** — dynamic OG image via `ImageResponse`
+- **`src/lib/seo.ts`** — schema.org builders: Organization, WebSite, ChildCare LocalBusiness, Breadcrumb, Person (nanny + aggregateRating), FAQPage
+- **`src/components/seo/JsonLd.tsx`** — injects JSON-LD into page `<head>`
+- **`src/app/layout.tsx`** — added Organization + WebSite + LocalBusiness JSON-LD site-wide
+- **New page layouts with SEO metadata:** `apply-as-nanny/layout.tsx`, `post-a-job/layout.tsx`, `register-family/layout.tsx`, `how-it-works/page.tsx`
+- **Enquiry email field clarified** — `EnquiryForm.tsx` label now "Your email (for your receipt)" (was ambiguous)
+
+**Resilience fixes:**
+- **Stale session handling** (commit `0be5e90`) — payment flows check user still exists in DB before checkout; return "session out of date" instead of failing at activation
+- **Stripe membership return-path fallback** (commit `a611401`) — webhook is primary, but return path also activates as a fallback if webhook hasn't fired yet (resilience against webhook delay/failure)
+- **PayPal membership activation on return** (commit `e8bc304`) — activates on return path, not just via webhook
+- **Refund parent on declined/cancelled booking** (commit `f94b0bd`) — `declineBooking` + `cancelBooking` call `refundStripe` / `refundPaypalCapture`
+- **Daily payout cron on Hobby plan** (commit `5405469`) — Vercel Hobby limits cron to daily; the 48h hold makes daily sweeps fine (payouts lag up to ~24h past release time)
+- **Nanny payouts + fee-from-earnings + admin money + photo gate** (commit `d465096`) — full payout flow, `BookingWidget` photo gate (nanny needs a profile photo before bookings appear), `MembershipPanel`, `TierCards`, admin money dashboard
