@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { NANNY_TIERS } from "@/lib/tiers";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
@@ -265,8 +267,33 @@ export default function ApplyAsNannyPage() {
         tags={["career", "jobs", "apply", "professional"]}
         seed="apply-as-nanny"
         aspect="aspect-[16/6]"
-        className="mb-10"
+        className="mb-8"
       />
+
+      {/* What it costs — reads live tier prices so it can't drift */}
+      <Card className="rounded-3xl border border-primary/20 bg-primary/[0.03] p-5 mb-10">
+        <h2 className="font-heading text-base font-bold text-foreground mb-2">
+          Applying is free 🎉
+        </h2>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Register your basic information and start receiving family enquiries at no cost. When
+          you&apos;re ready, you can join our{" "}
+          <strong className="text-foreground">
+            vetted pool (NZ${(NANNY_TIERS[0].priceCents / 100).toFixed(0)})
+          </strong>{" "}
+          or go{" "}
+          <strong className="text-foreground">
+            Premium (NZ${(NANNY_TIERS[1].priceCents / 100).toFixed(0)}, incl. First Aid training + a
+            Verified Premium badge)
+          </strong>{" "}
+          — a one-off payment, with no monthly nanny fee. A 10% service fee applies to completed
+          bookings.{" "}
+          <Link href="/pricing" className="text-primary font-semibold hover:underline">
+            See what&apos;s included
+          </Link>
+          .
+        </p>
+      </Card>
 
       {/* Step nodes tracker */}
       <div className="flex items-center justify-center gap-2 mb-10">

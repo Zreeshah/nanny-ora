@@ -12,6 +12,7 @@ import { ShinyText } from "@/components/ui/ShinyText";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { faqSchema, breadcrumbSchema } from "@/lib/seo";
 import { parentFaqs, nannyFaqs } from "@/lib/faq";
+import { NannyTiers } from "@/components/pricing/NannyTiers";
 
 export const metadata: Metadata = {
   title: "How NannyOra Works — Childcare Connected with Trust",
@@ -208,6 +209,28 @@ export default function HowItWorksPage() {
             </Button>
           </Link>
         </div>
+      </section>
+
+      {/* ===== WHAT IT COSTS (nannies) ===== */}
+      <section className="mt-24 pt-16 border-t border-border/20">
+        <div className="text-center max-w-xl mx-auto mb-10">
+          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-3">
+            What it costs
+          </span>
+          <h2 className="font-heading text-3xl sm:text-4xl text-foreground mb-4">
+            Free to start — <ShinyText>upgrade when you&apos;re ready</ShinyText>
+          </h2>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Registering your basic information and receiving enquiries is free. If you&apos;d like to
+            join our vetted pool or the Premium pool, that&apos;s a one-off payment — there&apos;s no
+            monthly nanny fee.
+          </p>
+        </div>
+        <NannyTiers />
+        <p className="text-center text-xs text-muted-foreground mt-6">
+          A 10% service fee applies to completed bookings. See full{" "}
+          <Link href="/pricing" className="text-primary hover:underline">pricing</Link>.
+        </p>
       </section>
 
       {/* ===== FAQ ===== */}
