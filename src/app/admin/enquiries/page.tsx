@@ -12,15 +12,6 @@ import { getEnquiries, updateEnquiryStatus } from "@/server/actions/enquiry";
 
 type EnquiryRow = { id: string; parentName: string; nannyName: string; message: string; status: string; createdAt: Date; flaggedCount: number; contactEmail: string | null; contactPhone: string | null };
 
-const sampleDefaults = { flaggedCount: 0, contactEmail: null, contactPhone: null };
-const sampleEnquiries: EnquiryRow[] = [
-  { id: "enq-001", ...sampleDefaults, parentName: "Sarah K.", nannyName: "Emma Thompson", message: "Hi Emma, we're looking for a sensory-aware nanny for our 4-year-old. Would love to chat!", status: "NEW", createdAt: new Date("2025-01-12") },
-  { id: "enq-002", ...sampleDefaults, parentName: "James W.", nannyName: "Sarah Mitchell", message: "Hi Sarah, would you be available for after-school care in Remuera 3 days a week?", status: "CONTACTED", createdAt: new Date("2025-01-10") },
-  { id: "enq-003", ...sampleDefaults, parentName: "Lisa M.", nannyName: "Aroha Williams", message: "We need a nanny with early intervention experience for our son. Are you available?", status: "NEW", createdAt: new Date("2025-01-11") },
-  { id: "enq-004", ...sampleDefaults, parentName: "Kate R.", nannyName: "Mia Johnson", message: "Hi Mia, looking for a weekend babysitter in Devonport. Interested?", status: "MATCHED", createdAt: new Date("2025-01-08") },
-  { id: "enq-005", ...sampleDefaults, parentName: "Tom S.", nannyName: "Grace Taylor", message: "We need a specialist nanny for our daughter with ASD. Your profile looks perfect.", status: "NEW", createdAt: new Date("2025-01-13") },
-];
-
 const statusColors: Record<string, string> = {
   NEW: "bg-accent/10 text-accent border-accent/20",
   CONTACTED: "bg-blue-50 text-blue-600 border-blue-200",
@@ -29,15 +20,16 @@ const statusColors: Record<string, string> = {
 };
 
 export default function AdminEnquiriesPage() {
-  const [enquiries, setEnquiries] = useState<EnquiryRow[]>(sampleEnquiries);
+  const [enquiries, setEnquiries] = useState<EnquiryRow[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const [statusFilter, setStatusFilter] = useState("");
   const [, startTransition] = useTransition();
 
-  // Load real enquiries; keep sample data as fallback for demo mode.
+  // Load real enquiries from the DB (no mock fallback).
   useEffect(() => {
     getEnquiries()
       .then((res) => {
-        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+        if (res.success && Array.isArray(res.data)) {
           setEnquiries(
             res.data.map((e: any) => ({
               id: e.id,
@@ -53,7 +45,8 @@ export default function AdminEnquiriesPage() {
           );
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoaded(true));
   }, []);
 
   const filtered = statusFilter ? enquiries.filter((e) => e.status === statusFilter) : enquiries;
@@ -91,6 +84,11 @@ export default function AdminEnquiriesPage() {
       </div>
 
       <div className="space-y-3">
+        {loaded && filtered.length === 0 && (
+          <Card className="rounded-3xl border-border/40 p-10 text-center text-sm text-muted-foreground">
+            {enquiries.length === 0 ? "No enquiries yet." : "No enquiries match this filter."}
+          </Card>
+        )}
         {filtered.map((enquiry) => (
           <Card key={enquiry.id} className="rounded-3xl border-border/40 hover:shadow-md transition-all">
             <div className="flex flex-col sm:flex-row gap-4">

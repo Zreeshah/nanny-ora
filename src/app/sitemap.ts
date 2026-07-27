@@ -21,6 +21,9 @@ const STATIC: { path: string; priority: number; freq: MetadataRoute.Sitemap[numb
   { path: "trust-and-safety", priority: 0.6, freq: "monthly" },
   { path: "verification-process", priority: 0.6, freq: "monthly" },
   { path: "pricing", priority: 0.5, freq: "monthly" },
+  { path: "terms", priority: 0.3, freq: "yearly" },
+  { path: "privacy", priority: 0.3, freq: "yearly" },
+  { path: "refunds", priority: 0.3, freq: "yearly" },
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

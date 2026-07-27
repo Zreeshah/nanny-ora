@@ -24,6 +24,11 @@ const footerLinks = {
     { href: "/neurodiverse-childcare-auckland", label: "Neurodiverse Childcare" },
     { href: "/ece-nanny-auckland", label: "ECE Nannies" },
   ],
+  "Legal": [
+    { href: "/terms", label: "Terms of Service" },
+    { href: "/privacy", label: "Privacy Policy" },
+    { href: "/refunds", label: "Refunds & Cancellations" },
+  ],
 };
 
 export function Footer() {
@@ -31,7 +36,7 @@ export function Footer() {
     <footer className="bg-secondary/30 border-t border-border/30 mt-auto text-foreground">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         {/* Top section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-12">
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
               <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">{category}</h3>

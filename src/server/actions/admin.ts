@@ -154,6 +154,14 @@ export async function getAdminStats(): Promise<ActionResult> {
       pendingJobs,
       newEnquiries,
       totalParents,
+      // real verification funnel (nannies passing each stage)
+      identityOk,
+      refereesOk,
+      policeOk,
+      interviewOk,
+      activePlacements,
+      recentApplications,
+      recentEnquiries,
     ] = await Promise.all([
       prisma.nannyProfile.count(),
       prisma.nannyProfile.count({ where: { adminStatus: "SUBMITTED" } }),
@@ -162,6 +170,21 @@ export async function getAdminStats(): Promise<ActionResult> {
       prisma.jobPost.count({ where: { status: "PENDING" } }),
       prisma.enquiry.count({ where: { status: "NEW" } }),
       prisma.parentProfile.count(),
+      prisma.nannyProfile.count({ where: { identityVerified: "VERIFIED" } }),
+      prisma.nannyProfile.count({ where: { refereeCheckStatus: "VERIFIED" } }),
+      prisma.nannyProfile.count({ where: { policeVetStatus: "VERIFIED" } }),
+      prisma.nannyProfile.count({ where: { interviewStatus: "VERIFIED" } }),
+      prisma.nannyProfile.count({ where: { placementStatus: "PLACED" } }),
+      prisma.nannyProfile.findMany({
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        select: { id: true, suburb: true, adminStatus: true, createdAt: true, user: { select: { name: true } } },
+      }),
+      prisma.enquiry.findMany({
+        orderBy: { createdAt: "desc" },
+        take: 6,
+        select: { id: true, createdAt: true, parent: { select: { name: true } }, nanny: { select: { user: { select: { name: true } } } } },
+      }),
     ]);
 
     return {
@@ -174,6 +197,26 @@ export async function getAdminStats(): Promise<ActionResult> {
         pendingJobs,
         newEnquiries,
         totalParents,
+        activePlacements,
+        funnel: [
+          { label: "Applied", count: totalNannies },
+          { label: "Identity", count: identityOk },
+          { label: "References", count: refereesOk },
+          { label: "Police Vet", count: policeOk },
+          { label: "Interview", count: interviewOk },
+          { label: "Approved", count: approvedNannies },
+        ],
+        recentApplications: recentApplications.map((n) => ({
+          id: n.id,
+          name: n.user.name,
+          suburb: n.suburb,
+          status: n.adminStatus,
+          createdAt: n.createdAt,
+        })),
+        recentActivity: recentEnquiries.map((e) => ({
+          text: `${e.parent.name} enquired about ${e.nanny.user.name}`,
+          when: e.createdAt,
+        })),
       },
     };
   } catch (error) {
