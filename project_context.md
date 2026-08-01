@@ -188,14 +188,17 @@ nannyora/
 │   │   ├── (public)/          # Public marketing + listing pages
 │   │   │   ├── layout.tsx     # Shared public layout
 │   │   │   ├── page.tsx       # Homepage (SERVER)
-│   │   │   ├── apply-as-nanny/page.tsx + layout.tsx    # Nanny application form (CLIENT, 844 lines)
+│   │   │   ├── apply-as-nanny/page.tsx + layout.tsx    # Nanny application form (CLIENT, 844 lines) — now with live tier cost callout
 │   │   │   ├── register-family/page.tsx + layout.tsx  # Parent registration (CLIENT)
 │   │   │   ├── find-a-nanny/page.tsx             # Nanny directory wrapper (SERVER, 16 lines, metadata + revalidate=300)
 │   │   │   ├── find-a-nanny/FindANannyClient.tsx # Filter sidebar + results grid (CLIENT, 455 lines)
 │   │   │   ├── post-a-job/page.tsx + layout.tsx  # Job posting form (CLIENT)
 │   │   │   ├── membership/page.tsx + PlanCards.tsx  # Parent membership plans (SERVER + CLIENT)
-│   │   │   ├── pricing/page.tsx           # Pricing (SERVER)
-│   │   │   ├── how-it-works/page.tsx      # How it works (SERVER)
+│   │   │   ├── pricing/page.tsx           # Pricing (SERVER) — real parent membership ($39/$89/$149) + nanny tiers section (NannyTiers)
+│   │   │   ├── how-it-works/page.tsx      # How it works (SERVER) — now with "What it costs" section
+│   │   │   ├── terms/page.tsx             # Terms of Service (SERVER, LegalShell)
+│   │   │   ├── privacy/page.tsx           # Privacy Policy (SERVER, LegalShell)
+│   │   │   ├── refunds/page.tsx           # Refunds & Cancellations (SERVER, LegalShell)
 │   │   │   ├── trust-and-safety/page.tsx  # Trust & safety (SERVER)
 │   │   │   ├── verification-process/page.tsx  # Detailed 7-layer verification process (SERVER, 232 lines)
 │   │   │   ├── childcare-support/page.tsx    # Childcare support options info page (SERVER, 81 lines)
@@ -239,6 +242,8 @@ nannyora/
 │   │   ├── cards/FavouriteButton.tsx # Optimistic heart toggle (PARENT only, member-gated)
 │   │   ├── booking/BookingsClient.tsx # Shared bookings list + status actions (nanny/parent)
 │   │   ├── membership/UpgradeGate.tsx  # Upgrade modal — shown when action returns upgradeRequired
+│   │   ├── pricing/NannyTiers.tsx      # 3-col tier cards (Free / $50 Listed / $200 Premium) reads live NANNY_TIERS — can't drift
+│   │   ├── legal/Legal.tsx             # LegalShell + LegalSection + LegalList — shared wrapper for /terms, /privacy, /refunds
 │   │   ├── seo/JsonLd.tsx             # Injects schema.org JSON-LD into page <head>
 │   │   ├── FaqGroups.tsx             # Grouped parent + nanny FAQ (reused on home + how-it-works)
 │   │   ├── home/                     # InteractiveHero, BentoFeatures, MarqueeTestimonials, StatsTicker, TrustStrip, TrustStandard, SpecialistExpertise, DayInLife, LifestyleGallery
@@ -635,7 +640,7 @@ Exports only the `ActionResult` type. `registerUser` was deleted — signups now
 | `updateVerificationLevel(nannyProfileId, level)` | ADMIN | Sets verification level, emails nanny |
 | `reviewDocument(documentId, reviewStatus)` | ADMIN | Approves/rejects document, stamps `reviewedAt` + `reviewedBy` |
 | `updateSafetyCheckStatus(nannyProfileId, checkField, status)` | ADMIN | Updates one of the 7 safety check fields |
-| `getAdminStats()` | ADMIN | Returns dashboard counts |
+| `getAdminStats()` | ADMIN | Returns dashboard counts (nannies, pending, approved, jobs, enquiries, parents), real verification funnel (identity/referees/police/interview VERIFIED counts → approved), `activePlacements`, `recentApplications` (5, with initials), `recentActivity` (6 recent enquiries) |
 | `getAdminNannies(filters?)` | ADMIN | Returns all nanny profiles with user + documents. `take: 100` limit |
 | `getDocumentDownloadUrl(documentId)` | ADMIN | Generates 5-minute signed Storage URL |
 | `updatePlacement(nannyProfileId, data)` | ADMIN | Sets placement status (AVAILABLE/TRIAL_PENDING/PLACED/CONTRACT_ENDING) + trialDate, placementStart, placementEnd, placementNote, paidConfirmed |
@@ -824,7 +829,7 @@ The seed script (`prisma/seed.ts`) is now a **no-op** — all demo/sample data w
 
 ### SEO (Next.js Metadata Route Handlers)
 - **`src/app/robots.ts`** — `robots.txt`. Allows `/`, disallows `/dashboard/`, `/admin/`, `/api/`, `/login`, `/forgot-password`, `/reset-password`. Sitemap + host declared.
-- **`src/app/sitemap.ts`** — `sitemap.xml`. Static marketing + landing pages (priority-weighted) + suburb SEO pages (`SUBURB_SLUGS`) + approved nanny profiles (slug-based URLs, `take: 200`).
+- **`src/app/sitemap.ts`** — `sitemap.xml`. Static marketing + landing pages (priority-weighted) + suburb SEO pages (`SUBURB_SLUGS`) + approved nanny profiles (slug-based URLs, `take: 200`). Legal pages (`/terms`, `/privacy`, `/refunds`) at priority 0.3, yearly.
 - **`src/app/opengraph-image.tsx`** — dynamic OG image via `ImageResponse` (NannyOra brand card).
 - **`src/lib/seo.ts`** — schema.org builders: `organizationSchema`, `websiteSchema`, `localBusinessSchema` (ChildCare type for local-pack relevance), `breadcrumbSchema`, `personSchema` (nanny profiles + `aggregateRating`), `faqSchema`. Injected via `src/components/seo/JsonLd.tsx`.
 
@@ -886,6 +891,9 @@ npm run dev      # starts at http://localhost:3000
 34. **Name-based nanny profile URLs** — `slugify(name)` → "jessie-wu" stored on `NannyProfile.slug` (unique). `uniqueNannySlug(name)` appends `-2`, `-3` on collision. `getPublicNannyById` looks up by `slug OR id` so old cuid links still resolve.
 35. **Technical SEO** — `robots.ts` + `sitemap.ts` (static + suburb SEO + approved profiles) + `opengraph-image.tsx` + schema.org JSON-LD (`src/lib/seo.ts` builders injected via `JsonLd.tsx`). `ChildCare` LocalBusiness schema for local-pack relevance. `Person` schema on nanny profiles with `aggregateRating`.
 36. **TrustStrip two-row layout** — Homepage trust strip split into baseline checks (every carer: Verified IDs, Police Vetted, Face-to-Face Interviewed, First Aid Ready) + advanced expertise (optional: ECE Qualified, Neurodiversity & Inclusive Practice, Baby Sleep Support, Maternity & Postnatal Care), separated by a divider.
+37. **Public pricing reads live source data** — `NannyTiers.tsx` reads `NANNY_TIERS` and `/pricing` reads `MEMBERSHIP_PLANS`, so the public pricing pages can never drift from what the product actually charges. No hardcoded plan numbers anywhere in the UI.
+38. **Legal pages + compliance** — `/terms`, `/privacy`, `/refunds` use a shared `LegalShell` (in `src/components/legal/Legal.tsx`), with NannyOra-specific content covering memberships, bookings, 10% fee, payouts, vetting, Children's Act consent, Privacy Act 2020, Consumer Guarantees Act. Linked from footer + sitemap.
+39. **Admin dashboard: no fabricated data** — All figures on `/admin` come from `getAdminStats()` (real funnel counts, recent applications with initials, recent enquiry activity). No fake/fallback/representative data anywhere — the dashboard shows what's actually in the DB, including an empty state when there's nothing.
 
 ---
 
@@ -907,6 +915,7 @@ npm run dev      # starts at http://localhost:3000
 - **SEO landing pages** (`/ece-nanny-auckland`, etc.) are statically rendered and don't pull from the database
 - **Stale comments in `nannies.ts`** — `getPublicNannies`/`getPublicNannyById` JSDoc still mentions "falls back to sample data" but sample data was deleted; they now return `[]` / `undefined` on DB error
 - **Logo tagline** — the tagline "Curated Care. Warm Hearts." is now rendered as CSS text below the `logo-wordmark.png` wordmark in Header, Footer, login page, and admin header. The old `logo.png` (with baked-in raster tagline) is retired but still in `public/`.
+- **Legal entity placeholder** — Terms §1 has a placeholder for the legal entity name/NZBN that needs filling with the real registered NZ business details before going fully live.
 
 ---
 
@@ -963,11 +972,11 @@ The following changes were made after the initial `project_context.md` was writt
 - **Footer** added "Childcare Support Options" link; "Our Verification Process" link now points to `/verification-process`
 
 ### Admin Dashboard Redesign
-- **`admin/page.tsx`** (346 lines) — warm "operations center" dashboard: live KPI cards with `StatsTicker` + inline SVG sparklines + completion rings; 7-step verification funnel with animated bars and drop-off counts; recent applications grid with progress bars; live activity feed; review queue cards. Uses `getAdminStats()` for live data; funnel/recent/activity use representative data.
+- **`admin/page.tsx`** (346 lines) — warm "operations center" dashboard: real KPI cards with `StatsTicker`; real verification funnel (counts of nannies passing each VERIFIED stage — identity, references, police vet, interview, approved) with animated bars; recent applications grid (initials, no fake photos); recent enquiry activity feed; live chips + KPIs. All figures from `getAdminStats()` — no fabricated/fallback data.
 - **`admin/layout.tsx`** — dark header using `logo-wordmark.png`, "Admin" label badge
 - **`admin/nannies/page.tsx`** (519 lines) — warm card design with image fallbacks via `pickImages()` when no profile image
 - **`admin/jobs/page.tsx`** — warm card design with Briefcase icons, colored status badges
-- **`admin/enquiries/page.tsx`** — parent→nanny flow visualization with avatar initials and arrow
+- **`admin/enquiries/page.tsx`** — parent→nanny flow visualization with avatar initials and arrow. Sample 'Sarah K.' rows removed; starts empty, shows real empty state when no enquiries exist
 
 ### Police Vetting Authorization
 - Required checkbox on Step 4 of nanny application with full Children's Act 2014 authorization text
@@ -1208,3 +1217,24 @@ Comprehensive read-only audit across 7 vulnerability classes, followed by fixes:
 - **Refund parent on declined/cancelled booking** (commit `f94b0bd`) — `declineBooking` + `cancelBooking` call `refundStripe` / `refundPaypalCapture`
 - **Daily payout cron on Hobby plan** (commit `5405469`) — Vercel Hobby limits cron to daily; the 48h hold makes daily sweeps fine (payouts lag up to ~24h past release time)
 - **Nanny payouts + fee-from-earnings + admin money + photo gate** (commit `d465096`) — full payout flow, `BookingWidget` photo gate (nanny needs a profile photo before bookings appear), `MembershipPanel`, `TierCards`, admin money dashboard
+
+### Legal Pages + Admin Real Data + Pricing Fix (commits `11ec092`, `ef91656`)
+
+**Legal pages (Stripe/PayPal + NZ Privacy Act compliance):**
+- **New pages:** `/terms` (Terms of Service), `/privacy` (Privacy Policy), `/refunds` (Refunds & Cancellations) — real NannyOra-specific content covering memberships, bookings, 10% fee, payouts, vetting, Children's Act consent, Privacy Act 2020, Consumer Guarantees Act
+- **New `src/components/legal/Legal.tsx`** — `LegalShell` (header + readable column + ShinyText title), `LegalSection` (numbered section), `LegalList` (bulleted). Shared by all 3 legal pages
+- **Footer** gained "Legal" column (Terms, Privacy, Refunds links) — grid changed 4→5 cols. **Sitemap** adds the 3 legal pages at priority 0.3, yearly
+- **One placeholder to fill:** legal entity name/NZBN in Terms §1
+
+**Admin dashboard real data (no more mock):**
+- **`admin/page.tsx`** — replaced all fabricated data (fake funnel counts, pexels applicant photos, invented activity feed, mock sparklines, "72%" placements) with real `getAdminStats()` queries. Real verification funnel (counts of nannies with each VERIFIED status), recent applications (initials only, no photos), recent enquiry activity
+- **`getAdminStats()`** now returns: `funnel` (6 stages: Applied → Identity → References → Police Vet → Interview → Approved), `activePlacements`, `recentApplications` (5), `recentActivity` (6)
+- **`admin/enquiries/page.tsx`** — dropped the hardcoded sample 'Sarah K.' rows; starts empty, loads real enquiries, shows real empty state
+- Removed leftover `paypal-test` account from production database
+- Deleted `Capture-2026-07-15-044810.png` (unused screenshot)
+
+**Public nanny-model explanation + pricing page fix:**
+- **New `src/components/pricing/NannyTiers.tsx`** — 3-col presentational component (Free / $50 Listed / $200 Premium) reads live `NANNY_TIERS` so public pricing can't drift from what the product charges. Pure/presentational — safe on server + client
+- **`/pricing` rewritten** — real parent membership plans ($39/$89/$149 from `MEMBERSHIP_PLANS`) + nanny tiers section (`NannyTiers`). Removed the stale hardcoded plans (defunct $19 'Coming Soon' parent plan, 'nanny application free' with no tiers)
+- **`/how-it-works`** — added "What it costs" section (free → vetted → premium)
+- **`/apply-as-nanny`** — added compact cost callout (free to apply; $50 vetted / $200 Premium incl. First Aid; one-off, no monthly fee) reading live tier prices
