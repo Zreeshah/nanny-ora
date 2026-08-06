@@ -17,8 +17,6 @@ import {
 } from "@/lib/constants";
 import { Search, SlidersHorizontal, X, LifeBuoy } from "lucide-react";
 import Link from "next/link";
-import { ImageBand } from "@/components/ui/ImageBand";
-import { ShinyText } from "@/components/ui/ShinyText";
 
 // ponytail: age range → specialist tag heuristic. No "childAge" field on nannies;
 // map age ranges to existing specialist tags for a rough filter.
@@ -365,27 +363,9 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Page Header */}
-      <div className="mb-8">
-        <h1 className="font-heading text-3xl md:text-4xl text-foreground mb-2">
-          Find a Nanny in <ShinyText>Auckland</ShinyText>
-        </h1>
-        <p className="text-muted-foreground text-lg">
-          Browse verified, experienced nannies across Auckland suburbs.
-        </p>
-      </div>
-
-      <ImageBand
-        tags={["find-a-nanny-band"]}
-        seed="find-a-nanny"
-        aspect="aspect-[16/6]"
-        priority
-        className="mb-8"
-      />
-
+    <div className="rounded-3xl bg-secondary/20 border border-border/30 p-5 sm:p-7">
       {/* Mobile Filter Toggle */}
-      <div className="lg:hidden mb-6">
+      <div className="lg:hidden mb-5">
         <Button
           variant="secondary"
           onClick={() => setSidebarOpen(!sidebarOpen)}
