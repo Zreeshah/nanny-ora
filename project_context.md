@@ -190,8 +190,9 @@ nannyora/
 │   │   │   ├── page.tsx       # Homepage (SERVER)
 │   │   │   ├── apply-as-nanny/page.tsx + layout.tsx    # Nanny application form (CLIENT, 844 lines) — now with live tier cost callout
 │   │   │   ├── register-family/page.tsx + layout.tsx  # Parent registration (CLIENT)
-│   │   │   ├── find-a-nanny/page.tsx             # Nanny directory wrapper (SERVER, 16 lines, metadata + revalidate=300)
-│   │   │   ├── find-a-nanny/FindANannyClient.tsx # Filter sidebar + results grid (CLIENT, 455 lines)
+│   │   │   ├── find-a-nanny/page.tsx             # SEO pillar page (SERVER) — metadata + canonical to https://www.nannyora.co.nz/find-a-nanny, 5-min revalidate
+│   │   │   ├── find-a-nanny/FindANannyArticle.tsx  # "Hire a Nanny in NZ" pillar article (SERVER) — full SEO guide wrapping the directory inline (breadcrumb + FAQ JSON-LD)
+│   │   │   ├── find-a-nanny/FindANannyClient.tsx   # Filter sidebar + results grid (CLIENT, ~490 lines) — directory UI wired into the article flow at #directory
 │   │   │   ├── post-a-job/page.tsx + layout.tsx  # Job posting form (CLIENT)
 │   │   │   ├── membership/page.tsx + PlanCards.tsx  # Parent membership plans (SERVER + CLIENT)
 │   │   │   ├── pricing/page.tsx           # Pricing (SERVER) — real parent membership ($39/$89/$149) + nanny tiers section (NannyTiers)
@@ -1238,3 +1239,13 @@ Comprehensive read-only audit across 7 vulnerability classes, followed by fixes:
 - **`/pricing` rewritten** — real parent membership plans ($39/$89/$149 from `MEMBERSHIP_PLANS`) + nanny tiers section (`NannyTiers`). Removed the stale hardcoded plans (defunct $19 'Coming Soon' parent plan, 'nanny application free' with no tiers)
 - **`/how-it-works`** — added "What it costs" section (free → vetted → premium)
 - **`/apply-as-nanny`** — added compact cost callout (free to apply; $50 vetted / $200 Premium incl. First Aid; one-off, no monthly fee) reading live tier prices
+
+### /find-a-nanny Pillar SEO Article (commit `95494e4`)
+- **Slug retained** as `/find-a-nanny` per the SEO brief — kept as canonical, no `/hire-a-nanny` route created, so no redirects needed (every existing nav/footer/dashboard link already pointed here).
+- **New `FindANannyArticle.tsx`** (server component, ~1100 lines) — "Hire a Nanny in NZ" pillar guide built directly from the SEO brief (`nannyora-hire-a-nanny.md`). Article structure follows the brief's `<!-- EXISTING UI -->` markers: hero + key takeaways + verification/matching explainer sit ABOVE the directory, the interactive directory (filters + nanny cards) sits INLINE at "Search and Compare Nanny Profiles" wrapped in `#directory`, and the remaining ~85% of the article (Why Hire a Nanny, Which Type, How to Hire 7 steps + common mistakes, Why Choose NannyOra, vs Other Childcare Options, What Does It Cost with live `<NannyTiers/>`, NZ Legal Responsibilities, Areas Served, Resources, Real Parent Stories, Summary, 28-question FAQ via `<Accordion/>`) sits BELOW the nanny grid.
+- **JSON-LD:** Breadcrumb (Home → Find a Nanny) + FAQPage (28 Q&A matching the visible accordion).
+- **Article design** matches existing article pages — `Callout` for takeaways/warnings, card-grid for the "Why Families Choose NannyOra" + "What Influences a Nanny's Rate" sections, ordered steps with numbered circles, styled comparison tables (vs Facebook/classifieds, vs daycare/babysitter/au pair/home-based ECE), Resource mini-cards, and a primary final CTA block. All internal links from the brief's "Live Links to Implement Now" table are wired (verification-process, how-it-works, pricing, trust-and-safety, childcare-support, specialist-childcare-auckland, sensory-aware-nanny-auckland, neurodiverse-childcare-auckland, ece-nanny-auckland, post-a-job, register-family, apply-as-nanny).
+- **Real Parent Stories** preserved as an honest placeholder (brief forbade fabricated quotes/counts/ratings).
+- **`FindANannyClient.tsx`** — removed the duplicated H1 + ImageBand (now provided by the article), wrapped the directory in a soft `bg-secondary/20` card so it reads as one contained block within the article flow. Filter logic + state unchanged.
+- **`page.tsx`** — new metadata (title + description from brief), `alternates.canonical` to the canonical URL, 5-min revalidate. Route is statically generated (`○`).
+- **"Redirects on whole website"** — none required; nothing in the codebase referenced `/hire-a-nanny` as a route, slug, or link (only an unrelated image filename `hire-a-nanny-auckland.jpeg`). All navigational/SEO/canonical references already pointed at `/find-a-nanny`; the SEO brief explicitly says to retain that URL.
