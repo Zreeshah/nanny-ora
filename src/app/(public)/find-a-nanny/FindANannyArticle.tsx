@@ -374,39 +374,41 @@ export function FindANannyArticle({ allNannies }: { allNannies: NannyProfilePubl
         <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl text-foreground mb-5 leading-tight">
           Hire a Nanny in New Zealand: Find the <ShinyText>Right Care</ShinyText> for Your Family
         </h1>
+      </div>
 
-        {/* ---------------- DIRECTORY (inline, right under the H1) ---------------- */}
-        <Article>
-          <H2 id="search-and-compare-nanny-profiles">Search and Compare Nanny Profiles</H2>
-          <P>
-            Use the filters below to narrow the directory by care type, suburb, child age, availability, rate
-            range, language and relevant experience. Start with the requirements you cannot compromise
-            on—usually location, hours, child age experience and transport—then compare style, qualifications
-            and specialist skills.
-          </P>
-        </Article>
+      {/* ---------------- DIRECTORY (full page width, right under the H1) ---------------- */}
+      <Article>
+        <H2 id="search-and-compare-nanny-profiles">Search and Compare Nanny Profiles</H2>
+        <P>
+          Use the filters below to narrow the directory by care type, suburb, child age, availability, rate
+          range, language and relevant experience. Start with the requirements you cannot compromise
+          on—usually location, hours, child age experience and transport—then compare style, qualifications
+          and specialist skills.
+        </P>
+      </Article>
 
-        <ImageBand tags={["find-a-nanny-band"]} seed="find-a-nanny" aspect="aspect-[16/6]" priority className="mb-2" />
+      <ImageBand tags={["find-a-nanny-band"]} seed="find-a-nanny" aspect="aspect-[16/6]" priority className="mb-2" />
 
-        <div id="directory" className="scroll-mt-24 mb-10">
-          <FindANannyClient allNannies={allNannies} />
+      <div id="directory" className="scroll-mt-24 mb-10">
+        <FindANannyClient allNannies={allNannies} />
+      </div>
+
+      <Article>
+        <H3 id="what-to-look-for-on-a-nanny-profile">What to Look for on a Nanny Profile</H3>
+        <ul className="space-y-2.5 mt-5 mb-6">
+          {PROFILE_LOOKS.map((t) => (
+            <Bullet key={t}>{t}</Bullet>
+          ))}
+        </ul>
+        <div className="text-center mb-10">
+          <Link href="#directory" className="inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:text-primary-light transition-colors">
+            Browse all available Auckland nannies
+            <ArrowRight className="w-4 h-4" aria-hidden="true" />
+          </Link>
         </div>
+      </Article>
 
-        <Article>
-          <H3 id="what-to-look-for-on-a-nanny-profile">What to Look for on a Nanny Profile</H3>
-          <ul className="space-y-2.5 mt-5 mb-6">
-            {PROFILE_LOOKS.map((t) => (
-              <Bullet key={t}>{t}</Bullet>
-            ))}
-          </ul>
-          <div className="text-center mb-10">
-            <Link href="#directory" className="inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:text-primary-light transition-colors">
-              Browse all available Auckland nannies
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </Link>
-          </div>
-        </Article>
-
+      <div className="max-w-3xl mx-auto text-center mb-10">
         <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">
           Hiring a nanny gives your child consistent, one-to-one care in the place they know best: home.
           NannyOra helps Auckland families discover local nanny profiles, compare care specialties and
