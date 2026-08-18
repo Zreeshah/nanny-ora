@@ -78,18 +78,29 @@ export async function POST(req: Request) {
         const subId = typeof inv.subscription === "string" ? inv.subscription : null;
         if (!subId) break;
 
-        const sub = await stripe.subscriptions.retrieve(subId);
-        const userId = sub.metadata?.userId;
-        const planId = sub.metadata?.planId as PlanId | undefined;
+        // The verified invoice payload already contains the subscription metadata
+        // and period dates. Do not retrieve the subscription here: the webhook may
+        // be Test mode while this Production deployment uses the Live API key.
+        const invoiceData = inv as Stripe.Invoice & {
+          parent?: {
+            subscription_details?: { metadata?: Record<string, string> | null };
+          } | null;
+          period_end?: number | null;
+        };
+        const metadata = invoiceData.parent?.subscription_details?.metadata
+          ?? inv.lines?.data?.[0]?.metadata
+          ?? {};
+        const userId = metadata.userId;
+        const planId = metadata.planId as PlanId | undefined;
         if (!userId || !planId) break;
 
-        const periodEndUnix = (sub as any).current_period_end as number | undefined;
+        const periodEndUnix = invoiceData.period_end;
 
         await activateMembership({
           userId,
           planId,
           provider: "STRIPE",
-          providerCustomerId: typeof sub.customer === "string" ? sub.customer : null,
+          providerCustomerId: typeof inv.customer === "string" ? inv.customer : null,
           providerSubscriptionId: subId,
           periodEnd: periodEndUnix ? new Date(periodEndUnix * 1000) : null,
         });
