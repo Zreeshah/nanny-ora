@@ -894,7 +894,7 @@ This is deliberately compact.
 | Nanny vs Babysitter       | Commercial Investigation |       P1 | LIVE    |
 | Nanny vs Au Pair          | Commercial Investigation |       P1 | LIVE    |
 | Parent Resources          | Informational Hub        |       P2 | LIVE    |
-| Auckland                  | Local Commercial         |       P0 | Phase 1 |
+| Auckland                  | Local Commercial         |       P0 | LIVE    |
 | Hamilton                  | Local Commercial         |       P1 | Phase 1 |
 | Christchurch              | Local Commercial         |       P1 | Phase 1 |
 | Wellington                | Local Commercial         |       P1 | Phase 1 |

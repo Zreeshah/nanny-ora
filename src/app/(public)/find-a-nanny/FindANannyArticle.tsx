@@ -950,8 +950,8 @@ export function FindANannyArticle({ allNannies }: { allNannies: NannyProfilePubl
               then narrow results by suburb and availability. Coverage depends on active profiles and each
               nanny’s travel area.
             </p>
-            <Link href="#directory" className="inline-flex items-center gap-1.5 text-sm font-bold text-white underline underline-offset-2">
-              Find a nanny in Auckland
+            <Link href="/nannies/auckland" className="inline-flex items-center gap-1.5 text-sm font-bold text-white underline underline-offset-2">
+              Browse the Auckland nanny directory
               <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </Link>
           </div>
