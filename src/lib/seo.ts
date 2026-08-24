@@ -100,3 +100,41 @@ export function faqSchema(faqs: { question: string; answer: string }[]) {
     })),
   };
 }
+
+export function articleSchema(article: {
+  headline: string;
+  description: string;
+  path: string;
+  datePublished: string;
+  dateModified?: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.headline,
+    description: article.description,
+    url: `${SITE_URL}${article.path}`,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${SITE_URL}${article.path}`,
+    },
+    datePublished: article.datePublished,
+    dateModified: article.dateModified ?? article.datePublished,
+    author: {
+      "@type": "Organization",
+      name: "NannyOra",
+      url: SITE_URL,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "NannyOra",
+      url: SITE_URL,
+      logo: {
+        "@type": "ImageObject",
+        url: LOGO,
+      },
+    },
+    inLanguage: "en-NZ",
+    about: ["Nannies", "In-home childcare", "New Zealand"],
+  };
+}

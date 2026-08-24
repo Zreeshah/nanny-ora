@@ -9,6 +9,11 @@ const BASE = "https://www.nannyora.co.nz";
 const STATIC: { path: string; priority: number; freq: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [
   { path: "", priority: 1.0, freq: "daily" },
   { path: "find-a-nanny", priority: 0.9, freq: "daily" },
+  { path: "nanny-vetting", priority: 0.8, freq: "monthly" },
+  { path: "nanny-interview-questions", priority: 0.7, freq: "monthly" },
+  { path: "nanny-contract", priority: 0.7, freq: "monthly" },
+  { path: "nanny-payroll", priority: 0.7, freq: "monthly" },
+  { path: "nanny-safety", priority: 0.7, freq: "monthly" },
   { path: "nannies/auckland", priority: 0.8, freq: "weekly" },
   { path: "ece-nanny-auckland", priority: 0.8, freq: "monthly" },
   { path: "neurodiverse-childcare-auckland", priority: 0.8, freq: "monthly" },

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Heart } from "lucide-react";
+import Image from "next/image";
 
 const footerLinks = {
   "For Families": [
@@ -8,6 +8,9 @@ const footerLinks = {
     { href: "/post-a-job", label: "Post a Job" },
     { href: "/how-it-works", label: "How It Works" },
     { href: "/childcare-support", label: "Childcare Support Options" },
+    { href: "/nanny-interview-questions", label: "Interview Questions" },
+    { href: "/nanny-contract", label: "Nanny Contract Guide" },
+    { href: "/nanny-payroll", label: "Nanny Payroll Guide" },
   ],
   "For Nannies": [
     { href: "/apply-as-nanny", label: "Apply as a Nanny" },
@@ -16,6 +19,8 @@ const footerLinks = {
   ],
   "Trust & Safety": [
     { href: "/verification-process", label: "Our Verification Process" },
+    { href: "/nanny-vetting", label: "Nanny Vetting Guide" },
+    { href: "/nanny-safety", label: "Nanny Safety Guide" },
     { href: "/trust-and-safety#guidelines", label: "Safety Guidelines" },
   ],
   "Specialist Care": [
@@ -61,9 +66,11 @@ export function Footer() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Logo */}
             <div className="flex flex-col items-center md:items-start leading-none">
-              <img
+              <Image
                 src="/logo-wordmark.png"
                 alt="NannyOra"
+                width={744}
+                height={190}
                 className="h-10 md:h-12 w-auto"
               />
               <span className="mt-1.5 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.15em] text-primary/80">

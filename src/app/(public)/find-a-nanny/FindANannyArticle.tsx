@@ -343,6 +343,11 @@ const FAQS: FAQ[] = [
 
 const RELATED = [
   { href: "/how-it-works", label: "How NannyOra works" },
+  { href: "/nanny-vetting", label: "How to vet a nanny in New Zealand" },
+  { href: "/nanny-interview-questions", label: "Nanny interview questions for families" },
+  { href: "/nanny-contract", label: "What to include in a nanny contract" },
+  { href: "/nanny-payroll", label: "Nanny payroll, PAYE and IR56 guidance" },
+  { href: "/nanny-safety", label: "Nanny safety and first-day checklist" },
   { href: "/verification-process", label: "NannyOra’s seven-layer verification process" },
   { href: "/trust-and-safety", label: "Trust and safety on NannyOra" },
   { href: "/ece-nanny-auckland", label: "ECE nannies in Auckland" },
