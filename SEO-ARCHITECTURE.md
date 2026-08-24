@@ -889,11 +889,11 @@ This is deliberately compact.
 | Nanny Cost                | Commercial Investigation |       P0 | Phase 1 |
 | Nanny Payroll             | Employment               |       P1 | LIVE    |
 | Nanny Safety              | Trust / Informational    |       P1 | LIVE    |
-| Specialist Nanny Care     | Commercial               |       P2 | Phase 1 |
-| Nanny vs Daycare          | Commercial Investigation |       P1 | Phase 1 |
-| Nanny vs Babysitter       | Commercial Investigation |       P1 | Phase 1 |
-| Nanny vs Au Pair          | Commercial Investigation |       P1 | Phase 1 |
-| Parent Resources          | Informational Hub        |       P2 | Phase 1 |
+| Specialist Nanny Care     | Commercial               |       P2 | LIVE    |
+| Nanny vs Daycare          | Commercial Investigation |       P1 | LIVE    |
+| Nanny vs Babysitter       | Commercial Investigation |       P1 | LIVE    |
+| Nanny vs Au Pair          | Commercial Investigation |       P1 | LIVE    |
+| Parent Resources          | Informational Hub        |       P2 | LIVE    |
 | Auckland                  | Local Commercial         |       P0 | Phase 1 |
 | Hamilton                  | Local Commercial         |       P1 | Phase 1 |
 | Christchurch              | Local Commercial         |       P1 | Phase 1 |

@@ -348,6 +348,11 @@ const RELATED = [
   { href: "/nanny-contract", label: "What to include in a nanny contract" },
   { href: "/nanny-payroll", label: "Nanny payroll, PAYE and IR56 guidance" },
   { href: "/nanny-safety", label: "Nanny safety and first-day checklist" },
+  { href: "/nanny-vs-daycare", label: "Nanny vs daycare: choose the right childcare" },
+  { href: "/nanny-vs-babysitter", label: "Nanny vs babysitter: regular care or occasional help" },
+  { href: "/nanny-vs-au-pair", label: "Nanny vs au pair: compare the full arrangement" },
+  { href: "/specialist-nanny-care", label: "Specialist nanny care for individual support" },
+  { href: "/parent-resources", label: "Parent resources for hiring and working with a nanny" },
   { href: "/verification-process", label: "NannyOra’s seven-layer verification process" },
   { href: "/trust-and-safety", label: "Trust and safety on NannyOra" },
   { href: "/ece-nanny-auckland", label: "ECE nannies in Auckland" },
@@ -801,6 +806,9 @@ export function FindANannyArticle({ allNannies }: { allNannies: NannyProfilePubl
           for genuinely occasional supervision. Consider an au pair only after understanding immigration,
           accommodation, working-hour and employment responsibilities. For licensed home-based ECE, ask who
           employs the educator, what curriculum and supervision apply, and which subsidies may be available.
+        </P>
+        <P>
+          For a more detailed decision, use our <Link href="/nanny-vs-daycare" className="text-primary underline underline-offset-2 font-semibold">nanny vs daycare</Link>, <Link href="/nanny-vs-babysitter" className="text-primary underline underline-offset-2 font-semibold">nanny vs babysitter</Link> and <Link href="/nanny-vs-au-pair" className="text-primary underline underline-offset-2 font-semibold">nanny vs au pair</Link> guides. If your child needs a more individual match, start with <Link href="/specialist-nanny-care" className="text-primary underline underline-offset-2 font-semibold">specialist nanny care</Link>.
         </P>
         <Callout title="A Simple Decision Framework">
           <p>

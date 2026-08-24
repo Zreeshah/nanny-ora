@@ -11,6 +11,7 @@ const footerLinks = {
     { href: "/nanny-interview-questions", label: "Interview Questions" },
     { href: "/nanny-contract", label: "Nanny Contract Guide" },
     { href: "/nanny-payroll", label: "Nanny Payroll Guide" },
+    { href: "/parent-resources", label: "Parent Resources" },
   ],
   "For Nannies": [
     { href: "/apply-as-nanny", label: "Apply as a Nanny" },
@@ -28,6 +29,7 @@ const footerLinks = {
     { href: "/sensory-aware-nanny-auckland", label: "Sensory-Aware Nannies" },
     { href: "/neurodiverse-childcare-auckland", label: "Neurodiverse Childcare" },
     { href: "/ece-nanny-auckland", label: "ECE Nannies" },
+    { href: "/specialist-nanny-care", label: "Specialist Nanny Care" },
   ],
   "Legal": [
     { href: "/terms", label: "Terms of Service" },

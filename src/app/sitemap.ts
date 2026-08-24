@@ -1,35 +1,21 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/db/prisma";
 import { SUBURB_SLUGS } from "@/lib/constants";
+import { INDEXABLE_STATIC_PATHS } from "@/lib/indexnow";
 
 const BASE = "https://www.nannyora.co.nz";
 
 // Public marketing + landing pages, with relative priority. Excludes gated/app
 // routes (dashboard, admin, login, register, post-a-job) which robots.txt blocks.
-const STATIC: { path: string; priority: number; freq: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [
-  { path: "", priority: 1.0, freq: "daily" },
-  { path: "find-a-nanny", priority: 0.9, freq: "daily" },
-  { path: "nanny-vetting", priority: 0.8, freq: "monthly" },
-  { path: "nanny-interview-questions", priority: 0.7, freq: "monthly" },
-  { path: "nanny-contract", priority: 0.7, freq: "monthly" },
-  { path: "nanny-payroll", priority: 0.7, freq: "monthly" },
-  { path: "nanny-safety", priority: 0.7, freq: "monthly" },
-  { path: "nannies/auckland", priority: 0.8, freq: "weekly" },
-  { path: "ece-nanny-auckland", priority: 0.8, freq: "monthly" },
-  { path: "neurodiverse-childcare-auckland", priority: 0.8, freq: "monthly" },
-  { path: "sensory-aware-nanny-auckland", priority: 0.8, freq: "monthly" },
-  { path: "specialist-childcare-auckland", priority: 0.8, freq: "monthly" },
-  { path: "childcare-support", priority: 0.7, freq: "monthly" },
-  { path: "how-it-works", priority: 0.7, freq: "monthly" },
-  { path: "apply-as-nanny", priority: 0.7, freq: "monthly" },
-  { path: "membership", priority: 0.7, freq: "monthly" },
-  { path: "trust-and-safety", priority: 0.6, freq: "monthly" },
-  { path: "verification-process", priority: 0.6, freq: "monthly" },
-  { path: "pricing", priority: 0.5, freq: "monthly" },
-  { path: "terms", priority: 0.3, freq: "yearly" },
-  { path: "privacy", priority: 0.3, freq: "yearly" },
-  { path: "refunds", priority: 0.3, freq: "yearly" },
-];
+const STATIC: { path: string; priority: number; freq: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = INDEXABLE_STATIC_PATHS.map((path) => {
+  if (path === "") return { path, priority: 1.0, freq: "daily" };
+  if (path === "find-a-nanny") return { path, priority: 0.9, freq: "daily" };
+  if (["nanny-vetting", "nannies/auckland", "ece-nanny-auckland", "neurodiverse-childcare-auckland", "sensory-aware-nanny-auckland", "specialist-childcare-auckland"].includes(path)) return { path, priority: 0.8, freq: path === "nannies/auckland" ? "weekly" : "monthly" };
+  if (["nanny-interview-questions", "nanny-contract", "nanny-payroll", "nanny-safety", "nanny-vs-daycare", "nanny-vs-babysitter", "nanny-vs-au-pair", "specialist-nanny-care", "parent-resources", "childcare-support", "how-it-works", "apply-as-nanny", "membership"].includes(path)) return { path, priority: 0.7, freq: "monthly" };
+  if (["trust-and-safety", "verification-process"].includes(path)) return { path, priority: 0.6, freq: "monthly" };
+  if (path === "pricing") return { path, priority: 0.5, freq: "monthly" };
+  return { path, priority: 0.3, freq: "yearly" };
+});
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
