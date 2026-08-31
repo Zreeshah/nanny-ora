@@ -13,6 +13,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { faqSchema, breadcrumbSchema } from "@/lib/seo";
 import { parentFaqs, nannyFaqs } from "@/lib/faq";
 import { NannyTiers } from "@/components/pricing/NannyTiers";
+import { VideoPlayer } from "@/components/ui/VideoPlayer";
 
 export const metadata: Metadata = {
   title: "How NannyOra Works — Childcare Connected with Trust",
@@ -67,6 +68,16 @@ export default function HowItWorksPage() {
             Follow our four-step process to discover local, verified Auckland nannies who match your family&apos;s specific needs.
           </p>
         </div>
+
+        <VideoPlayer
+          src="/videos/for-parents.mp4"
+          poster="/videos/for-parents-poster.jpg"
+          title="NannyOra for parents — how it works"
+          description="How Auckland families find and book verified, specialist nannies on NannyOra."
+          uploadDate="2026-08-31"
+          durationISO="PT1M9S"
+          className="max-w-3xl mx-auto mb-14"
+        />
 
         {/* Steps Visual Grid with Timeline Connectors */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10 stagger-children">
@@ -147,6 +158,16 @@ export default function HowItWorksPage() {
             Apply as a carer and highlight your qualifications, certifications, and experience to connect with local parents.
           </p>
         </div>
+
+        <VideoPlayer
+          src="/videos/for-nannies.mp4"
+          poster="/videos/for-nannies-poster.jpg"
+          title="NannyOra for nannies — how it works"
+          description="How nannies join NannyOra, get verified, and connect with Auckland families."
+          uploadDate="2026-08-31"
+          durationISO="PT1M1S"
+          className="max-w-3xl mx-auto mb-14"
+        />
 
         {/* Steps Visual Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10 stagger-children">
