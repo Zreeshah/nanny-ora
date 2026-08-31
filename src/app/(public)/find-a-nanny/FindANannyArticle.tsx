@@ -956,7 +956,7 @@ export function FindANannyArticle({ allNannies }: { allNannies: NannyProfilePubl
             </Link>
           </div>
 
-          {[{ name: "Hamilton", body: "Hamilton is a planned expansion area. Do not present active local coverage until profiles and operational support are live." },
+          {[{ name: "Hamilton", body: "Hamilton is a planned expansion area. NannyOra does not present active local coverage until profiles and operational support are live.", href: "/nannies/hamilton", linkLabel: "Plan your Hamilton nanny search" },
            { name: "Christchurch", body: "Christchurch is a planned expansion area. Build a dedicated location page only when families can complete the promised action and see relevant carers." },
            { name: "Wellington", body: "Wellington is a planned expansion area. Until launch, use an honest expression-of-interest message rather than sending visitors to an empty search result." }].map((c) => (
             <div key={c.name} className="bg-secondary/40 rounded-3xl p-6 border border-border/30">
@@ -966,6 +966,11 @@ export function FindANannyArticle({ allNannies }: { allNannies: NannyProfilePubl
                 <span className="text-[10px] uppercase tracking-wider bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">Coming later</span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">{c.body}</p>
+              {"href" in c && c.href ? (
+                <Link href={c.href} className="inline-flex items-center gap-1.5 text-sm font-bold text-primary mt-3 hover:text-primary-light transition-colors">
+                  {c.linkLabel} <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                </Link>
+              ) : null}
             </div>
           ))}
         </div>

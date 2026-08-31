@@ -5,6 +5,7 @@ const footerLinks = {
   "For Families": [
     { href: "/find-a-nanny", label: "Find a Nanny" },
     { href: "/nannies/auckland", label: "Auckland Nanny Directory" },
+    { href: "/nannies/hamilton", label: "Hamilton Nanny Planning" },
     { href: "/register-family", label: "Register as a Family" },
     { href: "/post-a-job", label: "Post a Job" },
     { href: "/how-it-works", label: "How It Works" },

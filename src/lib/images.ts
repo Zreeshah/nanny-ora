@@ -6,6 +6,8 @@ export type SiteImage = { src: string; alt: string; tags: string[] };
 
 // alt = human description for a11y; tags = topic keywords used for matching.
 export const SITE_IMAGES: SiteImage[] = [
+  { src: "/images/hamilton-nanny-family-hero.png", alt: "Family planning nanny care at home", tags: ["hamilton", "family", "find", "care"] },
+  { src: "/images/hamilton-after-school-care.png", alt: "Nanny supporting a child with an after-school activity", tags: ["hamilton", "after-school", "care", "family"] },
   // Dedicated banner images (unique tag = deterministic pick).
   { src: "/images/find-a-nanny-band.jpeg", alt: "Happy child playing at an Auckland beach", tags: ["find-a-nanny-band"] },
   { src: "/images/how-it-works-band.jpeg", alt: "Babies playing happily in front of a mirror during home-based care", tags: ["how-it-works-band"] },
