@@ -31,6 +31,7 @@ import BentoFeatures from "@/components/home/BentoFeatures";
 import MarqueeTestimonials from "@/components/home/MarqueeTestimonials";
 import { Reveal } from "@/components/ui/Reveal";
 import { ShinyText } from "@/components/ui/ShinyText";
+import { VideoPlayer } from "@/components/ui/VideoPlayer";
 import { BorderBeam } from "@/components/ui/BorderBeam";
 import { pickImages } from "@/lib/images";
 
@@ -122,6 +123,26 @@ export default function HomePage() {
 
       {/* ===== TRUSTED-BY REASSURANCE STRIP ===== */}
       <TrustStrip />
+
+      {/* ===== INTRO VIDEO (for parents) ===== */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <div className="text-center max-w-xl mx-auto mb-6">
+          <h2 className="font-heading text-2xl sm:text-3xl text-foreground mb-2">
+            How NannyOra works for <ShinyText>your family</ShinyText>
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            A one-minute look at how we vet nannies and match them to your family.
+          </p>
+        </div>
+        <VideoPlayer
+          src="/videos/for-parents.mp4"
+          poster="/videos/for-parents-poster.jpg"
+          title="NannyOra for parents — how it works"
+          description="How Auckland families find and book verified, specialist nannies on NannyOra."
+          uploadDate="2026-08-31"
+          durationISO="PT1M9S"
+        />
+      </section>
 
       {/* ===== BENTO SPECIALIST CARE SECTION ===== */}
       <BentoFeatures />

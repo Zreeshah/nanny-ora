@@ -23,7 +23,7 @@ import {
   User, Briefcase, GraduationCap, Users, ShieldAlert,
   ClipboardCheck, AlertTriangle, Info, X, Plus, Trash2,
 } from "lucide-react";
-import { ImageBand } from "@/components/ui/ImageBand";
+import { VideoPlayer } from "@/components/ui/VideoPlayer";
 
 // Icons mapped to each safety check
 const CHECK_ICONS: Record<string, React.ElementType> = {
@@ -263,10 +263,13 @@ export default function ApplyAsNannyPage() {
         </p>
       </div>
 
-      <ImageBand
-        tags={["career", "jobs", "apply", "professional"]}
-        seed="apply-as-nanny"
-        aspect="aspect-[16/6]"
+      <VideoPlayer
+        src="/videos/for-nannies.mp4"
+        poster="/videos/for-nannies-poster.jpg"
+        title="NannyOra for nannies — how it works"
+        description="How nannies join NannyOra, get verified, and connect with Auckland families."
+        uploadDate="2026-08-31"
+        durationISO="PT1M1S"
         className="mb-8"
       />
 

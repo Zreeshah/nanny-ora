@@ -1,94 +1,108 @@
-# NannyOra SEO Architecture — Phase 1
+# NannyOra SEO Architecture
 
-> Phase 1 is the initial, non-cannibalizing SEO architecture for NannyOra.
-> This document defines the pages we should build first, their search intent,
-> topical relationships, and internal-linking structure.
->
-> This is NOT a list of every possible future page.
-> Future pages must earn their place through distinct search intent,
-> competitive opportunity, or demonstrated demand.
+> Single source of truth for NannyOra's SEO topical architecture,
+> content hierarchy, local SEO structure, and internal linking strategy.
 
-Last updated: 2026-08-21
+Last updated: 2026-08-10
 
 ---
 
-# 1. Phase 1 Objective
+# 1. SEO Mission
 
-Build NannyOra's first layer of:
+NannyOra aims to become a leading New Zealand authority for:
 
-* Topical authority
-* Commercial authority
-* Local authority
-* Trust authority
-* Internal-link authority
+- Finding and hiring nannies
+- In-home childcare
+- Nanny services
+- Babysitting
+- Childcare options
+- Nanny vetting and safety
+- Nanny employment
+- Nanny costs and payroll
+- Parent education
+- Childcare guidance
+- Specialist childcare
+- Local nanny services
 
-without creating large numbers of overlapping pages.
+Primary geographic markets:
 
-The Phase 1 strategy is:
+1. Auckland
+2. Hamilton
+3. Christchurch
+4. Wellington
+
+The long-term objective is to expand throughout New Zealand after establishing
+strong topical and local authority in these four markets.
+
+---
+
+# 2. SEO Strategy
+
+NannyOra should not be treated as a normal blog.
+
+It is a:
+
+> Marketplace + Service Business + Local Business + Childcare Knowledge Hub
+
+The architecture therefore has four interconnected layers:
 
 ```text
-Strong core pages
+TOPICAL AUTHORITY
         ↓
-Relevant supporting pages
+COMMERCIAL AUTHORITY
         ↓
-Four local hubs
+LOCAL AUTHORITY
         ↓
-Natural internal linking
-        ↓
-GSC/SERP data
-        ↓
-Phase 2 expansion
+TRUST / ENTITY AUTHORITY
 ```
 
-The goal is NOT to publish the maximum number of URLs.
-
-The goal is to establish a small number of strong pages that collectively cover
-the important search intents around hiring a nanny in New Zealand.
-
----
-
-# 2. Core Principle: One Intent = One Primary Page
-
-Before creating a page, ask:
-
-> Does this page satisfy a meaningfully different search intent from an
-> existing NannyOra page?
-
-If NO:
-
-* Do not create another page.
-* Strengthen the existing page.
-* Add the additional topic as a section.
-* Add the keyword as a semantic variation.
-* Use internal links where appropriate.
-
-If YES:
-
-* A separate page may be justified.
-
----
-
-# 3. Phase 1 Page Count
-
-Target approximately:
+The site should allow Google to understand:
 
 ```text
-20–30 strategic indexable pages
+NannyOra
+  ↓
+Childcare
+  ↓
+Nanny
+  ↓
+Hiring a Nanny
+  ↓
+Nanny Types
+  ↓
+Nanny Services
+  ↓
+Locations
+  ↓
+Specific local services
 ```
-
-This includes:
-
-* Core commercial pages
-* Hiring guides
-* Trust/safety pages
-* Cost/employment content
-* Four city pages
-
-Do not attempt to create 100+ pages during Phase 1.
 
 ---
 
-# 4. Core Marketplace Page
+# 3. Primary SEO Hubs
+
+The primary hubs are:
+
+```text
+1. Find a Nanny
+2. Hire a Nanny
+3. Nanny Services
+4. Nanny Types
+5. Childcare Resources
+6. Parent Resources
+7. Nanny Resources
+8. Safety & Vetting
+9. Nanny Employment
+10. Locations
+11. Research & Guides
+```
+
+Not every hub needs to become a standalone indexable page immediately.
+
+Some are architectural/topic clusters that will expand over time.
+
+---
+
+# 4. Current Core Marketplace
 
 ## Find a Nanny
 
@@ -98,50 +112,58 @@ Current URL:
 /find-a-nanny
 ```
 
-Status:
+This is the primary marketplace/search page.
 
-```text
-LIVE
-```
+It already contains:
 
-Primary intent:
-
-```text
-Transactional / Marketplace
-```
-
-Primary purpose:
-
-Allow parents to:
-
-* Browse nanny profiles
+* Nanny profiles
 * Search
-* Filter
-* Compare available nannies
-* Take the next step toward hiring
+* Filters
+* Profile discovery
 
-This page is NOT the primary long-form SEO guide.
+Therefore:
 
-Its primary UX should remain:
+**Do not turn this into a giant SEO article above the profiles.**
+
+Recommended structure:
 
 ```text
 Hero
 ↓
-Trust/value proposition
+Short trust/value proposition
 ↓
-Search + filters
+Search + Filters
 ↓
-Nanny profiles
+Nanny Profiles
 ↓
-Supporting SEO content
+SEO content
+↓
+Nanny types
+↓
+How hiring works
+↓
+Why NannyOra
+↓
+Childcare comparisons
+↓
+Costs
+↓
+Locations
+↓
+Parent resources
+↓
+FAQs
+↓
+CTA
 ```
 
-The SEO content below the profiles can target the broader "find a nanny"
-topic without interfering with profile discovery.
+The profile discovery experience is the primary purpose of this page.
+
+SEO content should support the marketplace rather than interfere with it.
 
 ---
 
-# 5. Core Commercial Page
+# 5. Primary Commercial Hub
 
 ## Hire a Nanny
 
@@ -151,476 +173,241 @@ Recommended URL:
 /hire-a-nanny
 ```
 
-Status:
-
-```text
-PHASE 1
-```
-
 Primary intent:
 
-```text
-Commercial / Transactional / Decision Support
-```
+Commercial / Transactional
 
-This is the main commercial authority page.
+Primary topic:
 
-It should explain:
+Hiring a nanny in New Zealand
 
-* Why families hire nannies
-* How NannyOra works
-* Nanny types
-* Hiring process
-* Vetting
-* Costs
-* What parents should look for
-* Comparison with other childcare options
-* Locations served
-* Next steps
-
-It should link prominently to:
-
-```text
-/find-a-nanny
-```
-
-This page owns the broad commercial topic:
-
-```text
-hire a nanny
-hiring a nanny
-find the right nanny
-nanny hiring
-```
-
-Do NOT create separate pages for these keyword variations.
+This should be the main commercial topical pillar.
 
 ---
 
-# 6. Hiring Process Cluster
-
-Only create pages where the intent is clearly different from the main
-commercial page.
-
-## How to Hire a Nanny
-
-Recommended URL:
+## Hire a Nanny — Supporting Pages
 
 ```text
-/how-to-hire-a-nanny
+/hire-a-nanny
+    │
+    ├── /how-to-hire-a-nanny
+    ├── /nanny-interview-questions
+    ├── /nanny-trial-period
+    ├── /nanny-reference-checks
+    ├── /nanny-background-checks
+    ├── /nanny-police-vetting
+    ├── /nanny-contract
+    ├── /nanny-employment-agreement
+    ├── /nanny-first-day-checklist
+    ├── /questions-to-ask-a-nanny
+    └── /nanny-hiring-checklist
 ```
 
-Intent:
+These pages answer the questions that occur before, during and immediately
+after hiring.
+
+---
+
+# 6. Commercial Conversion Path
+
+The ideal user journey:
 
 ```text
-Informational
-```
-
-Purpose:
-
-Explain the complete step-by-step process of finding, interviewing,
-vetting, selecting, and employing a nanny.
-
-Relationship:
-
-```text
+Google
+  ↓
+Informational Article
+  ↓
+Relevant Supporting Guide
+  ↓
 Hire a Nanny
-    ↓
-How to Hire a Nanny
+  ↓
+Find a Nanny
+  ↓
+Nanny Profiles
+  ↓
+Profile
+  ↓
+Contact / Apply / Match
 ```
+
+Never force every informational page directly into a sales pitch.
+
+The commercial transition should be contextually appropriate.
 
 ---
 
-## Nanny Interview Questions
+# 7. Nanny Services Hub
 
 Recommended URL:
 
 ```text
-/nanny-interview-questions
-```
-
-Intent:
-
-```text
-Informational / Commercial Investigation
+/nanny-services
 ```
 
 Purpose:
 
-Provide practical interview questions and evaluation criteria.
+Group different childcare services offered through NannyOra.
 
-This is sufficiently different from "How to Hire a Nanny" because the user's
-specific problem is preparing for and conducting the interview.
+Potential children:
+
+```text
+/nanny-services
+    │
+    ├── /full-time-nanny
+    ├── /part-time-nanny
+    ├── /live-in-nanny
+    ├── /live-out-nanny
+    ├── /temporary-nanny
+    ├── /emergency-nanny
+    ├── /weekend-nanny
+    ├── /night-nanny
+    ├── /travel-nanny
+    ├── /after-school-nanny
+    ├── /before-school-nanny
+    ├── /newborn-nanny
+    ├── /infant-nanny
+    └── /special-needs-nanny
+```
+
+Only create a page when:
+
+1. Search intent is sufficiently distinct.
+2. NannyOra actually supports the service.
+3. The page can provide unique value.
+
+Do not create pages solely because a keyword exists.
 
 ---
 
-## Nanny Vetting
+# 8. Nanny Types Hub
 
 Recommended URL:
 
 ```text
-/nanny-vetting
+/nanny-types
 ```
 
-Intent:
+This cluster focuses on the type of caregiver rather than the schedule/service.
+
+Potential pages:
 
 ```text
-Trust / Safety / Commercial Investigation
+/nanny-types
+    │
+    ├── /newborn-nanny
+    ├── /infant-nanny
+    ├── /toddler-nanny
+    ├── /special-needs-nanny
+    ├── /experienced-nanny
+    ├── /qualified-nanny
+    ├── /professional-nanny
+    └── /bilingual-nanny
 ```
 
-Purpose:
-
-Explain how families can evaluate a nanny's suitability and how NannyOra's
-vetting process works.
-
-Topics can include:
-
-* Identity verification
-* References
-* Experience
-* Qualifications
-* Police vetting
-* Risk assessment
-
-Do NOT immediately create separate pages for:
-
-* nanny background checks
-* nanny identity verification
-* nanny reference checks
-* nanny police vetting
-
-unless later SERP/GSC research proves these deserve independent pages.
-
-For Phase 1, they are subsections of `/nanny-vetting`.
+Do not create pages where the search intent is substantially identical to a
+service page.
 
 ---
 
-## Nanny Contract & Employment
+# 9. Childcare Options Cluster
 
-Recommended URL:
-
-```text
-/nanny-contract
-```
-
-Intent:
+Recommended hub:
 
 ```text
-Informational / Employment
+/childcare
 ```
 
-Purpose:
+Potential pages:
 
-Explain what families should consider when formally employing a nanny.
+```text
+/childcare
+    │
+    ├── /nanny-vs-daycare
+    ├── /nanny-vs-babysitter
+    ├── /nanny-vs-au-pair
+    ├── /nanny-vs-home-based-childcare
+    ├── /nanny-vs-family-care
+    ├── /babysitting
+    ├── /after-school-care
+    ├── /before-school-care
+    ├── /holiday-childcare
+    ├── /emergency-childcare
+    └── /in-home-childcare
+```
 
-Cover:
+These pages target users who are still deciding what childcare solution they
+need.
 
-* Written agreements
-* Duties
-* Hours
-* Pay
-* Leave
-* Expectations
-* Confidentiality
-* Termination
-* Other relevant employment considerations
-
-Do not create separate Phase 1 pages for:
-
-* nanny employment agreement
-* nanny household employer
-* nanny employer responsibilities
-
-unless the intent later proves distinct.
+They should naturally funnel users toward NannyOra where appropriate.
 
 ---
 
-# 7. Cost Cluster
+# 10. Nanny Cost Cluster
 
-## Nanny Cost
-
-Recommended URL:
+Recommended hub:
 
 ```text
 /nanny-cost
 ```
 
-Intent:
+Potential pages:
 
 ```text
-Commercial Investigation / Informational
+/nanny-cost
+    │
+    ├── /nanny-cost-nz
+    ├── /nanny-pay-rates
+    ├── /nanny-salary
+    ├── /nanny-payroll
+    ├── /nanny-tax
+    ├── /nanny-paye
+    ├── /nanny-employer-costs
+    └── /childcare-costs
 ```
 
-This page owns the broad cost topic.
+Important:
 
-Cover:
+Do not create overlapping pages targeting the same search intent.
 
-* Typical pricing factors
-* Hourly rates
-* Experience
-* Number of children
-* Hours
-* Location
-* Specialist requirements
-* Employer costs
-* How families should budget
-
-Do NOT create separate Phase 1 pages for:
-
-```text
-/nanny-cost-nz
-/nanny-pay-rates
-/nanny-salary
-```
-
-Those overlap heavily.
-
-They should initially be sections/semantic subtopics inside `/nanny-cost`.
+For example, if `/nanny-cost` and `/nanny-cost-nz` would contain essentially
+the same information, consolidate them.
 
 ---
 
-## Nanny Payroll & Tax
+# 11. Employment Cluster
 
-Recommended URL:
-
-```text
-/nanny-payroll
-```
-
-Intent:
+Recommended hub:
 
 ```text
-Employment / Informational
+/nanny-employment
 ```
 
-This is separate from cost because the user intent is:
+Potential pages:
 
-> How do I actually manage payment, payroll and employment obligations?
+```text
+/nanny-employment
+    │
+    ├── /nanny-employment-contract
+    ├── /nanny-contract
+    ├── /nanny-payroll
+    ├── /nanny-paye
+    ├── /nanny-holiday-pay
+    ├── /nanny-annual-leave
+    ├── /nanny-sick-leave
+    ├── /household-employer
+    ├── /nanny-employer-responsibilities
+    └── /nanny-insurance
+```
 
-Cover relevant New Zealand requirements and link to authoritative government
-sources.
+Employment and tax content must be factually verified.
 
-Do not create separate Phase 1 pages for every payroll/tax variation.
+Where appropriate, link to official New Zealand government sources.
+
+Do not provide legal or tax advice as though NannyOra is a legal authority.
 
 ---
 
-# 8. Childcare Comparison Cluster
-
-Create only the most useful comparison pages initially.
-
-## Nanny vs Daycare
-
-Recommended URL:
-
-```text
-/nanny-vs-daycare
-```
-
-Intent:
-
-```text
-Commercial Investigation
-```
-
-Compare:
-
-* Cost
-* Flexibility
-* Individual attention
-* Location
-* Routine
-* Sick-day considerations
-* Family involvement
-* Convenience
-
----
-
-## Nanny vs Babysitter
-
-Recommended URL:
-
-```text
-/nanny-vs-babysitter
-```
-
-Intent:
-
-```text
-Commercial Investigation
-```
-
-The distinction is sufficiently useful because users often confuse the two
-services.
-
----
-
-## Nanny vs Au Pair
-
-Recommended URL:
-
-```text
-/nanny-vs-au-pair
-```
-
-Intent:
-
-```text
-Commercial Investigation
-```
-
-This page can explain differences in:
-
-* Role
-* Living arrangement
-* Schedule
-* Responsibilities
-* Typical use cases
-
----
-
-Do NOT create separate Phase 1 pages for:
-
-```text
-Nanny vs family care
-Nanny vs home-based childcare
-Nanny vs every childcare option
-```
-
-unless search data later justifies them.
-
----
-
-# 9. Nanny Services / Nanny Types
-
-Do NOT create a giant collection of highly similar pages immediately.
-
-Phase 1 should consolidate most service variations into the main:
-
-```text
-/hire-a-nanny
-```
-
-and relevant sections within it.
-
-Examples that should initially be treated as sections/semantic entities:
-
-* Full-time nanny
-* Part-time nanny
-* Live-in nanny
-* Live-out nanny
-* Temporary nanny
-* Weekend nanny
-* Night nanny
-* Newborn nanny
-* After-school nanny
-
-Why?
-
-Because a page such as:
-
-```text
-Full-Time Nanny
-```
-
-and:
-
-```text
-Part-Time Nanny
-```
-
-can easily become thin variations of the same commercial intent.
-
-### Phase 1 exception
-
-Create a separate service page only if BOTH are true:
-
-1. NannyOra genuinely offers the service.
-2. The service has a sufficiently distinct SERP/search intent.
-
-For example, a highly specialized service such as:
-
-```text
-Newborn Nanny
-```
-
-may eventually deserve its own page.
-
-But it should not be created automatically.
-
----
-
-# 10. Specialist Care
-
-Phase 1 should use a single broader page.
-
-## Specialist Nanny Care
-
-Recommended URL:
-
-```text
-/specialist-nanny-care
-```
-
-Intent:
-
-```text
-Commercial / Informational
-```
-
-Cover relevant needs such as:
-
-* Special needs
-* Twins
-* Newborn care
-* Additional support requirements
-
-Do not immediately split every condition or care type into separate pages.
-
-Only expand when NannyOra has:
-
-* genuine service capability
-* sufficient information
-* clear search demand
-* distinct search intent
-
----
-
-# 11. Parent Resources
-
-Rather than launching a huge parenting blog, create one useful hub:
-
-## Parent Resources
-
-Recommended URL:
-
-```text
-/parent-resources
-```
-
-Status:
-
-```text
-PHASE 1
-```
-
-This page can organize resources around:
-
-* Choosing childcare
-* Preparing to hire a nanny
-* Starting with a new nanny
-* Working parents
-* Childcare planning
-* Hiring checklists
-
-Individual articles should be added selectively.
-
-Do not create dozens of generic parenting articles in Phase 1.
-
----
-
-# 12. Safety and Trust
-
-## Nanny Safety
+# 12. Safety & Vetting Hub
 
 Recommended URL:
 
@@ -628,216 +415,1046 @@ Recommended URL:
 /nanny-safety
 ```
 
-Intent:
+Potential architecture:
 
 ```text
-Informational / Trust
+/nanny-safety
+    │
+    ├── /nanny-vetting
+    ├── /nanny-police-vetting
+    ├── /nanny-background-checks
+    ├── /nanny-reference-checks
+    ├── /nanny-identity-verification
+    ├── /nanny-safety-checklist
+    ├── /child-safety
+    ├── /first-aid-for-nannies
+    ├── /cpr-for-nannies
+    ├── /safe-sleep
+    ├── /food-allergies
+    ├── /medication-safety
+    └── /childproofing
 ```
 
-Cover:
+Use the actual NannyOra verification process as the source of truth.
 
-* Safe childcare practices
-* What parents should check
-* Vetting
-* References
-* Emergency planning
-* First aid
-* Child safety
-
-This page supports `/nanny-vetting`.
+Do not claim that a nanny has been verified unless the platform actually
+performed the relevant verification.
 
 ---
 
-# 13. Core Trust Pages
+# 13. NannyOra Vetting Entity
 
-These are not primarily keyword-targeting pages.
+NannyOra's vetting process is a major trust differentiator.
 
-They strengthen the entity and conversion system.
-
-Recommended pages:
+The architecture should eventually communicate:
 
 ```text
-/about
-/our-vetting-process
-/pricing
-/contact
-/reviews
+NannyOra
+    ↓
+Nanny Safety
+    ↓
+Nanny Vetting
+    ↓
+Identity
+    ↓
+Interview
+    ↓
+CV / Experience
+    ↓
+References
+    ↓
+Professional Body Checks
+    ↓
+Police Vetting
+    ↓
+Risk Assessment
 ```
 
-Only use these URLs if they match the actual site.
-
-These pages should be accessible from relevant commercial pages.
+The exact process must always match NannyOra's current operational process.
 
 ---
 
-# 14. Local SEO — Phase 1
+# 14. Parent Resources Hub
 
-Phase 1 targets four cities:
+Recommended URL:
 
 ```text
-Auckland
-Hamilton
-Christchurch
-Wellington
+/parent-resources
 ```
 
-Do NOT create dozens of suburb pages yet.
+Potential pages:
+
+```text
+/parent-resources
+    │
+    ├── /how-to-choose-childcare
+    ├── /how-to-prepare-for-a-nanny
+    ├── /nanny-interview-guide
+    ├── /questions-to-ask-a-nanny
+    ├── /nanny-first-day
+    ├── /childcare-checklist
+    ├── /working-parents
+    ├── /returning-to-work
+    ├── /childcare-budget
+    └── /nanny-family-relationship
+```
+
+This cluster should answer real parent questions.
 
 ---
 
-# 15. Auckland
+# 15. Child Development Cluster
 
-Primary URL:
-
-```text
-/locations/auckland
-```
-
-or the site's chosen canonical location structure.
-
-Intent:
+Recommended hub:
 
 ```text
-Local Commercial
+/child-development
 ```
 
-Primary target:
+Potential topics:
 
 ```text
-nanny Auckland
-nannies Auckland
-hire a nanny Auckland
+/child-development
+    │
+    ├── /newborn-development
+    ├── /infant-development
+    ├── /toddler-development
+    ├── /preschool-development
+    ├── /school-age-development
+    ├── /learning-through-play
+    ├── /positive-discipline
+    ├── /screen-time
+    ├── /sleep
+    ├── /potty-training
+    └── /child-development-activities
 ```
 
-The page should cover:
+This is primarily an authority cluster.
 
-* NannyOra's Auckland availability
-* Relevant nanny services
-* How hiring works
-* Available profiles
-* Auckland areas served
-* Trust/vetting
-* FAQs
-* CTA to find a nanny
+It should not become a generic parenting blog disconnected from NannyOra's
+core entity.
+
+Every article must maintain a meaningful relationship to:
+
+* childcare
+* parents
+* caregivers
+* nannies
+* child development
 
 ---
 
-# 16. Hamilton
+# 16. Childcare By Age
 
-Primary URL:
+Potential pages:
 
 ```text
-/locations/hamilton
+/newborn-care
+/infant-care
+/toddler-care
+/preschool-care
+/school-age-care
 ```
 
-Same principle.
+These pages can connect:
 
-Do not simply duplicate the Auckland page with "Hamilton" substituted.
-
-Include genuinely relevant local information and actual service availability.
+```text
+Age
+↓
+Care requirements
+↓
+Suitable nanny type
+↓
+Relevant qualifications
+↓
+Activities
+↓
+Safety
+↓
+Find a Nanny
+```
 
 ---
 
-# 17. Christchurch
+# 17. Specialist Childcare
 
-Primary URL:
+Recommended hub:
 
 ```text
-/locations/christchurch
+/specialist-childcare
 ```
 
-Same principle.
+Potential topics:
+
+```text
+/special-needs-nanny
+/autism-childcare
+/adhd-childcare
+/sensory-friendly-childcare
+/speech-delay-support
+/twins-childcare
+/newborn-specialist-care
+```
+
+Only publish claims that NannyOra can substantiate.
+
+Avoid implying medical expertise unless qualified professionals are involved.
 
 ---
 
-# 18. Wellington
+# 18. Nanny Resources
 
-Primary URL:
+Recommended hub:
 
 ```text
-/locations/wellington
+/nanny-resources
 ```
 
-Same principle.
+Purpose:
+
+Build authority among caregivers as well as parents.
+
+Potential pages:
+
+```text
+/nanny-resources
+    │
+    ├── /become-a-nanny
+    ├── /nanny-resume
+    ├── /nanny-interview
+    ├── /nanny-first-aid
+    ├── /nanny-cpr
+    ├── /nanny-childcare-skills
+    ├── /nanny-professional-development
+    └── /nanny-career-guide
+```
+
+These pages can support the supply side of NannyOra's marketplace.
 
 ---
 
-# 19. Suburb Pages
+# 19. Nanny Jobs Cluster
 
-Status:
-
-```text
-DO NOT CREATE IN PHASE 1
-```
-
-Do not initially create:
-
-```text
-Remuera Nanny
-Epsom Nanny
-Takapuna Nanny
-Rototuna Nanny
-Fendalton Nanny
-Karori Nanny
-...
-```
-
-First establish city-level authority.
-
-Suburb pages can become a Phase 2 experiment after:
-
-* city pages gain impressions
-* actual profile inventory exists
-* local search data is available
-* unique local content can be created
-
----
-
-# 20. Nanny Jobs
-
-If the NannyOra product has a genuine job marketplace, maintain:
+If NannyOra has a genuine nanny-job marketplace, create:
 
 ```text
 /nanny-jobs
 ```
 
-But do NOT build dozens of static city/job pages simply for SEO.
+Potential structure:
 
-Dynamic job pages should be evaluated separately.
+```text
+/nanny-jobs
+    │
+    ├── /nanny-jobs-auckland
+    ├── /nanny-jobs-hamilton
+    ├── /nanny-jobs-christchurch
+    └── /nanny-jobs-wellington
+```
 
-Expired/thin jobs should not become a large indexable footprint.
+Dynamic job URLs should be treated separately from evergreen SEO landing pages.
+
+Do not index thin or expired job pages indefinitely.
 
 ---
 
-# 21. Nanny Profiles
+# 20. Locations Hub
 
-Nanny profile pages can become valuable long-tail SEO assets.
+Recommended URL:
 
-Only allow indexation when profiles contain enough unique, useful information.
+```text
+/locations
+```
 
-Potential indexable profile attributes:
+Primary cities:
 
-* Name
-* Location
-* Experience
+```text
+/locations/auckland
+/locations/hamilton
+/locations/christchurch
+/locations/wellington
+```
+
+Alternative URL structures are acceptable, but choose ONE structure and keep it
+consistent.
+
+Do not create multiple URLs for the same location intent.
+
+---
+
+# 21. Auckland Cluster
+
+Primary page:
+
+```text
+/locations/auckland
+```
+
+Primary topic:
+
+Nannies and childcare services in Auckland.
+
+Supporting pages:
+
+```text
+/locations/auckland/nannies
+/locations/auckland/babysitters
+/locations/auckland/nanny-jobs
+/locations/auckland/after-school-care
+/locations/auckland/newborn-nannies
+/locations/auckland/night-nannies
+```
+
+Only create pages that have distinct search intent and sufficient content.
+
+---
+
+# 22. Hamilton Cluster
+
+Primary page:
+
+```text
+/locations/hamilton
+```
+
+Potential supporting pages:
+
+```text
+/locations/hamilton/nannies
+/locations/hamilton/babysitters
+/locations/hamilton/nanny-jobs
+/locations/hamilton/after-school-care
+/locations/hamilton/newborn-nannies
+```
+
+---
+
+# 23. Christchurch Cluster
+
+Primary page:
+
+```text
+/locations/christchurch
+```
+
+Potential supporting pages:
+
+```text
+/locations/christchurch/nannies
+/locations/christchurch/babysitters
+/locations/christchurch/nanny-jobs
+/locations/christchurch/after-school-care
+/locations/christchurch/newborn-nannies
+```
+
+---
+
+# 24. Wellington Cluster
+
+Primary page:
+
+```text
+/locations/wellington
+```
+
+Potential supporting pages:
+
+```text
+/locations/wellington/nannies
+/locations/wellington/babysitters
+/locations/wellington/nanny-jobs
+/locations/wellington/after-school-care
+/locations/wellington/newborn-nannies
+```
+
+---
+
+# 25. Local Service Architecture
+
+The preferred conceptual hierarchy is:
+
+```text
+Locations
+    ↓
+Auckland
+    ↓
+Nannies
+    ↓
+Nanny Types
+    ↓
+Relevant suburbs
+```
+
+Example:
+
+```text
+Locations
+  ↓
+Auckland
+  ↓
+Nannies in Auckland
+  ↓
+Newborn Nannies Auckland
+  ↓
+Remuera
+```
+
+Do not create every possible combination automatically.
+
+Only create combinations that have:
+
+* search demand
+* commercial value
+* unique information
+* actual NannyOra service availability
+
+---
+
+# 26. Suburb SEO
+
+Suburb pages are a later-stage local authority layer.
+
+Examples:
+
+## Auckland
+
+```text
+Remuera
+Epsom
+Parnell
+Takapuna
+Milford
+Albany
+Howick
+Botany
+Pakuranga
+Mt Eden
+Mt Albert
+Grey Lynn
+Ponsonby
+Devonport
+Orewa
+Papakura
+Manukau
+New Lynn
+Hobsonville
+```
+
+## Hamilton
+
+```text
+Hamilton East
+Rototuna
+Flagstaff
+Chartwell
+Hillcrest
+Dinsdale
+St Andrews
+Nawton
+```
+
+## Christchurch
+
+```text
+Riccarton
+Fendalton
+Merivale
+St Albans
+Papanui
+Cashmere
+Halswell
+```
+
+## Wellington
+
+```text
+Karori
+Johnsonville
+Miramar
+Newtown
+Kelburn
+Island Bay
+Lower Hutt
+Upper Hutt
+```
+
+Suburb pages must not be generated as thin templates.
+
+Each page needs genuinely local value.
+
+---
+
+# 27. Local Page Requirements
+
+A local page should ideally include:
+
+* Local introduction
+* Available NannyOra services
+* Relevant nanny types
+* Local childcare considerations
+* Profiles where available
+* Local suburbs
+* Relevant childcare resources
+* Local FAQs
+* Clear CTA
+* Links to broader nanny guides
+
+Avoid:
+
+```text
+"Find a nanny in Auckland."
+
+"Find a nanny in Hamilton."
+
+"Find a nanny in Christchurch."
+```
+
+with only the city name changed.
+
+That is doorway-page behavior.
+
+---
+
+# 28. Core Topic Graph
+
+The primary graph should look like:
+
+```text
+                         NANNYORA
+                            │
+              ┌─────────────┴─────────────┐
+              │                           │
+        FIND A NANNY                 HIRE A NANNY
+              │                           │
+        Nanny Profiles              Hiring Process
+              │                    /     |      \
+              │             Interview  Vetting  Cost
+              │                 │        │        │
+              │                 │        │      Payroll
+              │                 │        │
+              └─────────────┬───┴────────┘
+                            │
+                       NANNY SERVICES
+                            │
+          ┌─────────────────┼─────────────────┐
+          │                 │                 │
+      Nanny Types       Childcare        Specialist Care
+          │                 │                 │
+          └─────────────────┼─────────────────┘
+                            │
+                        LOCATIONS
+                            │
+          ┌─────────┬───────┼────────┬─────────┐
+          │         │       │        │
+       Auckland  Hamilton Christchurch Wellington
+          │         │       │        │
+       Suburbs   Suburbs   Suburbs   Suburbs
+```
+
+---
+
+# 29. Internal Linking Philosophy
+
+Every page should have a role.
+
+Links should represent relationships between entities and topics.
+
+The preferred relationship types are:
+
+```text
+Parent → Child
+Child → Parent
+Sibling → Sibling
+Informational → Commercial
+Commercial → Trust
+Location → Service
+Service → Location
+Guide → Supporting Guide
+Supporting Guide → Hub
+```
+
+---
+
+# 30. Mandatory Internal Link Relationships
+
+## Find a Nanny
+
+Should link to:
+
+```text
+Hire a Nanny
+Nanny Services
+Nanny Types
+Nanny Vetting
+Nanny Costs
+Locations
+Parent Resources
+```
+
+---
+
+## Hire a Nanny
+
+Should link to:
+
+```text
+Find a Nanny
+How to Hire a Nanny
+Nanny Interview Questions
+Nanny Vetting
+Police Vetting
+Reference Checks
+Nanny Costs
+Nanny Contract
+Nanny Types
+Locations
+```
+
+---
+
+## How to Hire a Nanny
+
+Should link to:
+
+```text
+Hire a Nanny
+Find a Nanny
+Nanny Interview Questions
+Reference Checks
+Police Vetting
+Nanny Trial Period
+Nanny Contract
+Nanny Costs
+```
+
+---
+
+## Nanny Costs
+
+Should link to:
+
+```text
+Hire a Nanny
+Nanny Salary
+Nanny Pay Rates
+Payroll
+Employment Contract
+Full-Time Nanny
+Part-Time Nanny
+Relevant location page
+```
+
+---
+
+## Nanny Vetting
+
+Should link to:
+
+```text
+Hire a Nanny
+Find a Nanny
+Police Vetting
+Reference Checks
+Background Checks
+Identity Verification
+```
+
+---
+
+## Nanny Contract
+
+Should link to:
+
+```text
+Hire a Nanny
+Nanny Costs
+Payroll
+Holiday Pay
+Employment Responsibilities
+```
+
+---
+
+# 31. Informational → Commercial Linking
+
+Every informational page should identify at least one natural commercial
+destination.
+
+Example:
+
+Article:
+
+```text
+Nanny vs Daycare
+```
+
+Natural links:
+
+```text
+Hire a Nanny
+Find a Nanny
+Nanny Services
+```
+
+Article:
+
+```text
+How Much Does a Nanny Cost?
+```
+
+Natural links:
+
+```text
+Find a Nanny
+Hire a Nanny
+Nanny Profiles
+```
+
+Article:
+
+```text
+How to Interview a Nanny
+```
+
+Natural links:
+
+```text
+Find a Nanny
+Hire a Nanny
+Nanny Vetting
+```
+
+---
+
+# 32. Commercial → Informational Linking
+
+Commercial pages should also link to supporting information.
+
+This establishes topical completeness.
+
+Example:
+
+```text
+Hire a Nanny
+    ↓
+How to Hire a Nanny
+    ↓
+Nanny Interview Questions
+    ↓
+Reference Checks
+    ↓
+Police Vetting
+```
+
+---
+
+# 33. Location Internal Linking
+
+Auckland pages should generally connect to:
+
+```text
+Auckland
+Hire a Nanny
+Find a Nanny
+Nanny Costs
+Nanny Vetting
+Relevant Auckland services
+Relevant Auckland suburbs
+```
+
+Hamilton pages should connect to:
+
+```text
+Hamilton
+Hire a Nanny
+Find a Nanny
+Nanny Costs
+Nanny Vetting
+Relevant Hamilton services
+Relevant Hamilton suburbs
+```
+
+Repeat for Christchurch and Wellington.
+
+---
+
+# 34. Anchor Text Strategy
+
+Use natural variations.
+
+For the same destination:
+
+```text
+hire a nanny
+find a nanny
+nanny hiring
+hiring a nanny
+nanny services
+find the right nanny
+NannyOra's nanny service
+```
+
+Do not use:
+
+```text
+hire a nanny
+hire a nanny
+hire a nanny
+hire a nanny
+```
+
+on every page.
+
+Exact-match anchors are allowed but should not dominate the internal link
+profile.
+
+---
+
+# 35. Link Priority
+
+When several pages are possible destinations, use this priority:
+
+```text
+1. Directly relevant page
+2. Parent hub
+3. Closely related sibling
+4. Commercial page
+5. Trust/safety page
+6. Local page
+7. Broader educational page
+```
+
+Never link merely because a page exists.
+
+---
+
+# 36. Orphan Prevention
+
+Every indexable SEO page should have:
+
+```text
+At least 1 relevant incoming internal link
++
+Relevant outgoing internal links
+```
+
+A new page should never be published and left disconnected from the site.
+
+---
+
+# 37. New Page Creation Rule
+
+Before creating a new page, ask:
+
+```text
+Does this intent already have a page?
+```
+
+If YES:
+
+```text
+Improve existing page
+OR
+Differentiate intent
+OR
+Consolidate
+```
+
+If NO:
+
+Create the page only if it contributes meaningfully to the topical graph.
+
+---
+
+# 38. Keyword Cannibalization Rules
+
+Avoid multiple pages targeting the same intent.
+
+Example:
+
+Do NOT create:
+
+```text
+/hire-a-nanny
+/find-a-nanny
+/hiring-a-nanny
+/nanny-hiring
+```
+
+with essentially identical content.
+
+Instead define roles:
+
+```text
+/find-a-nanny
+= marketplace / profiles / filters
+
+/hire-a-nanny
+= commercial guide / service / decision support
+
+/how-to-hire-a-nanny
+= informational process guide
+```
+
+These can coexist because their purposes differ.
+
+---
+
+# 39. Programmatic SEO
+
+NannyOra may eventually create programmatic pages for:
+
+```text
+Location
+×
+Service
+×
+Nanny Type
+```
+
+Potential combinations:
+
+```text
+Nanny Auckland
+Nanny Hamilton
+Nanny Christchurch
+Nanny Wellington
+
+Newborn Nanny Auckland
+Night Nanny Auckland
+After-School Nanny Auckland
+```
+
+But combinations should only be generated where:
+
+```text
+Demand
++
+Unique value
++
+Actual service
++
+Sufficient content
+```
+
+are present.
+
+Never create thousands of near-identical pages simply because the
+combination is technically possible.
+
+---
+
+# 40. Dynamic Nanny Profile Pages
+
+Nanny profiles can contribute to long-tail local authority.
+
+If profiles are indexable, ensure:
+
+* Unique profile content
+* Meaningful location
+* Relevant experience
 * Skills
-* Care types
-* Relevant qualifications
-* Availability
-* Genuine profile description
+* Availability where appropriate
+* Structured data where appropriate
+* Canonical URL
+* Noindex rules for empty/thin profiles where necessary
 
-Avoid indexing:
-
-* empty profiles
-* incomplete profiles
-* duplicate profiles
-* temporary filter URLs
+Do not index empty profiles or profiles with insufficient unique content.
 
 ---
 
-# 22. Phase 1 Architecture
+# 41. Job Pages
 
-The simplified architecture is:
+If NannyOra has nanny job listings:
+
+Use:
+
+```text
+/nanny-jobs
+```
+
+for the evergreen hub.
+
+Individual job URLs should be treated as temporary entities.
+
+When jobs expire:
+
+* remove from active indexes where appropriate
+* redirect where there is a meaningful replacement
+* or return an appropriate status
+* avoid large numbers of permanently indexed expired jobs
+
+---
+
+# 42. Research & Data Hub
+
+Recommended URL:
+
+```text
+/research
+```
+
+This is the digital PR / backlink engine.
+
+Potential resources:
+
+```text
+/average-nanny-cost-nz
+/nanny-salary-report
+/childcare-cost-nz
+/nanny-demand-nz
+/nanny-jobs-report
+/working-parents-nz
+/childcare-statistics-nz
+/family-friendly-suburbs-nz
+```
+
+Use original research wherever possible.
+
+These pages should be updated periodically.
+
+---
+
+# 43. Annual Research Strategy
+
+Create recurring annual assets:
+
+```text
+Nanny Cost Report 2026
+Nanny Cost Report 2027
+Nanny Cost Report 2028
+```
+
+Prefer updating a canonical evergreen report where appropriate rather than
+creating dozens of competing yearly URLs.
+
+---
+
+# 44. E-E-A-T / Trust Architecture
+
+Important trust pages:
+
+```text
+/about
+/our-vetting-process
+/how-we-match
+/safety
+/pricing
+/contact
+/reviews
+/parent-reviews
+/nanny-reviews
+```
+
+Exact URLs must be verified against the repository.
+
+These pages should be linked from commercial pages where relevant.
+
+---
+
+# 45. NannyOra Entity
+
+Google should consistently understand the entity:
 
 ```text
 NannyOra
@@ -907,457 +1524,775 @@ Target:
 existing product/profile pages
 +
 existing core business pages
+=
+New Zealand nanny / childcare platform
 ```
 
-Additional pages are earned later rather than pre-created.
+Entity signals should be consistent across:
+
+* Organization information
+* About page
+* Contact information
+* Social profiles
+* Local pages
+* Reviews
+* Structured data
+* Brand mentions
+* Author pages
+* Press mentions
+
+Do not create contradictory descriptions of the business.
 
 ---
 
-# 24. Pages Intentionally NOT Created in Phase 1
+# 46. Author Architecture
 
-Do not create separate pages yet for:
+Informational content should have identifiable authors where appropriate.
+
+Author pages may include:
 
 ```text
-Nanny Hiring
-Hiring a Nanny
-Find a Nanny Guide
-Nanny Agency
-Private Nanny
-Professional Nanny
-Experienced Nanny
+/author/name
+```
+
+Each author should have:
+
+* Name
+* Role
+* Relevant expertise
+* Bio
+* Relevant qualifications where applicable
+* Articles written/reviewed
+
+Do not invent credentials.
+
+---
+
+# 47. Editorial Review
+
+Where content concerns:
+
+* childcare safety
+* employment
+* tax
+* child development
+* health
+* specialist care
+
+include appropriate review information.
+
+Never claim professional review unless an actual qualified reviewer has reviewed
+the content.
+
+---
+
+# 48. External Authority Linking
+
+External links should primarily support factual claims.
+
+For New Zealand employment/tax information, prioritize official sources such
+as:
+
+* Employment New Zealand
+* Inland Revenue
+* Ministry of Education
+* New Zealand Police
+* ACC
+* WorkSafe
+* relevant government agencies
+
+External links should complement NannyOra's content, not replace it.
+
+---
+
+# 49. Schema Architecture
+
+Use structured data where genuinely applicable.
+
+Potential schemas:
+
+```text
+Organization
+WebSite
+BreadcrumbList
+Service
+LocalBusiness
+Person
+Article
+FAQPage
+HowTo
+Review
+JobPosting
+```
+
+Do not add schema merely for the sake of adding schema.
+
+Schema must accurately represent visible page content.
+
+---
+
+# 50. Breadcrumb Architecture
+
+Recommended conceptual breadcrumbs:
+
+```text
+Home
+  >
+Nanny Services
+  >
+Night Nanny
+```
+
+or:
+
+```text
+Home
+  >
+Locations
+  >
+Auckland
+  >
+Nannies
+```
+
+Breadcrumb hierarchy should match the actual information architecture.
+
+---
+
+# 51. Sitemap Architecture
+
+The XML sitemap should prioritize indexable canonical URLs.
+
+Potential sitemap groups:
+
+```text
+pages-sitemap.xml
+services-sitemap.xml
+locations-sitemap.xml
+profiles-sitemap.xml
+jobs-sitemap.xml
+articles-sitemap.xml
+```
+
+Only use multiple sitemap files when the site's scale warrants it.
+
+---
+
+# 52. Canonical Rules
+
+Every indexable page should have:
+
+```text
+One canonical URL
+```
+
+Avoid:
+
+* trailing slash inconsistencies
+* duplicate URL parameters
+* duplicate location URLs
+* HTTP/HTTPS duplication
+* www/non-www duplication
+* duplicate profile URLs
+* filter URLs being indexed unnecessarily
+
+Search/filter combinations should generally not create thousands of indexable
+URLs unless there is a deliberate SEO strategy for them.
+
+---
+
+# 53. Search Filter SEO
+
+The `/find-a-nanny` marketplace may contain filters such as:
+
+```text
+Location
+Availability
+Experience
+Age group
+Skills
+Care type
+```
+
+Do NOT automatically index every filter combination.
+
+Only create crawlable/indexable landing pages for combinations that have:
+
+* meaningful search demand
+* stable inventory
+* unique content
+* useful user intent
+
+Example:
+
+Potentially valuable:
+
+```text
+Nannies in Auckland
+```
+
+Potentially poor:
+
+```text
+Nannies in Auckland
++
+available Tuesday
++
+2 children
++
+specific age
++
+specific hourly availability
+```
+
+---
+
+# 54. Main Internal Linking Graph
+
+Core graph:
+
+```text
+                         HOME
+                          │
+             ┌────────────┼────────────┐
+             │            │            │
+       FIND A NANNY   HIRE A NANNY  LOCATIONS
+             │            │            │
+             │            │       ┌────┼────┐
+             │            │       │    │    │
+             │            │     AKL  HAM  CHCH  WLG
+             │            │
+             │      ┌─────┼─────────────┐
+             │      │     │             │
+             │   Hiring  Vetting       Cost
+             │      │     │             │
+             └──────┴─────┴─────────────┘
+                    │
+              NANNY SERVICES
+                    │
+          ┌─────────┼─────────┐
+          │         │         │
+       Nanny      Childcare  Specialist
+       Types      Options     Care
+          │         │         │
+          └─────────┼─────────┘
+                    │
+              PARENT RESOURCES
+                    │
+             CHILD DEVELOPMENT
+                    │
+               RESEARCH
+```
+
+---
+
+# 55. Page Relationship Matrix
+
+| Page / Hub       | Should Link To                                          |
+| ---------------- | ------------------------------------------------------- |
+| Find a Nanny     | Hire a Nanny, Nanny Services, Locations, Vetting, Costs |
+| Hire a Nanny     | Find a Nanny, Hiring Process, Vetting, Costs, Services  |
+| How to Hire      | Hire a Nanny, Interview, Vetting, References, Contract  |
+| Nanny Costs      | Hire a Nanny, Salary, Payroll, Employment               |
+| Nanny Vetting    | Hire a Nanny, Find a Nanny, Police Vetting, References  |
+| Nanny Contract   | Hire a Nanny, Costs, Payroll, Employment                |
+| Nanny Services   | Find a Nanny, Hire a Nanny, Nanny Types                 |
+| Nanny Types      | Services, Find a Nanny, Locations                       |
+| Childcare        | Nanny, Babysitting, Daycare comparisons                 |
+| Parent Resources | Hire a Nanny, Childcare, Safety                         |
+| Locations        | Auckland, Hamilton, Christchurch, Wellington            |
+| City Page        | Find a Nanny, Hire a Nanny, Local Services              |
+| Suburb Page      | City Page, Nanny Service, Find a Nanny                  |
+| Research         | Relevant commercial/service pages                       |
+
+---
+
+# 56. Internal Link Direction
+
+Important authority flow:
+
+```text
+Research
+   ↓
+Informational
+   ↓
+Supporting Guides
+   ↓
+Commercial Hub
+   ↓
+Find a Nanny
+   ↓
+Profiles
+```
+
+At the same time:
+
+```text
+Find a Nanny
+   ↓
+Trust
+   ↓
+Vetting
+   ↓
+Hiring Guides
+   ↓
+Parent Resources
+```
+
+This creates a circular topical graph rather than a dead-end funnel.
+
+---
+
+# 57. Content Publishing Priority
+
+## Phase 1 — Foundation
+
+Build:
+
+```text
+Find a Nanny
+Hire a Nanny
+Nanny Services
+Locations
+Auckland
+Hamilton
+Christchurch
+Wellington
+Nanny Vetting
+Nanny Costs
+How to Hire a Nanny
+```
+
+---
+
+# 58. Phase 2 — Commercial Expansion
+
+Build:
+
+```text
 Full-Time Nanny
 Part-Time Nanny
 Live-In Nanny
 Live-Out Nanny
-Temporary Nanny
-Weekend Nanny
-Night Nanny
 Newborn Nanny
-Infant Nanny
+Night Nanny
 After-School Nanny
-Nanny Cost NZ
-Nanny Pay Rates
-Nanny Salary
-Nanny Employer Costs
-Nanny Reference Checks
-Nanny Background Checks
-Nanny Identity Verification
-Nanny Police Vetting
-Nanny Employment Agreement
-Household Employer
-Nanny Annual Leave
-Nanny Sick Leave
-Nanny Holiday Pay
-Nanny vs Home-Based Childcare
-Nanny vs Family Care
-Individual suburb pages
-Individual specialist-condition pages
-Dozens of generic parenting articles
-```
-
-These are NOT deleted from the long-term strategy.
-
-They are simply **not separate Phase 1 URLs**.
-
-Their topics can be covered within stronger parent pages.
-
----
-
-# 25. How Phase 1 Handles Semantic Coverage
-
-Not having a separate URL does NOT mean ignoring the topic.
-
-For example:
-
-`/nanny-vetting` can comprehensively cover:
-
-* Police vetting
-* References
-* Identity checks
-* Background checks
-* Experience
-* Qualifications
-* Risk assessment
-
-Likewise:
-
-`/nanny-cost` can cover:
-
-* Nanny salary
-* Hourly rates
-* Full-time costs
-* Part-time costs
-* Location
-* Experience
-* Employer costs
-
-This creates topical depth without creating cannibalizing pages.
-
----
-
-# 26. Internal Linking — Core Graph
-
-## Find a Nanny
-
-Link to:
-
-```text
-Hire a Nanny
-Nanny Vetting
-Nanny Cost
-Locations
-Nanny Services / relevant service sections
-Parent Resources
-```
-
-Primary CTA:
-
-```text
-Browse Nanny Profiles
+Weekend Nanny
+Emergency Nanny
+Special Needs Nanny
 ```
 
 ---
 
-## Hire a Nanny
+# 59. Phase 3 — Hiring Authority
 
-Link to:
+Build:
 
 ```text
-Find a Nanny
-How to Hire a Nanny
 Nanny Interview Questions
-Nanny Vetting
+Questions to Ask a Nanny
+Reference Checks
+Police Vetting
+Background Checks
+Nanny Trial Period
 Nanny Contract
-Nanny Cost
-Nanny Safety
+Employment Agreement
+Nanny First Day Checklist
+```
+
+---
+
+# 60. Phase 4 — Parent Authority
+
+Build:
+
+```text
 Nanny vs Daycare
 Nanny vs Babysitter
 Nanny vs Au Pair
-Locations
+Choosing Childcare
+Childcare Budget
+Returning to Work
+Working Parents
+Preparing for a Nanny
 ```
 
 ---
 
-## How to Hire a Nanny
+# 61. Phase 5 — Safety Authority
 
-Link to:
-
-```text
-Hire a Nanny
-Find a Nanny
-Nanny Interview Questions
-Nanny Vetting
-Nanny Contract
-Nanny Cost
-```
-
----
-
-## Nanny Interview Questions
-
-Link to:
+Build:
 
 ```text
-How to Hire a Nanny
-Nanny Vetting
-Hire a Nanny
-Find a Nanny
-```
-
----
-
-## Nanny Vetting
-
-Link to:
-
-```text
-Hire a Nanny
-Find a Nanny
 Nanny Safety
-Nanny Interview Questions
-Nanny Contract
+Child Safety
+Safe Sleep
+First Aid
+CPR
+Food Allergies
+Medication Safety
+Childproofing
+Emergency Procedures
 ```
 
 ---
 
-## Nanny Contract
+# 62. Phase 6 — Local Authority
 
-Link to:
+Expand:
 
 ```text
-Hire a Nanny
-Nanny Cost
-Nanny Payroll
-How to Hire a Nanny
+Auckland services
+Hamilton services
+Christchurch services
+Wellington services
+```
+
+Then carefully expand into:
+
+```text
+Suburbs
 ```
 
 ---
 
-## Nanny Cost
+# 63. Phase 7 — Research / Digital PR
 
-Link to:
+Build:
 
 ```text
-Hire a Nanny
-Nanny Payroll
-Nanny Contract
-Find a Nanny
-Relevant local page
+Nanny Cost Report
+Nanny Salary Report
+Childcare Cost Report
+Nanny Demand Report
+Working Parents Report
+Family-Friendly Suburbs
+```
+
+These should be designed to earn links and mentions.
+
+---
+
+# 64. Content Cluster Rule
+
+Every new article must answer:
+
+```text
+What cluster does this belong to?
+What is its parent?
+What are its siblings?
+What child pages can support it?
+Which commercial page should it support?
+Which location is relevant?
+```
+
+If these questions cannot be answered, reconsider publishing the page.
+
+---
+
+# 65. Content Brief Requirements
+
+Every NannyOra SEO content brief should contain:
+
+```text
+Page purpose
+Search intent
+Primary keyword
+Secondary keywords
+Entities
+Semantic topics
+Parent topic
+Sibling pages
+Child pages
+Internal links INTO page
+Internal links OUT OF page
+Anchor recommendations
+H1
+H2s
+H3s
+FAQs
+E-E-A-T requirements
+Schema
+Conversion goal
 ```
 
 ---
 
-## Nanny Payroll
+# 66. Writing Requirements
 
-Link to:
+When Codex is asked:
+
+> "Write according to Korey content brief"
+
+it MUST:
+
+1. Read this architecture.
+2. Inspect the actual repository.
+3. Verify existing routes.
+4. Identify the page's cluster.
+5. Identify parent and sibling pages.
+6. Identify relevant supporting pages.
+7. Write for users first.
+8. Add contextual internal links.
+9. Use natural anchor text.
+10. Avoid cannibalization.
+11. Never invent URLs.
+12. Never invent NannyOra claims.
+13. Check for orphan relationships.
+14. Check for broken links.
+
+---
+
+# 67. URL Verification
+
+This document contains proposed architecture.
+
+The actual website is the source of truth for current URLs.
+
+Before linking:
 
 ```text
-Nanny Cost
-Nanny Contract
-Hire a Nanny
+Inspect repository
+↓
+Find actual route
+↓
+Verify page exists
+↓
+Use canonical URL
+```
+
+Never assume that the proposed URL in this document already exists.
+
+If a page does not exist:
+
+```text
+DO NOT create a broken link.
+```
+
+Instead, report:
+
+```text
+Future internal-link opportunity:
+[Page name]
+Recommended future URL:
+[proposed URL]
 ```
 
 ---
 
-# 27. Local Internal Linking
+# 68. Page Status
 
-Each city page should link to:
+Use these statuses when maintaining this file:
 
 ```text
-Find a Nanny
-Hire a Nanny
-Nanny Cost
-Nanny Vetting
-Relevant services
-Relevant resources
+LIVE
+PLANNED
+IN PROGRESS
+NEEDS OPTIMIZATION
+CONSOLIDATE
+DO NOT CREATE
 ```
-
-The national commercial pages should link back to the appropriate city pages.
 
 Example:
 
 ```text
 Hire a Nanny
-    ↓
-Auckland
-Hamilton
-Christchurch
-Wellington
+Status: PLANNED
 ```
 
-This establishes the national → local relationship.
+The actual current status should be updated as the site develops.
 
 ---
 
-# 28. Anchor Text Strategy
+# 69. No Thin Content Rule
 
-Use natural variations.
-
-For `/hire-a-nanny`:
+NannyOra should prefer:
 
 ```text
-hire a nanny
-hiring a nanny
-finding the right nanny
-nanny hiring process
-learn more about hiring a nanny
+10 excellent pages
 ```
 
-For `/nanny-vetting`:
+over:
 
 ```text
-nanny vetting
-our vetting process
-how nannies are vetted
-nanny safety checks
+100 nearly identical pages
 ```
 
-Avoid repeatedly using exactly the same keyword anchor.
+Every page must add something meaningful to the entity graph.
 
 ---
 
-# 29. Internal Link Quantity
+# 70. No Generic Blog Rule
 
-No rigid formula.
-
-Use links where they help the user.
-
-Typical target:
+Avoid publishing generic articles such as:
 
 ```text
-Short page: 3–6 contextual links
-Medium page: 5–10
-Pillar page: 8–15+
+10 Fun Activities for Kids
 ```
 
-Relevance matters more than quantity.
+unless they connect strongly to:
 
----
+* nanny care
+* childcare
+* parents
+* child development
+* caregiver responsibilities
 
-# 30. Cannibalization Rules
-
-Before publishing any page, Codex must compare it with all existing and
-planned Phase 1 pages.
-
-Ask:
-
-1. What exact intent does this page own?
-2. Which existing page currently owns that intent?
-3. Is the new page genuinely different?
-4. Would Google reasonably rank the same page for both?
-5. Could the topic be better handled as a section of an existing page?
-
-If the answer suggests overlap:
+Better:
 
 ```text
-CONSOLIDATE
+Age-Appropriate Activities a Nanny Can Do With Toddlers
 ```
 
-rather than creating another URL.
+This maintains topical relevance.
 
 ---
 
-# 31. GSC Validation Before Expansion
+# 71. Local Content Rule
 
-Phase 1 should run long enough to generate meaningful data.
+Local pages should contain real local information.
 
-Review:
+Potential local elements:
 
-* GSC impressions
-* queries
-* rankings
-* pages receiving impressions
-* pages receiving clicks
-* query/page overlap
-* pages showing cannibalization
-* unexpected ranking terms
+* suburbs served
+* local childcare context
+* local family needs
+* available nanny types
+* local profile inventory
+* local FAQs
+* local service availability
 
-Use actual SERP behavior to decide what Phase 2 needs.
-
----
-
-# 32. Expansion Rule
-
-Only create a new page when one of the following is demonstrated:
-
-### A. Distinct Search Intent
-
-The SERP clearly treats the query as a different result type.
-
-### B. Strong Keyword Opportunity
-
-There is enough demand and commercial relevance.
-
-### C. GSC Evidence
-
-An existing page is receiving substantial impressions for a topic that
-deserves its own dedicated result.
-
-### D. Product Expansion
-
-NannyOra genuinely introduces a new service.
-
-### E. Local Opportunity
-
-A location has enough demand, inventory, and unique information.
+Never fabricate local facts.
 
 ---
 
-# 33. Phase 2 Candidates
+# 72. Marketplace + SEO Rule
 
-Potential Phase 2 pages may include:
+The marketplace is the product.
+
+SEO exists to feed the marketplace.
+
+Therefore:
 
 ```text
-Newborn Nanny
-Night Nanny
-After-School Nanny
-Full-Time Nanny
-Part-Time Nanny
-Nanny Salary
-Police Vetting
-Reference Checks
-Nanny Background Checks
-Suburb pages
-Additional childcare comparisons
-Additional parent guides
+SEO Content
+     ↓
+Trust
+     ↓
+Intent
+     ↓
+NannyOra
+     ↓
+Profiles
+     ↓
+Match / Contact
 ```
 
-But NONE are guaranteed.
+SEO must never degrade:
 
-Each must be evaluated individually for intent and cannibalization.
+* profile discovery
+* filtering
+* conversion
+* page speed
+* mobile usability
+* accessibility
 
 ---
 
-# 34. Phase 1 Content Philosophy
+# 73. Primary Conversion Paths
 
-The site should feel like:
+Primary:
 
 ```text
-A highly useful nanny platform with excellent supporting resources
+Find a Nanny
 ```
 
-not:
+Secondary:
 
 ```text
-An SEO site containing hundreds of keyword pages.
+Get Started
+Contact NannyOra
+Request a Match
 ```
 
-Prioritize:
+Supply-side:
 
-* usefulness
-* trust
-* unique experience
-* real NannyOra information
-* genuine nanny profiles
-* local relevance
-* strong conversion paths
+```text
+Become a Nanny
+```
 
----
+Use actual CTA labels from the current product.
 
-# 35. Golden Rule
-
-The NannyOra Phase 1 architecture follows this principle:
-
-> Build fewer, stronger pages that each own a clear search intent, then expand
-> only when real search data demonstrates that a separate page is warranted.
-
-The strongest topical authority does not come from having the most URLs.
-
-It comes from having the clearest and most useful relationship between the
-pages that exist.
+Do not invent functionality.
 
 ---
 
-# 36. Codex Instruction
+# 74. Future Expansion
 
-When Codex receives a request such as:
+Once the four primary cities have strong authority, consider:
 
-> "Write a Korey SEO page for Nanny Cost."
+```text
+Tauranga
+Dunedin
+Queenstown
+Palmerston North
+Napier
+Nelson
+Rotorua
+Whangārei
+New Plymouth
+Invercargill
+```
 
-it must:
+Expansion should be driven by:
 
-1. Read this architecture.
-2. Identify `/nanny-cost` as the canonical Phase 1 page for the cost topic.
-3. NOT create `/nanny-cost-nz`, `/nanny-pay-rates`, `/nanny-salary`, etc.
-4. Cover those concepts semantically within `/nanny-cost` where appropriate.
-5. Inspect the live repository for actual routes.
-6. Identify relevant existing pages.
-7. Add contextual internal links.
-8. Check for cannibalization.
-9. Report potential future pages rather than creating them automatically.
+```text
+Search demand
++
+Available Nannies
++
+Commercial demand
++
+Operational coverage
++
+Content opportunity
+```
+
+Do not expand merely to increase URL count.
 
 ---
 
-# 37. Phase 1 Success Criteria
+# 75. Final SEO Principle
 
-Phase 1 is successful when:
+NannyOra should become the entity Google associates with:
 
-* Core commercial pages are indexed.
-* Four city pages are established.
-* NannyOra has a coherent internal-link graph.
-* Important nanny-hiring intents are covered without duplication.
-* GSC begins showing impressions across the broader topic.
-* Pages support one another rather than competing against one another.
-* Users can move naturally from information → trust → profiles → hiring.
+```text
+"Everything a New Zealand parent needs to understand,
+find, hire and manage a nanny."
+```
 
-Only after this foundation is working should the architecture expand.
+The architecture should therefore progress from:
+
+```text
+FIND
+  ↓
+UNDERSTAND
+  ↓
+COMPARE
+  ↓
+TRUST
+  ↓
+HIRE
+  ↓
+MANAGE
+  ↓
+RETURN
+```
+
+Every page should strengthen one or more of these relationships.
+
+The ultimate goal is not to rank 500 disconnected pages.
+
+The goal is to build a highly interconnected NannyOra knowledge graph in which
+every important page has a clear purpose, parent, siblings, children,
+commercial relationship and internal-link pathway.
