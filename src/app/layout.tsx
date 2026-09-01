@@ -26,7 +26,6 @@ export const metadata: Metadata = {
   authors: [{ name: "NannyOra" }],
   creator: "NannyOra",
   publisher: "NannyOra",
-  alternates: { canonical: "/" },
   formatDetection: { telephone: false, email: false, address: false },
   openGraph: {
     type: "website",

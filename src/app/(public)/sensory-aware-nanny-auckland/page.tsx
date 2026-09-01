@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { ImageBand } from "@/components/ui/ImageBand";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/sensory-aware-nanny-auckland" },
   title: "Sensory-Aware Nannies Auckland — Calm, Specialist Childcare",
   description: "Find sensory-aware nannies in Auckland who create calm, structured environments for children with sensory processing needs. Verified on NannyOra.",
 };

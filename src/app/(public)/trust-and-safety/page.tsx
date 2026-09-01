@@ -10,6 +10,7 @@ import { ImageBand } from "@/components/ui/ImageBand";
 import { ShinyText } from "@/components/ui/ShinyText";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/trust-and-safety" },
   title: "Trust & Safety — Safe Childcare on NannyOra",
   description: "Learn how NannyOra verifies nannies, protects parents, and maintains a secure, trust-focused childcare community in Auckland.",
 };

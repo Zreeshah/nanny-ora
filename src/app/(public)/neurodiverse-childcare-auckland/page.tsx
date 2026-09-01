@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { ImageBand } from "@/components/ui/ImageBand";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/neurodiverse-childcare-auckland" },
   title: "Neurodiverse Childcare Auckland — Experienced Nannies",
   description: "Find nannies in Auckland with experience in neurodiverse childcare, including autism and ADHD support. Verified specialist carers on NannyOra.",
 };

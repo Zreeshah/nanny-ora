@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { ImageBand } from "@/components/ui/ImageBand";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/ece-nanny-auckland" },
   title: "ECE Nannies Auckland — Early Childhood Education Qualified",
   description: "Find ECE-qualified nannies and registered teachers in Auckland. Experienced early childhood educators providing enriching home-based care via NannyOra.",
 };

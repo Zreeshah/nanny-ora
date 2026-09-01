@@ -22,9 +22,17 @@ export async function generateMetadata({
   const { suburb } = await params;
   const suburbName = SUBURB_SLUGS[suburb];
   if (!suburbName) return { title: "Suburb Not Found" };
+
+  // A suburb with no nannies yet is a near-empty, near-duplicate page. Keep it
+  // reachable for users but out of the index until it has real content — this
+  // flips to indexable automatically as soon as a nanny covers the suburb.
+  const hasNannies = (await getPublicNannies({ suburb: suburbName })).length > 0;
+
   return {
     title: `Nannies in ${suburbName}, Auckland — Verified Childcare`,
     description: `Find verified nannies in ${suburbName}, Auckland. Browse experienced local carers, ECE-qualified nannies, and specialist childcare support on NannyOra.`,
+    alternates: { canonical: `/nannies/auckland/${suburb}` },
+    robots: hasNannies ? undefined : { index: false, follow: true },
   };
 }
 

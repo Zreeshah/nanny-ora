@@ -16,6 +16,7 @@ import { NannyTiers } from "@/components/pricing/NannyTiers";
 import { VideoPlayer } from "@/components/ui/VideoPlayer";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/how-it-works" },
   title: "How NannyOra Works — Childcare Connected with Trust",
   description: "Learn how NannyOra connects Auckland families with verified, specialist nannies. Simple process steps for parents and professional nannies.",
 };

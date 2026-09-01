@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/verification-process" },
   title: "Our Verification Process — How NannyOra Vets Every Nanny",
   description:
     "See exactly how NannyOra verifies every Auckland nanny: identity, interviews, reference calls, NZ Police vetting, qualifications, trial sessions, and ongoing feedback — and how each step protects your family.",

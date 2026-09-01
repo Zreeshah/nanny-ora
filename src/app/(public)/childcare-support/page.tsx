@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { LifeBuoy, ShieldCheck, Clock, MessageCircle } from "lucide-react";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/childcare-support" },
   title: "Childcare Support Options — NannyOra",
   description:
     "Some recurring or full-time home-based care arrangements may qualify for additional childcare support. Eligibility is assessed privately by the NannyOra team.",

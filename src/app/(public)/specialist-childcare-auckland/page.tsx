@@ -8,6 +8,7 @@ import { Brain, Heart, Shield, ArrowRight, Sparkles, Award } from "lucide-react"
 import { ImageBand } from "@/components/ui/ImageBand";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/specialist-childcare-auckland" },
   title: "Specialist Childcare Auckland — Sensory-Aware & Neurodiverse Nannies",
   description: "Find specialist childcare in Auckland. NannyOra connects families with vetted nannies experienced in sensory-aware care, neurodiverse support, ECE, and early intervention.",
 };

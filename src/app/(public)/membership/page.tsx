@@ -7,6 +7,7 @@ import { ShinyText } from "@/components/ui/ShinyText";
 import { ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/membership" },
   title: "Membership — Unlock Verified Auckland Nannies",
   description:
     "Become a NannyOra member to message verified nannies, shortlist favourites, request meet-and-greets, post jobs and make secure bookings. From NZ$39/month.",
