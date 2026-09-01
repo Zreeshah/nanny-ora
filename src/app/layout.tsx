@@ -24,6 +24,7 @@ export const metadata: Metadata = {
     "NannyOra",
   ],
   authors: [{ name: "NannyOra" }],
+  verification: { google: "NoGoOytN_JSfKiZcu99MVXg5OtYv73BlYhVkOoIiMWE" },
   creator: "NannyOra",
   publisher: "NannyOra",
   formatDetection: { telephone: false, email: false, address: false },
