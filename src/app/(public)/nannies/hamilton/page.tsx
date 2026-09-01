@@ -9,7 +9,7 @@ import { breadcrumbSchema } from "@/lib/seo";
 import type { NannyProfilePublic } from "@/types";
 import { ArrowRight, CalendarCheck, Check, Heart, MapPin, Search, ShieldCheck, Users } from "lucide-react";
 
-const title = "Nannies in Hamilton | Plan Your Hamilton Nanny Search";
+const title = "Nannies in Hamilton — Plan Your Search";
 const description = "Explore nanny care in Hamilton, understand how to hire with confidence, and share your family’s care brief with NannyOra as Hamilton availability develops.";
 const path = "/nannies/hamilton";
 

@@ -6,10 +6,12 @@ import { getPublicNannies } from "@/lib/data/nannies";
 import { ArrowRight, Brain, Sparkles, HeartHandshake, Compass } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { ImageBand } from "@/components/ui/ImageBand";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbSchema, serviceSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/neurodiverse-childcare-auckland" },
-  title: "Neurodiverse Childcare Auckland — Experienced Nannies",
+  title: "Neurodiverse Childcare in Auckland",
   description: "Find nannies in Auckland with experience in neurodiverse childcare, including autism and ADHD support. Verified specialist carers on NannyOra.",
 };
 
@@ -20,6 +22,7 @@ export default async function NeurodiverseChildcarePage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <JsonLd data={[breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Neurodiverse Childcare Auckland", path: "/neurodiverse-childcare-auckland" }]), serviceSchema({ name: "Neurodiverse Childcare in Auckland", description: "Find nannies in Auckland with experience in neurodiverse childcare, including autism and ADHD support. Verified specialist carers on NannyOra.", path: "/neurodiverse-childcare-auckland", serviceType: "Neurodiverse childcare support" })]} />
       {/* Top Header */}
       <div className="text-center max-w-3xl mx-auto mb-16 animate-fade-in">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-badge-specialist text-xs font-bold uppercase tracking-wider mb-4 border border-blue-100/50">

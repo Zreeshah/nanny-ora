@@ -11,8 +11,8 @@ import {
 } from "@/components/seo/EditorialGuide";
 import { articleSchema, breadcrumbSchema, faqSchema } from "@/lib/seo";
 
-const title = "Nanny vs Daycare in New Zealand: Which Childcare Is Right for Your Family?";
-const description = "Compare a nanny and daycare in New Zealand: routines, flexibility, one-to-one attention, social time, household responsibilities and the questions that make the choice clearer.";
+const title = "Nanny vs Daycare NZ: Which Is Right for You?";
+const description = "Compare a nanny and daycare in New Zealand: routines, flexibility, one-to-one attention, social time, cost and how to choose.";
 const path = "/nanny-vs-daycare";
 
 export const metadata: Metadata = {

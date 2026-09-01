@@ -3,8 +3,8 @@ import Link from "next/link";
 import { Checklist, EditorialGuide, GuideSection, InfoCard, Prose, Steps, type GuideFaq } from "@/components/seo/EditorialGuide";
 import { articleSchema, breadcrumbSchema, faqSchema } from "@/lib/seo";
 
-const title = "Specialist Nanny Care: Finding the Right Individual Support";
-const description = "Learn how to find specialist nanny care for a child who needs individual support, including newborn care, ECE experience, sensory-aware support and neurodiverse experience.";
+const title = "Specialist Nanny Care & Individual Support";
+const description = "Find specialist nanny care for a child who needs individual support — newborn care, ECE experience, sensory-aware and neurodiverse support.";
 const path = "/specialist-nanny-care";
 
 export const metadata: Metadata = { title, description, alternates: { canonical: path }, openGraph: { title, description, url: path, type: "article" } };

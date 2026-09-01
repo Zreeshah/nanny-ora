@@ -3,8 +3,8 @@ import Link from "next/link";
 import { Checklist, EditorialGuide, GuideSection, InfoCard, Prose, Steps, type GuideFaq } from "@/components/seo/EditorialGuide";
 import { articleSchema, breadcrumbSchema, faqSchema } from "@/lib/seo";
 
-const title = "Nanny vs Au Pair: Which Childcare Arrangement Fits Your Family?";
-const description = "Compare a professional nanny and an au pair arrangement: childcare role, live-in boundaries, privacy, accommodation, planning and the questions New Zealand families should resolve first.";
+const title = "Nanny vs Au Pair: Which Fits Your Family?";
+const description = "Compare a professional nanny and an au pair: the childcare role, live-in boundaries, privacy and what NZ families should settle first.";
 const path = "/nanny-vs-au-pair";
 
 export const metadata: Metadata = { title, description, alternates: { canonical: path }, openGraph: { title, description, url: path, type: "article" } };

@@ -3,8 +3,8 @@ import Link from "next/link";
 import { Checklist, EditorialGuide, GuideSection, InfoCard, Prose, Steps, type GuideFaq } from "@/components/seo/EditorialGuide";
 import { articleSchema, breadcrumbSchema, faqSchema } from "@/lib/seo";
 
-const title = "Nanny vs Babysitter: What’s the Difference for New Zealand Families?";
-const description = "Understand the difference between a nanny and a babysitter: regular care, responsibilities, experience, planning, employment and how to choose the right support for your family.";
+const title = "Nanny vs Babysitter: The Difference in NZ";
+const description = "The difference between a nanny and a babysitter: regular care, responsibilities, experience and how to choose for your family.";
 const path = "/nanny-vs-babysitter";
 
 export const metadata: Metadata = { title, description, alternates: { canonical: path }, openGraph: { title, description, url: path, type: "article" } };

@@ -40,7 +40,7 @@ const finalCtaImage = pickImages({ tags: ["family", "find", "trust", "care"], co
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
-  title: "NannyOra — Trusted Nanny Care for Auckland Families",
+  title: { absolute: "NannyOra — Trusted Nanny Care in Auckland" },
   description:
     "Find trusted, specialist nannies in Auckland — including sensory-aware, ECE, and highly experienced childcare support. Verified local nannies for your family.",
 };

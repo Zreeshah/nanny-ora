@@ -6,11 +6,13 @@ import { NannyCard } from "@/components/cards/NannyCard";
 import { getPublicNannies } from "@/lib/data/nannies";
 import { Brain, Heart, Shield, ArrowRight, Sparkles, Award } from "lucide-react";
 import { ImageBand } from "@/components/ui/ImageBand";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbSchema, serviceSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/specialist-childcare-auckland" },
-  title: "Specialist Childcare Auckland — Sensory-Aware & Neurodiverse Nannies",
-  description: "Find specialist childcare in Auckland. NannyOra connects families with vetted nannies experienced in sensory-aware care, neurodiverse support, ECE, and early intervention.",
+  title: "Specialist Childcare in Auckland",
+  description: "Specialist childcare in Auckland — vetted nannies experienced in sensory-aware care, neurodiverse support, ECE and early intervention.",
 };
 
 export const revalidate = 300;
@@ -21,6 +23,7 @@ export default async function SpecialistChildcarePage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <JsonLd data={[breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Specialist Childcare Auckland", path: "/specialist-childcare-auckland" }]), serviceSchema({ name: "Specialist Childcare in Auckland", description: "Specialist childcare in Auckland — vetted nannies experienced in sensory-aware care, neurodiverse support, ECE and early intervention.", path: "/specialist-childcare-auckland", serviceType: "Specialist in-home childcare" })]} />
       {/* Top Header Section */}
       <div className="text-center max-w-3xl mx-auto mb-16 animate-fade-in">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-badge-specialist text-xs font-bold uppercase tracking-wider mb-4 border border-blue-100/50">

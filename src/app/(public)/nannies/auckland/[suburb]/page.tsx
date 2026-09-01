@@ -7,6 +7,8 @@ import { getPublicNannies } from "@/lib/data/nannies";
 import { SUBURB_SLUGS } from "@/lib/constants";
 import { ArrowRight } from "lucide-react";
 import { ImageBand } from "@/components/ui/ImageBand";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbSchema } from "@/lib/seo";
 
 export const revalidate = 300;
 
@@ -29,7 +31,7 @@ export async function generateMetadata({
   const hasNannies = (await getPublicNannies({ suburb: suburbName })).length > 0;
 
   return {
-    title: `Nannies in ${suburbName}, Auckland — Verified Childcare`,
+    title: `Verified Nannies in ${suburbName}, Auckland`,
     description: `Find verified nannies in ${suburbName}, Auckland. Browse experienced local carers, ECE-qualified nannies, and specialist childcare support on NannyOra.`,
     alternates: { canonical: `/nannies/auckland/${suburb}` },
     robots: hasNannies ? undefined : { index: false, follow: true },
@@ -49,6 +51,13 @@ export default async function SuburbNanniesPage({
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Nannies in Auckland", path: "/nannies/auckland" },
+          { name: `Nannies in ${suburbName}`, path: `/nannies/auckland/${suburb}` },
+        ])}
+      />
       <div className="text-center mb-12">
         <h1 className="font-heading text-4xl md:text-5xl text-foreground mb-4">
           Nannies in {suburbName}

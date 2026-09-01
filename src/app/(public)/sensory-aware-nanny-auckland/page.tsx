@@ -6,10 +6,12 @@ import { getPublicNannies } from "@/lib/data/nannies";
 import { ArrowRight, Heart, Sparkles, Smile, ShieldAlert } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { ImageBand } from "@/components/ui/ImageBand";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbSchema, serviceSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/sensory-aware-nanny-auckland" },
-  title: "Sensory-Aware Nannies Auckland — Calm, Specialist Childcare",
+  title: "Sensory-Aware Nannies in Auckland",
   description: "Find sensory-aware nannies in Auckland who create calm, structured environments for children with sensory processing needs. Verified on NannyOra.",
 };
 
@@ -20,6 +22,7 @@ export default async function SensoryAwareNannyPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <JsonLd data={[breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Sensory-Aware Nannies Auckland", path: "/sensory-aware-nanny-auckland" }]), serviceSchema({ name: "Sensory-Aware Nannies in Auckland", description: "Find sensory-aware nannies in Auckland who create calm, structured environments for children with sensory processing needs. Verified on NannyOra.", path: "/sensory-aware-nanny-auckland", serviceType: "Sensory-aware childcare" })]} />
       {/* Top Header */}
       <div className="text-center max-w-3xl mx-auto mb-16 animate-fade-in">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 text-teal-600 text-xs font-bold uppercase tracking-wider mb-4 border border-teal-100/50">

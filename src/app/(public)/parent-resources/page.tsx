@@ -3,7 +3,7 @@ import Link from "next/link";
 import { EditorialGuide, GuideSection, InfoCard, Prose, Steps, type GuideFaq } from "@/components/seo/EditorialGuide";
 import { articleSchema, breadcrumbSchema, faqSchema } from "@/lib/seo";
 
-const title = "Parent Resources: Guides for Hiring and Working With a Nanny";
+const title = "Parent Resources for Hiring a Nanny in NZ";
 const description = "Practical NannyOra resources for parents: choosing childcare, vetting, nanny interview questions, contracts, payroll, safety and individual support planning.";
 const path = "/parent-resources";
 

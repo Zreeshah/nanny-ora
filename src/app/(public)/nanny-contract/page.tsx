@@ -13,7 +13,7 @@ import {
 } from "@/components/seo/EditorialGuide";
 import { articleSchema, breadcrumbSchema, faqSchema } from "@/lib/seo";
 
-const title = "Nanny Contract NZ: What Your Agreement Should Cover";
+const title = "Nanny Contract NZ: What to Include";
 const description = "A New Zealand guide to nanny contracts and employment agreements, including duties, hours, pay, leave, privacy, transport, safety, changes and ending employment.";
 const path = "/nanny-contract";
 

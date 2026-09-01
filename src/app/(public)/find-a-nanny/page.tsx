@@ -3,7 +3,7 @@ import { getPublicNannies } from "@/lib/data/nannies";
 import { FindANannyArticle } from "./FindANannyArticle";
 
 export const metadata: Metadata = {
-  title: "Hire a Nanny in NZ | Trusted Home Childcare | NannyOra",
+  title: "Hire a Nanny in NZ — Trusted Home Childcare",
   description:
     "Hire a nanny with confidence. Compare care options, understand costs and NZ employer duties, and browse trusted Auckland nanny profiles with NannyOra.",
   alternates: {

@@ -13,8 +13,8 @@ import {
 } from "@/components/seo/EditorialGuide";
 import { articleSchema, breadcrumbSchema, faqSchema } from "@/lib/seo";
 
-const title = "Nanny Safety: A Complete Checklist for New Zealand Families";
-const description = "Create a safer nanny arrangement with practical guidance on vetting, first-day handovers, emergencies, first aid, safe sleep, transport, medication, privacy and ongoing communication.";
+const title = "Nanny Safety Checklist for NZ Families";
+const description = "Practical nanny safety guidance for NZ families: vetting, handovers, emergencies, first aid, safe sleep, transport and medication.";
 const path = "/nanny-safety";
 
 export const metadata: Metadata = {
