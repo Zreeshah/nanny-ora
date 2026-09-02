@@ -44,7 +44,7 @@ export async function generateMetadata({
   if (!nanny) return { title: "Nanny Not Found" };
   return {
     title: `${nanny.name} — Nanny in ${nanny.suburb}`,
-    description: `${nanny.name} is a ${nanny.verificationLevel.toLowerCase().replace("_", " ")} nanny in ${nanny.suburb}, Auckland. ${nanny.bio.slice(0, 150)}`,
+    description: `${nanny.name} is a ${nanny.verificationLevel.toLowerCase().replace("_", " ")} nanny in ${nanny.suburb}, Auckland. ${nanny.bio}`.slice(0, 155).trim(),
     alternates: { canonical: `/nannies/${nanny.slug}` },
     openGraph: {
       type: "profile",

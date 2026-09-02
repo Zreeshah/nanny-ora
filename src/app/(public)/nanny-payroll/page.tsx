@@ -13,8 +13,8 @@ import {
 } from "@/components/seo/EditorialGuide";
 import { articleSchema, breadcrumbSchema, faqSchema } from "@/lib/seo";
 
-const title = "Nanny Payroll NZ: PAYE, IR56, KiwiSaver and Records";
-const description = "Understand nanny payroll in New Zealand, including worker status, the IR56 private domestic worker route, household employer payroll, PAYE, leave records, KiwiSaver and ACC.";
+const title = "Nanny Payroll NZ: PAYE, IR56 & KiwiSaver";
+const description = "Understand nanny payroll in New Zealand: worker status, the IR56 route, PAYE, leave records, KiwiSaver and ACC for household employers.";
 const path = "/nanny-payroll";
 
 export const metadata: Metadata = {

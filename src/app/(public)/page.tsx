@@ -39,7 +39,8 @@ const homeSensoryImage = pickImages({ tags: ["sensory", "neurodiverse", "special
 const finalCtaImage = pickImages({ tags: ["family", "find", "trust", "care"], count: 1, seed: "home-final-cta" })[0];
 
 export const metadata: Metadata = {
-  title: "NannyOra — Trusted Nanny Care for Auckland Families",
+  alternates: { canonical: "/" },
+  title: { absolute: "NannyOra — Trusted Nanny Care in Auckland" },
   description:
     "Find trusted, specialist nannies in Auckland — including sensory-aware, ECE, and highly experienced childcare support. Verified local nannies for your family.",
 };

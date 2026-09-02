@@ -6,9 +6,12 @@ import { getPublicNannies } from "@/lib/data/nannies";
 import { ArrowRight, GraduationCap, Star, BookOpen, Lightbulb } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { ImageBand } from "@/components/ui/ImageBand";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbSchema, serviceSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "ECE Nannies Auckland — Early Childhood Education Qualified",
+  alternates: { canonical: "/ece-nanny-auckland" },
+  title: "ECE Qualified Nannies in Auckland",
   description: "Find ECE-qualified nannies and registered teachers in Auckland. Experienced early childhood educators providing enriching home-based care via NannyOra.",
 };
 
@@ -19,6 +22,7 @@ export default async function EceNannyPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <JsonLd data={[breadcrumbSchema([{ name: "Home", path: "/" }, { name: "ECE Nannies Auckland", path: "/ece-nanny-auckland" }]), serviceSchema({ name: "ECE Qualified Nannies in Auckland", description: "Find ECE-qualified nannies and registered teachers in Auckland. Experienced early childhood educators providing enriching home-based care via NannyOra.", path: "/ece-nanny-auckland", serviceType: "ECE-qualified in-home childcare" })]} />
       {/* Top Header */}
       <div className="text-center max-w-3xl mx-auto mb-16 animate-fade-in">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-badge-premium text-xs font-bold uppercase tracking-wider mb-4 border border-amber-100/50">

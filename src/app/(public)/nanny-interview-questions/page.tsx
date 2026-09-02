@@ -13,8 +13,8 @@ import {
 } from "@/components/seo/EditorialGuide";
 import { articleSchema, breadcrumbSchema, faqSchema } from "@/lib/seo";
 
-const title = "Nanny Interview Questions: A Practical Guide for NZ Families";
-const description = "Prepare for a nanny interview with structured questions about experience, routines, safety, emergencies, communication, duties, employment expectations and family fit.";
+const title = "Nanny Interview Questions for NZ Families";
+const description = "Structured nanny interview questions on experience, routines, safety, emergencies, communication, duties and family fit.";
 const path = "/nanny-interview-questions";
 
 export const metadata: Metadata = {

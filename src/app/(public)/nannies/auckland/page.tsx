@@ -9,8 +9,8 @@ import { breadcrumbSchema, localBusinessSchema } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { ArrowRight, CalendarCheck, Check, Heart, MapPin, Search, ShieldCheck, Users } from "lucide-react";
 
-const title = "Nannies in Auckland — Find Trusted Local Childcare";
-const description = "Find nanny care in Auckland through NannyOra. Browse real local profiles, compare experience and care types, understand the matching process, and choose the right next step for your family.";
+const title = "Nannies in Auckland — Trusted Local Care";
+const description = "Find nanny care in Auckland with NannyOra. Browse verified local profiles, compare experience and care types, and start your search.";
 const path = "/nannies/auckland";
 
 export const metadata: Metadata = {

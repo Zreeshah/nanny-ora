@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { LifeBuoy, ShieldCheck, Clock, MessageCircle } from "lucide-react";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbSchema, serviceSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/childcare-support" },
   title: "Childcare Support Options — NannyOra",
   description:
     "Some recurring or full-time home-based care arrangements may qualify for additional childcare support. Eligibility is assessed privately by the NannyOra team.",
@@ -30,6 +33,7 @@ const points = [
 export default function ChildcareSupportPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <JsonLd data={[breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Childcare Support Options", path: "/childcare-support" }]), serviceSchema({ name: "Childcare Support Options — NannyOra", description: "Some recurring or full-time home-based care arrangements may qualify for additional childcare support. Eligibility is assessed privately by the NannyOra team.", path: "/childcare-support", serviceType: "Childcare support and guidance" })]} />
       {/* Soft header — informational, not promotional */}
       <div className="text-center max-w-2xl mx-auto mb-14 animate-fade-in">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4 border border-primary/15">

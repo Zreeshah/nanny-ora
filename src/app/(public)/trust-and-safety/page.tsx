@@ -8,8 +8,11 @@ import {
 } from "lucide-react";
 import { ImageBand } from "@/components/ui/ImageBand";
 import { ShinyText } from "@/components/ui/ShinyText";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/trust-and-safety" },
   title: "Trust & Safety — Safe Childcare on NannyOra",
   description: "Learn how NannyOra verifies nannies, protects parents, and maintains a secure, trust-focused childcare community in Auckland.",
 };
@@ -48,6 +51,7 @@ const verificationDetails = [
 export default function TrustAndSafetyPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <JsonLd data={[breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Trust & Safety", path: "/trust-and-safety" }])]} />
       {/* Header section */}
       <div className="text-center max-w-2xl mx-auto mb-16 animate-fade-in">
         <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5 border border-primary/20">

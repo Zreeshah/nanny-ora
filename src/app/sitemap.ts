@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/db/prisma";
 import { SUBURB_SLUGS } from "@/lib/constants";
+import { getPublicNannies, filterNannies } from "@/lib/data/nannies";
 import { INDEXABLE_STATIC_PATHS } from "@/lib/indexnow";
 
 const BASE = "https://www.nannyora.co.nz";
@@ -27,12 +28,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: s.priority,
   }));
 
-  const suburbEntries: MetadataRoute.Sitemap = Object.keys(SUBURB_SLUGS).map((slug) => ({
-    url: `${BASE}/nannies/auckland/${slug}`,
-    lastModified: now,
-    changeFrequency: "weekly",
-    priority: 0.7,
-  }));
+  // Only list suburbs that actually have nannies. Empty suburb pages are noindex
+  // (near-duplicate thin content), and a sitemap must never advertise a noindex URL.
+  // One DB read, filtered in memory.
+  let suburbEntries: MetadataRoute.Sitemap = [];
+  try {
+    const allNannies = await getPublicNannies();
+    suburbEntries = Object.keys(SUBURB_SLUGS)
+      .filter((slug) => filterNannies(allNannies, { suburb: SUBURB_SLUGS[slug] }).length > 0)
+      .map((slug) => ({
+        url: `${BASE}/nannies/auckland/${slug}`,
+        lastModified: now,
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      }));
+  } catch (error) {
+    console.error("sitemap: suburb query failed:", error);
+  }
 
   // Real approved nanny profiles by slug. Fail soft: if the DB is unreachable the
   // sitemap still returns the static + suburb pages rather than erroring.

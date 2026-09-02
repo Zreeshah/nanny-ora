@@ -5,15 +5,18 @@ import { ImageBand } from "@/components/ui/ImageBand";
 import { Reveal } from "@/components/ui/Reveal";
 import { ShinyText } from "@/components/ui/ShinyText";
 import StatsTicker from "@/components/home/StatsTicker";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbSchema } from "@/lib/seo";
 import {
   Fingerprint, Video, PhoneCall, ShieldCheck, GraduationCap, CalendarCheck,
   Heart, ArrowRight, Check, Lock, Sparkles,
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Our Verification Process — How NannyOra Vets Every Nanny",
+  alternates: { canonical: "/verification-process" },
+  title: "How NannyOra Vets Every Nanny",
   description:
-    "See exactly how NannyOra verifies every Auckland nanny: identity, interviews, reference calls, NZ Police vetting, qualifications, trial sessions, and ongoing feedback — and how each step protects your family.",
+    "How NannyOra verifies every Auckland nanny: identity, interviews, reference calls, NZ Police vetting, qualifications and trial sessions.",
 };
 
 const METRICS = [
@@ -77,6 +80,7 @@ const CHECKS = [
 export default function VerificationProcessPage() {
   return (
     <div className="py-16 md:py-24">
+      <JsonLd data={[breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Verification Process", path: "/verification-process" }])]} />
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-14">

@@ -13,7 +13,7 @@ import {
 } from "@/components/seo/EditorialGuide";
 import { articleSchema, breadcrumbSchema, faqSchema } from "@/lib/seo";
 
-const title = "Nanny Vetting in New Zealand: A Parent’s Complete Guide";
+const title = "Nanny Vetting NZ: A Parent’s Complete Guide";
 const description = "Learn how to vet a nanny in New Zealand, from identity and work history to references, qualifications, Police vetting, interviews and a practical risk assessment.";
 const path = "/nanny-vetting";
 

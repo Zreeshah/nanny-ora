@@ -9,6 +9,8 @@ import { ShinyText } from "@/components/ui/ShinyText";
 import { BorderBeam } from "@/components/ui/BorderBeam";
 import { NannyTiers } from "@/components/pricing/NannyTiers";
 import { MEMBERSHIP_PLANS, MEMBERSHIP_BENEFITS, planSavingsCents, formatNzd } from "@/lib/membership";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Pricing",
@@ -30,6 +32,7 @@ export default function PricingPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <JsonLd data={[breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Pricing", path: "/pricing" }])]} />
       <div className="text-center mb-14">
         <h1 className="font-heading text-4xl md:text-5xl text-foreground mb-4">
           Simple, <ShinyText>Transparent Pricing</ShinyText>

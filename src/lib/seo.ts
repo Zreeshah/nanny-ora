@@ -138,3 +138,24 @@ export function articleSchema(article: {
     about: ["Nannies", "In-home childcare", "New Zealand"],
   };
 }
+
+/** Service offering (the specialist / location landing pages). */
+export function serviceSchema(s: {
+  name: string;
+  description: string;
+  path: string;
+  serviceType?: string;
+  areaName?: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: s.name,
+    description: s.description,
+    serviceType: s.serviceType ?? "In-home childcare",
+    url: `${SITE_URL}${s.path}`,
+    provider: { "@type": "Organization", name: "NannyOra", url: SITE_URL },
+    areaServed: { "@type": "City", name: s.areaName ?? "Auckland", addressCountry: "NZ" },
+    audience: { "@type": "Audience", audienceType: "Parents and families" },
+  };
+}
