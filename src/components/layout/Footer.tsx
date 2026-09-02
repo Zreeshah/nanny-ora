@@ -4,6 +4,7 @@ import Image from "next/image";
 const footerLinks = {
   "For Families": [
     { href: "/find-a-nanny", label: "Find a Nanny" },
+    { href: "/how-to-hire-a-nanny", label: "How to Hire a Nanny" },
     { href: "/nannies/auckland", label: "Auckland Nanny Directory" },
     { href: "/nannies/hamilton", label: "Hamilton Nanny Planning" },
     { href: "/register-family", label: "Register as a Family" },

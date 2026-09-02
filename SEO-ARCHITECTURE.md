@@ -170,7 +170,7 @@ SEO content should support the marketplace rather than interfere with it.
 Recommended URL:
 
 ```text
-/hire-a-nanny
+/find-a-nanny
 ```
 
 Primary intent:
@@ -181,14 +181,17 @@ Primary topic:
 
 Hiring a nanny in New Zealand
 
-This should be the main commercial topical pillar.
+This should be the main commercial topical pillar. NannyOra consolidates the
+"Hire a Nanny" and "Find a Nanny" intents on this one page: the directory and
+filters serve the transactional intent, while the surrounding guide content
+answers commercial and decision-support questions.
 
 ---
 
 ## Hire a Nanny — Supporting Pages
 
 ```text
-/hire-a-nanny
+/find-a-nanny
     │
     ├── /how-to-hire-a-nanny
     ├── /nanny-interview-questions
@@ -1287,10 +1290,7 @@ Instead define roles:
 
 ```text
 /find-a-nanny
-= marketplace / profiles / filters
-
-/hire-a-nanny
-= commercial guide / service / decision support
+= marketplace / profiles / filters + commercial guide / service / decision support
 
 /how-to-hire-a-nanny
 = informational process guide
@@ -1498,8 +1498,8 @@ This is deliberately compact.
 | Page                      | Intent                   | Priority | Status  |
 | ------------------------- | ------------------------ | -------: | ------- |
 | Find a Nanny              | Transactional            |       P0 | LIVE    |
-| Hire a Nanny              | Commercial               |       P0 | Phase 1 |
-| How to Hire a Nanny       | Informational            |       P0 | Phase 1 |
+| Hire a Nanny (served by `/find-a-nanny`) | Commercial |       P0 | LIVE    |
+| How to Hire a Nanny       | Informational            |       P0 | LIVE    |
 | Nanny Interview Questions | Informational            |       P1 | LIVE    |
 | Nanny Vetting             | Trust / Commercial       |       P0 | LIVE    |
 | Nanny Contract            | Employment               |       P1 | LIVE    |

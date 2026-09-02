@@ -11,6 +11,7 @@ export const INDEXNOW_KEY_LOCATION = `https://${INDEXNOW_HOST}/${INDEXNOW_KEY}.t
 export const INDEXABLE_STATIC_PATHS = [
   "",
   "find-a-nanny",
+  "how-to-hire-a-nanny",
   "nanny-vetting",
   "nanny-interview-questions",
   "nanny-contract",

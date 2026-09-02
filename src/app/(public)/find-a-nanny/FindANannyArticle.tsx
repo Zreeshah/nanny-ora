@@ -342,6 +342,7 @@ const FAQS: FAQ[] = [
 ];
 
 const RELATED = [
+  { href: "/how-to-hire-a-nanny", label: "How to hire a nanny in New Zealand" },
   { href: "/how-it-works", label: "How NannyOra works" },
   { href: "/nanny-vetting", label: "How to vet a nanny in New Zealand" },
   { href: "/nanny-interview-questions", label: "Nanny interview questions for families" },
