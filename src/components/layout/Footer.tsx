@@ -14,6 +14,7 @@ const footerLinks = {
     { href: "/nanny-interview-questions", label: "Interview Questions" },
     { href: "/nanny-contract", label: "Nanny Contract Guide" },
     { href: "/nanny-payroll", label: "Nanny Payroll Guide" },
+    { href: "/nanny-cost", label: "Nanny Cost Guide" },
     { href: "/parent-resources", label: "Parent Resources" },
   ],
   "For Nannies": [

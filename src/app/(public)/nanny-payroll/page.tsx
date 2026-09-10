@@ -71,6 +71,7 @@ export default function NannyPayrollPage() {
       schemas={schemas}
       faqs={faqs}
       related={[
+        { href: "/nanny-cost", label: "Nanny cost guide", description: "Budget wages, leave, employer costs and practical childcare expenses." },
         { href: "/nanny-contract", label: "Nanny contract", description: "Set the gross pay, hours, leave, expenses and employment terms first." },
         { href: "/nanny-interview-questions", label: "Nanny interview questions", description: "Discuss pay expectations and practical duties before an offer." },
         { href: "/nanny-vetting", label: "Nanny vetting", description: "Complete role-relevant checks before the regular start date." },

@@ -1503,7 +1503,7 @@ This is deliberately compact.
 | Nanny Interview Questions | Informational            |       P1 | LIVE    |
 | Nanny Vetting             | Trust / Commercial       |       P0 | LIVE    |
 | Nanny Contract            | Employment               |       P1 | LIVE    |
-| Nanny Cost                | Commercial Investigation |       P0 | Phase 1 |
+| Nanny Cost                | Commercial Investigation |       P0 | LIVE    |
 | Nanny Payroll             | Employment               |       P1 | LIVE    |
 | Nanny Safety              | Trust / Informational    |       P1 | LIVE    |
 | Specialist Nanny Care     | Commercial               |       P2 | LIVE    |
@@ -1513,8 +1513,8 @@ This is deliberately compact.
 | Parent Resources          | Informational Hub        |       P2 | LIVE    |
 | Auckland                  | Local Commercial         |       P0 | LIVE    |
 | Hamilton                  | Local Commercial         |       P1 | LIVE    |
-| Christchurch              | Local Commercial         |       P1 | Phase 1 |
-| Wellington                | Local Commercial         |       P1 | Phase 1 |
+| Christchurch              | Local Commercial         |       P1 | LIVE    |
+| Wellington                | Local Commercial         |       P1 | LIVE    |
 
 Target:
 

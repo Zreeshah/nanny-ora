@@ -34,6 +34,7 @@ export default function NannyVsBabysitterPage() {
         { href: "/nanny-vs-daycare", label: "Nanny vs daycare", description: "Compare home-based, individual care with a centre routine." },
         { href: "/nanny-vs-au-pair", label: "Nanny vs au pair", description: "Understand the added considerations of a live-in arrangement." },
         { href: "/nanny-vetting", label: "Nanny vetting", description: "Use references, interview evidence and visible verification information." },
+        { href: "/nanny-cost", label: "Nanny cost guide", description: "Compare the total cost of a recurring care arrangement." },
         { href: "/nanny-interview-questions", label: "Interview questions", description: "Ask questions that reveal safety judgment and communication." },
         { href: "/nanny-safety", label: "Nanny safety", description: "Prepare the home, emergency contacts and first handover." },
         { href: "/find-a-nanny", label: "Find a nanny", description: "Browse Auckland profiles for planned, recurring care." },

@@ -11,8 +11,8 @@ const BASE = "https://www.nannyora.co.nz";
 const STATIC: { path: string; priority: number; freq: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = INDEXABLE_STATIC_PATHS.map((path) => {
   if (path === "") return { path, priority: 1.0, freq: "daily" };
   if (path === "find-a-nanny") return { path, priority: 0.9, freq: "daily" };
-  if (["nanny-vetting", "nannies/auckland", "ece-nanny-auckland", "neurodiverse-childcare-auckland", "sensory-aware-nanny-auckland", "specialist-childcare-auckland"].includes(path)) return { path, priority: 0.8, freq: path === "nannies/auckland" ? "weekly" : "monthly" };
-  if (["nanny-interview-questions", "how-to-hire-a-nanny", "nanny-contract", "nanny-payroll", "nanny-safety", "nanny-vs-daycare", "nanny-vs-babysitter", "nanny-vs-au-pair", "specialist-nanny-care", "parent-resources", "nannies/hamilton", "childcare-support", "how-it-works", "apply-as-nanny", "membership"].includes(path)) return { path, priority: 0.7, freq: "monthly" };
+  if (["nanny-vetting", "nanny-cost", "nannies/auckland", "ece-nanny-auckland", "neurodiverse-childcare-auckland", "sensory-aware-nanny-auckland", "specialist-childcare-auckland"].includes(path)) return { path, priority: 0.8, freq: path === "nannies/auckland" ? "weekly" : "monthly" };
+  if (["nanny-interview-questions", "how-to-hire-a-nanny", "nanny-contract", "nanny-payroll", "nanny-safety", "nanny-vs-daycare", "nanny-vs-babysitter", "nanny-vs-au-pair", "specialist-nanny-care", "parent-resources", "nannies/hamilton", "nannies/christchurch", "nannies/wellington", "childcare-support", "how-it-works", "apply-as-nanny", "membership"].includes(path)) return { path, priority: 0.7, freq: "monthly" };
   if (["trust-and-safety", "verification-process"].includes(path)) return { path, priority: 0.6, freq: "monthly" };
   if (path === "pricing") return { path, priority: 0.5, freq: "monthly" };
   return { path, priority: 0.3, freq: "yearly" };

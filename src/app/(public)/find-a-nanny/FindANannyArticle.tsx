@@ -348,6 +348,7 @@ const RELATED = [
   { href: "/nanny-interview-questions", label: "Nanny interview questions for families" },
   { href: "/nanny-contract", label: "What to include in a nanny contract" },
   { href: "/nanny-payroll", label: "Nanny payroll, PAYE and IR56 guidance" },
+  { href: "/nanny-cost", label: "Nanny costs: plan your total family budget" },
   { href: "/nanny-safety", label: "Nanny safety and first-day checklist" },
   { href: "/nanny-vs-daycare", label: "Nanny vs daycare: choose the right childcare" },
   { href: "/nanny-vs-babysitter", label: "Nanny vs babysitter: regular care or occasional help" },
@@ -958,8 +959,8 @@ export function FindANannyArticle({ allNannies }: { allNannies: NannyProfilePubl
           </div>
 
           {[{ name: "Hamilton", body: "Hamilton is a planned expansion area. NannyOra does not present active local coverage until profiles and operational support are live.", href: "/nannies/hamilton", linkLabel: "Plan your Hamilton nanny search" },
-           { name: "Christchurch", body: "Christchurch is a planned expansion area. Build a dedicated location page only when families can complete the promised action and see relevant carers." },
-           { name: "Wellington", body: "Wellington is a planned expansion area. Until launch, use an honest expression-of-interest message rather than sending visitors to an empty search result." }].map((c) => (
+           { name: "Christchurch", body: "Christchurch is a planned expansion area. Use the local hub to plan a care brief and register interest while profiles are not yet publicly live.", href: "/nannies/christchurch", linkLabel: "Plan your Christchurch nanny search" },
+           { name: "Wellington", body: "Wellington is a planned expansion area. Use the local hub to share an honest expression of interest while active local profiles develop.", href: "/nannies/wellington", linkLabel: "Plan your Wellington nanny search" }].map((c) => (
             <div key={c.name} className="bg-secondary/40 rounded-3xl p-6 border border-border/30">
               <div className="flex items-center gap-2 mb-2">
                 <MapPin className="w-5 h-5 text-muted-foreground" aria-hidden="true" />

@@ -35,6 +35,7 @@ export default function NannyVsAuPairPage() {
         { href: "/nanny-vs-babysitter", label: "Nanny vs babysitter", description: "Understand recurring care compared with occasional help." },
         { href: "/nanny-contract", label: "Nanny contract guide", description: "Put the childcare role and working arrangements in writing." },
         { href: "/nanny-payroll", label: "Nanny payroll guide", description: "Work through status, pay and household obligations." },
+        { href: "/nanny-cost", label: "Nanny cost guide", description: "Price the full nanny arrangement, not just one hourly figure." },
         { href: "/nanny-safety", label: "Nanny safety guide", description: "Prepare safe routines and clear emergency information." },
         { href: "/find-a-nanny", label: "Find a nanny", description: "Browse Auckland nanny profiles for professional in-home care." },
       ]}

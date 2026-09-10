@@ -30,6 +30,7 @@ const resources = [
     { href: "/trust-and-safety", label: "Trust and safety", body: "Understand shared responsibilities for a safe match." },
   ] },
   { group: "Set up the arrangement", links: [
+    { href: "/nanny-cost", label: "Nanny cost guide", body: "Build a full family budget beyond the advertised hourly rate." },
     { href: "/nanny-contract", label: "Nanny contract guide", body: "Put hours, duties, pay and expectations into writing." },
     { href: "/nanny-payroll", label: "Nanny payroll guide", body: "Work through tax, status and household-employer questions." },
     { href: "/nanny-safety", label: "Nanny safety guide", body: "Prepare emergency details, routines, transport and the first day." },

@@ -68,6 +68,7 @@ export default function NannyVsDaycarePage() {
         { href: "/nanny-vs-au-pair", label: "Nanny vs au pair", description: "Compare a professional nanny role with a live-in household arrangement." },
         { href: "/specialist-nanny-care", label: "Specialist nanny care", description: "Plan a careful match when your child needs individual support." },
         { href: "/nanny-payroll", label: "Nanny payroll guide", description: "Understand the household responsibilities that can come with a regular nanny." },
+        { href: "/nanny-cost", label: "Nanny cost guide", description: "Budget the total employment cost, not only an hourly rate." },
         { href: "/parent-resources", label: "Parent resources", description: "Keep planning with NannyOra’s family guides and checklists." },
         { href: "/find-a-nanny", label: "Find a nanny", description: "Browse Auckland nanny profiles when in-home care is the better fit." },
       ]}
