@@ -390,12 +390,13 @@ export function FindANannyArticle({ allNannies }: { allNannies: NannyProfilePubl
 
       {/* ---------------- DIRECTORY (full page width, right under the H1) ---------------- */}
       <Article>
-        <H2 id="search-and-compare-nanny-profiles">Search and Compare Nanny Profiles</H2>
+        <H2 id="search-and-compare-nanny-profiles">Search Auckland Nanny Profiles by Availability, Location and Experience</H2>
         <P>
-          Use the filters below to narrow the directory by care type, suburb, child age, availability, rate
-          range, language and relevant experience. Start with the requirements you cannot compromise
-          on—usually location, hours, child age experience and transport—then compare style, qualifications
-          and specialist skills.
+          NannyOra currently connects families with Auckland nanny profiles. Use the filters below to narrow the
+          directory by the care you need, suburb or travel area, child-age experience, current placement status,
+          rate range, language and relevant skills. Start with the requirements you cannot compromise on—usually
+          location, hours, child-age experience and transport—then compare profile details, qualifications and
+          the verification level shown.
         </P>
       </Article>
 
@@ -407,6 +408,12 @@ export function FindANannyArticle({ allNannies }: { allNannies: NannyProfilePubl
 
       <Article>
         <H3 id="what-to-look-for-on-a-nanny-profile">What to Look for on a Nanny Profile</H3>
+        <P>
+          A profile is a useful starting point, not a guarantee that every schedule will fit. Read the suburb and
+          areas covered alongside the availability summary, then confirm the actual days, hours and start date
+          directly with the nanny. Read the verification badge as the level of checks recorded on that profile,
+          not a substitute for an interview, references and a paid trial.
+        </P>
         <ul className="space-y-2.5 mt-5 mb-6">
           {PROFILE_LOOKS.map((t) => (
             <Bullet key={t}>{t}</Bullet>
@@ -426,7 +433,7 @@ export function FindANannyArticle({ allNannies }: { allNannies: NannyProfilePubl
           NannyOra helps Auckland families discover local nanny profiles, compare care specialties and
           connect through a structured platform.
         </p>
-        <p className="text-xs text-muted-foreground mt-4">Last updated: 7 August 2026</p>
+        <p className="text-xs text-muted-foreground mt-4">Last updated: 25 September 2026</p>
       </div>
 
       <Callout tone="warn" title="Important">

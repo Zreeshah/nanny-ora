@@ -50,6 +50,37 @@ const CheckboxPill = ({ checked, onClick, label }: { checked: boolean; onClick: 
   </button>
 );
 
+function searchableProfileText(nanny: NannyProfilePublic) {
+  const careLabels = nanny.careTypes
+    .map((careType) => CARE_TYPES.find((item) => item.value === careType)?.label ?? careType);
+  const specialistLabels = nanny.specialistTags
+    .map((tag) => SPECIALIST_TAGS.find((item) => item.value === tag)?.label ?? tag);
+  const languageLabels = nanny.languages
+    .map((language) => LANGUAGE_TAGS.find((item) => item.value === language)?.label ?? language);
+  const helpfulTerms = ["nanny", "nanny care", "in-home childcare", "Auckland"];
+
+  if (nanny.specialistTags.includes("baby_experience") || nanny.careTypes.includes("maternity_newborn")) {
+    helpfulTerms.push("newborn", "infant", "baby");
+  }
+  if (nanny.careTypes.includes("emergency_backup")) {
+    helpfulTerms.push("short-term", "backup", "on demand");
+  }
+  if (nanny.careTypes.includes("casual_babysitting")) {
+    helpfulTerms.push("casual", "one-off");
+  }
+
+  return [
+    nanny.name,
+    nanny.bio,
+    nanny.suburb,
+    ...nanny.areasCovered,
+    ...nanny.qualifications,
+    ...careLabels,
+    ...specialistLabels,
+    ...languageLabels,
+    ...helpfulTerms,
+  ].join(" ").toLowerCase();
+}
 
 export default function FindANannyClient({ allNannies }: { allNannies: NannyProfilePublic[] }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -100,11 +131,7 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
 
     if (search) {
       const q = search.toLowerCase();
-      results = results.filter(
-        (n) =>
-          n.name.toLowerCase().includes(q) ||
-          n.bio.toLowerCase().includes(q)
-      );
+      results = results.filter((nanny) => searchableProfileText(nanny).includes(q));
     }
 
     if (region) {
@@ -232,9 +259,10 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
         <input
           type="search"
-          placeholder="Search by nanny name or keyword..."
+          placeholder="Search name, suburb or experience..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          aria-label="Search nanny names, Auckland suburbs and profile experience"
           className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-border/70 bg-card text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all"
         />
       </div>
@@ -267,9 +295,9 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
           value={suburbs}
           onChange={setSuburbs}
           options={suburbOptions}
-          placeholder="Type a suburb…"
+          placeholder="Search an Auckland suburb…"
         />
-        <p className="text-[11px] text-muted-foreground mt-1.5">Start typing — we suggest suburbs where nannies are available.</p>
+        <p className="text-[11px] text-muted-foreground mt-1.5">Start typing — we suggest suburbs covered by current profiles.</p>
       </FilterSection>
 
       <FilterSection title="Specialization">
@@ -298,7 +326,7 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
         </div>
       </FilterSection>
 
-      <FilterSection title="Child Age">
+      <FilterSection title="Child Age Experience">
         <div className="flex flex-wrap gap-2">
           {CHILD_AGE_RANGES.map((a) => (
             <CheckboxPill
@@ -309,16 +337,18 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
             />
           ))}
         </div>
+        <p className="text-[11px] text-muted-foreground mt-2">Matches experience tags shown on profiles; review the full profile before shortlisting.</p>
       </FilterSection>
 
-      <FilterSection title="Quick Filters">
+      <FilterSection title="Availability and Profile Signals">
         <div className="flex flex-wrap gap-2">
-          <CheckboxPill checked={verifiedOnly} onClick={() => setVerifiedOnly(!verifiedOnly)} label="Verified Only" />
+          <CheckboxPill checked={verifiedOnly} onClick={() => setVerifiedOnly(!verifiedOnly)} label="Verified Profiles" />
           <CheckboxPill checked={availableOnly} onClick={() => setAvailableOnly(!availableOnly)} label="Available Now" />
-          <CheckboxPill checked={eceExperience} onClick={() => setEceExperience(!eceExperience)} label="ECE Qualified" />
+          <CheckboxPill checked={eceExperience} onClick={() => setEceExperience(!eceExperience)} label="ECE Experience" />
           <CheckboxPill checked={firstAid} onClick={() => setFirstAid(!firstAid)} label="First Aid" />
           <CheckboxPill checked={driverLicence} onClick={() => setDriverLicence(!driverLicence)} label="Driver Licence" />
         </div>
+        <p className="text-[11px] text-muted-foreground mt-2">Verified Profiles excludes Listed profiles. Read each badge and completed checks before deciding.</p>
       </FilterSection>
 
       <FilterSection title="Rate Range">
@@ -426,10 +456,19 @@ export default function FindANannyClient({ allNannies }: { allNannies: NannyProf
 
         {/* Results */}
         <div className="flex-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Start with</span>
+            <CheckboxPill checked={availableOnly} onClick={() => setAvailableOnly(!availableOnly)} label="Available now" />
+            <CheckboxPill checked={ageRanges.includes("newborn")} onClick={() => toggleArray(ageRanges, "newborn", setAgeRanges)} label="Newborn experience" />
+            <CheckboxPill checked={careTypes.includes("after_school")} onClick={() => toggleArray(careTypes, "after_school", setCareTypes)} label="After-school care" />
+            <CheckboxPill checked={verifiedOnly} onClick={() => setVerifiedOnly(!verifiedOnly)} label="Verified profiles" />
+          </div>
+
           {/* Results Count */}
           <div className="flex items-center justify-between mb-6">
-            <p className="text-sm text-muted-foreground">
-              {filteredNannies.length} nann{filteredNannies.length === 1 ? "y" : "ies"} found
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {filteredNannies.length} nanny profile{filteredNannies.length === 1 ? "" : "s"} found
+              <span className="block text-xs mt-0.5">Availability and schedules are profile-supplied; confirm the fit directly.</span>
             </p>
             {activeFilterCount > 0 && (
               <div className="flex flex-wrap gap-1.5">

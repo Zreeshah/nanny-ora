@@ -4,9 +4,10 @@ import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/Card";
 import { Badge, VerificationBadge, SpecialistTag, PlacementBadge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { MapPin, Clock, Star } from "lucide-react";
+import { MapPin, Clock } from "lucide-react";
 import { formatRate, truncate, getInitials } from "@/lib/utils";
 import { CARE_TYPES, LANGUAGE_TAGS } from "@/lib/constants";
+import type { SpecialistTagValue } from "@/lib/constants";
 import { FavouriteButton } from "./FavouriteButton";
 import type { NannyProfilePublic } from "@/types";
 
@@ -46,10 +47,6 @@ export function NannyCard({ nanny, className, favourited }: NannyCardProps) {
                 </span>
               </div>
             )}
-            {/* Online indicator dot */}
-            {nanny.verificationLevel !== "LISTED" && (
-              <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-badge-verified rounded-full border-2 border-card" />
-            )}
           </div>
 
           {/* Name & Location */}
@@ -60,11 +57,9 @@ export function NannyCard({ nanny, className, favourited }: NannyCardProps) {
               <span className="truncate">{nanny.suburb}</span>
             </div>
             <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-              <VerificationBadge level={nanny.verificationLevel as any} />
+              <VerificationBadge level={nanny.verificationLevel} />
               {nanny.tier === "PREMIUM" && <Badge variant="premium" size="sm">Verified Premium</Badge>}
-              {nanny.placementStatus && nanny.placementStatus !== "AVAILABLE" && (
-                <PlacementBadge status={nanny.placementStatus} placementEnd={nanny.placementEnd} />
-              )}
+              <PlacementBadge status={nanny.placementStatus || "AVAILABLE"} placementEnd={nanny.placementEnd} />
             </div>
           </div>
 
@@ -91,11 +86,19 @@ export function NannyCard({ nanny, className, favourited }: NannyCardProps) {
           ))}
         </div>
 
+        {nanny.areasCovered.length > 0 && (
+          <p className="text-xs text-muted-foreground leading-relaxed mb-4">
+            <span className="font-semibold text-foreground">Also covers:</span>{" "}
+            {nanny.areasCovered.slice(0, 3).join(", ")}
+            {nanny.areasCovered.length > 3 ? " and nearby areas" : ""}
+          </p>
+        )}
+
         {/* Specialist Tags */}
         {nanny.specialistTags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-4">
             {(nanny.specialistTags as string[]).slice(0, 3).map((tag) => (
-              <SpecialistTag key={tag} tag={tag as any} />
+              <SpecialistTag key={tag} tag={tag as SpecialistTagValue} />
             ))}
             {nanny.specialistTags.length > 3 && (
               <Badge variant="outline" size="sm">+{nanny.specialistTags.length - 3} more</Badge>
@@ -124,7 +127,7 @@ export function NannyCard({ nanny, className, favourited }: NannyCardProps) {
         {/* Availability */}
         {nanny.availabilitySummary && (
           <div className="bg-secondary/40 rounded-xl px-3 py-2 text-xs text-muted-foreground mb-4 border border-border/20 flex items-center gap-1.5">
-            <span className="font-semibold text-foreground">Available:</span> 
+            <span className="font-semibold text-foreground">Schedule:</span>
             <span>{nanny.availabilitySummary}</span>
           </div>
         )}
