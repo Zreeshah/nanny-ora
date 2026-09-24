@@ -13,8 +13,8 @@ import {
 } from "@/components/seo/EditorialGuide";
 import { articleSchema, breadcrumbSchema, faqSchema } from "@/lib/seo";
 
-const title = "Nanny Payroll NZ: PAYE, IR56 & KiwiSaver";
-const description = "Understand nanny payroll in New Zealand: worker status, the IR56 route, PAYE, leave records, KiwiSaver and ACC for household employers.";
+const title = "Nanny Payroll Software NZ: PAYE, IR56 & DIY Guide";
+const description = "Compare nanny payroll software, a payroll provider and DIY in New Zealand. Understand PAYE filing, IR56, KiwiSaver, leave records and household-employer responsibilities.";
 const path = "/nanny-payroll";
 
 export const metadata: Metadata = {
@@ -32,6 +32,10 @@ const faqs: GuideFaq[] = [
   { question: "Do I have to provide a nanny payslip?", answer: "New Zealand does not generally require every employer to issue a payslip, but employers must keep complete wage, time, holiday and leave records and show them to the employee on request. A clear payslip is good practice and reduces misunderstandings." },
   { question: "How long do nanny payroll records need to be kept?", answer: "Employment New Zealand says wage and time, holiday and leave records must be kept for six years. Tax and KiwiSaver records can have different or longer requirements—Inland Revenue’s guidance commonly requires seven years—so build the system to meet the longest applicable period." },
   { question: "Does a nanny get holiday pay and sick leave?", answer: "Employees receive statutory leave and holiday rights when the relevant eligibility rules are met. IR56 employees are still employees. Do not assume every casual or part-time arrangement can simply add 8% holiday pay; that method is lawful only in defined situations." },
+  { question: "Do I need payroll software to pay a nanny in New Zealand?", answer: "Not necessarily. A household employer can submit employment information in myIR without buying software. Payroll software or a payroll provider can be useful when hours, leave, public holidays, deductions or filing become harder to manage. The family still needs to supply accurate information, check the results and meet employer obligations." },
+  { question: "Can a payroll provider file PAYE for a household employer?", answer: "A payroll provider or intermediary may be able to file or manage payroll when the household gives the appropriate authority. Confirm exactly what the service files, who approves each pay, where records are kept and what access you retain. Using a provider does not decide whether the nanny is an employee, IR56 worker or genuine contractor." },
+  { question: "What should I look for in nanny payroll software?", answer: "Look for a New Zealand payroll workflow that suits your actual pay pattern and can record daily hours, leave, public-holiday work, deductions, reimbursements and the reports you need. Ask the provider whether it supports the correct payday-filing route, how it handles changes and corrections, what records you can export, and what you still need to review yourself." },
+  { question: "Can an IR56 nanny use payroll software?", answer: "An eligible IR56 worker is responsible for their own monthly PAYE and related filing obligations. Software may help organise calculations or records, but it does not move those obligations to the household or turn the worker into a contractor. Follow Inland Revenue’s current IR56 instructions." },
   { question: "Does NannyOra run payroll for families?", answer: "NannyOra is a discovery and matching platform, not the household employer. Families and nannies must establish the correct worker status and payroll route. Use Inland Revenue, Employment New Zealand, ACC or a New Zealand payroll professional for advice on the individual arrangement." },
 ];
 
@@ -45,7 +49,7 @@ const setupSteps = [
 
 export default function NannyPayrollPage() {
   const schemas = [
-    articleSchema({ headline: title, description, path, datePublished: "2026-08-21" }),
+    articleSchema({ headline: title, description, path, datePublished: "2026-08-21", dateModified: "2026-09-25" }),
     breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Find a Nanny", path: "/find-a-nanny" }, { name: "Nanny Payroll", path }]),
     faqSchema(faqs),
   ];
@@ -57,11 +61,12 @@ export default function NannyPayrollPage() {
       description={description}
       imageTags={["professional", "nanny", "family", "planning"]}
       imageSeed="nanny-payroll-nz"
-      highlights={["IR56 decision guide", "Household payroll steps", "Leave and record checks", "Official NZ sources"]}
+      highlights={["Software vs DIY", "IR56 decision guide", "Leave and record checks", "Official NZ sources"]}
       toc={[
         { id: "start-with-status", label: "Start with worker status" },
         { id: "ir56", label: "IR56 explained" },
         { id: "household-employer", label: "Household employer payroll" },
+        { id: "software-or-diy", label: "Software, provider or DIY" },
         { id: "gross-to-net", label: "Gross-to-net pay" },
         { id: "leave-holidays", label: "Leave and public holidays" },
         { id: "kiwisaver-acc", label: "KiwiSaver and ACC" },
@@ -71,6 +76,7 @@ export default function NannyPayrollPage() {
       schemas={schemas}
       faqs={faqs}
       related={[
+        { href: "/how-to-hire-a-nanny", label: "How to hire a nanny", description: "Move from a care brief and interview to a clear employment setup." },
         { href: "/nanny-cost", label: "Nanny cost guide", description: "Budget wages, leave, employer costs and practical childcare expenses." },
         { href: "/nanny-contract", label: "Nanny contract", description: "Set the gross pay, hours, leave, expenses and employment terms first." },
         { href: "/nanny-interview-questions", label: "Nanny interview questions", description: "Discuss pay expectations and practical duties before an offer." },
@@ -151,6 +157,59 @@ export default function NannyPayrollPage() {
         ]} />
         <Prose>
           For electronic payday filing, Inland Revenue currently requires employment information within two working days of each payday. Check <SourceLink href="https://www.ird.govt.nz/employing-staff/payday-filing">IRD’s payday filing page</SourceLink> because deadlines and processes can change.
+        </Prose>
+      </GuideSection>
+
+      <GuideSection
+        id="software-or-diy"
+        title="Nanny payroll software NZ: software, provider or DIY?"
+        intro={<Prose>A payroll tool can reduce admin, but it cannot make the employment-status decision or repair incomplete timesheets. Choose a workflow only after you know whether the household runs employer payroll or the nanny uses the IR56 route.</Prose>}
+      >
+        <div className="grid sm:grid-cols-3 gap-4">
+          <InfoCard title="DIY in myIR">
+            The household prepares the pay calculation and files employment information itself. Inland Revenue allows employers to enter employment information through myIR, so software is not a legal requirement.
+          </InfoCard>
+          <InfoCard title="Payroll software">
+            The household enters and approves the underlying hours and pay data in a New Zealand payroll system. Some products can create payroll records or help file information, but confirm the exact capability before relying on it.
+          </InfoCard>
+          <InfoCard title="Payroll provider or bureau">
+            An authorised provider may calculate, process or file on the household’s behalf. Confirm the approval process, responsibility for corrections and ongoing access to records before signing up.
+          </InfoCard>
+        </div>
+        <Prose>
+          Inland Revenue says employers can file employment information through an online myIR form, by uploading a payroll file, or directly through payroll software. Electronic employment information is generally due within two working days of payday. Read <SourceLink href="https://www.ird.govt.nz/payday">IRD’s current payday filing guidance</SourceLink> for the available filing methods and deadlines.
+        </Prose>
+        <InfoCard title="A provider does not become the employer" tone="important">
+          The household should still check the nanny’s correct status, approve the hours and pay, fund the wages and deductions, keep the required records and respond when the arrangement changes. A payroll provider works from the information it is given; it cannot decide the facts of the employment relationship for you.
+        </InfoCard>
+
+        <Subheading>When DIY may be manageable</Subheading>
+        <Prose>
+          DIY can suit a simple, consistent arrangement when the household has time to learn the current process, keeps daily hours and leave records carefully, and can meet each filing and payment deadline. It is not simply a matter of transferring the same amount every fortnight: changes to hours, leave, public holidays, tax codes or KiwiSaver still need to be recorded and treated correctly.
+        </Prose>
+
+        <Subheading>When software or a provider can be worth considering</Subheading>
+        <Prose>
+          Families often seek payroll software or a provider when the schedule is variable, school-holiday hours are different, public-holiday calculations apply, leave balances need regular attention, deductions change, or they want a clearer repeatable record. It can also be useful where more than one adult administers the household. These are practical reasons to seek support, not a rule that every nanny arrangement requires a paid product.
+        </Prose>
+
+        <Subheading>Questions to ask before choosing a payroll provider</Subheading>
+        <Checklist items={[
+          "Does it support the correct New Zealand payroll route for this arrangement, including the filing method you will use?",
+          "Can it record the actual days and daily hours worked, not only a total payment?",
+          "How does it handle variable schedules, annual holidays, sick leave, public holidays and alternative holidays?",
+          "Can it clearly separate wages from approved mileage, reimbursements and other expenses?",
+          "Who enters the hours, approves each pay, files employment information and corrects an error?",
+          "Does the service support the KiwiSaver information and deductions that apply to the actual payroll route?",
+          "Can you download complete wage, time, holiday, leave and filing records if you change provider or the employment ends?",
+          "What authority or access is needed for myIR, and how will the provider protect the nanny’s personal and bank information?",
+          "What is included in the fee, and what is the support process for an unusual pay period or a correction?",
+        ]} />
+        <Prose>
+          Inland Revenue advises people choosing a digital service to confirm with the provider that it meets their needs. Do not select a product because it promises “easy payroll” alone; check the workflow against your real care schedule and the terms in the <Link href="/nanny-contract" className="text-primary underline underline-offset-2 font-semibold">written nanny agreement</Link>. The <Link href="/nanny-cost" className="text-primary underline underline-offset-2 font-semibold">nanny cost guide</Link> can help you budget software or provider fees separately from the nanny’s pay.
+        </Prose>
+        <Prose>
+          This is general information, not a recommendation of a particular payroll product. If the arrangement is unclear or complex, obtain current advice from Inland Revenue, Employment New Zealand, ACC or an appropriately qualified New Zealand adviser before the first pay.
         </Prose>
       </GuideSection>
 
