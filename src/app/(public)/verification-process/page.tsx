@@ -14,66 +14,66 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/verification-process" },
-  title: "How NannyOra Vets Every Nanny",
+  title: "NannyOra Verification Levels: How Profile Checks Work",
   description:
-    "How NannyOra verifies every Auckland nanny: identity, interviews, reference calls, NZ Police vetting, qualifications and trial sessions.",
+    "Understand NannyOra verification levels, what checks may be completed on a nanny profile, and the questions families should still ask before hiring.",
 };
 
 const METRICS = [
-  { value: 7, suffix: "", label: "Verification layers" },
-  { value: 100, suffix: "%", label: "Identity-checked carers" },
-  { value: 2, suffix: "+", label: "References personally called" },
+  { value: 4, suffix: "", label: "Verification levels" },
+  { value: 7, suffix: "", label: "Hiring checks to consider" },
+  { value: 1, suffix: "", label: "Profile level shown clearly" },
 ];
 
 const CHECKS = [
   {
     icon: Fingerprint,
     title: "Identity Verification",
-    what: "Government photo ID — passport or driver licence — is reviewed and matched to the person.",
-    why: "Confirms the nanny is exactly who they claim to be. It's the foundation every other check builds on.",
-    protects: "No fake or borrowed identities ever reach your family.",
+    what: "For profiles whose level shows identity verified, government photo ID — such as a passport or driver licence — has been reviewed.",
+    why: "It helps establish who a carer is before you decide whether to meet them.",
+    protects: "You can distinguish a completed identity check from a profile that is simply listed.",
   },
   {
     icon: Video,
-    title: "Face-to-Face Interview",
-    what: "A video or in-person interview assessing character, warmth, communication, and approach to care.",
-    why: "Certificates don't show temperament — a real conversation does.",
-    protects: "You only meet carers who present as calm, genuine, and child-focused.",
+    title: "Meet and Interview",
+    what: "A video or in-person conversation lets your family discuss communication, approach to care, routines and real scenarios.",
+    why: "Credentials cannot tell you whether the relationship and communication style will suit your family.",
+    protects: "You make a considered decision rather than relying on a profile alone.",
   },
   {
     icon: PhoneCall,
     title: "Reference Calls",
-    what: "We personally phone previous families and employers — never relying on written forms alone.",
-    why: "Real people describe real behaviour over months, not a one-line note.",
-    protects: "Patterns of reliability — or red flags — surface before you ever meet.",
+    what: "Where a profile marks references as complete, NannyOra has reviewed the relevant reference evidence. Families can also ask questions that matter to their own role.",
+    why: "Specific examples of reliability, communication and care can be more useful than a generic endorsement.",
+    protects: "You can discuss evidence relevant to your child and household, not only a broad claim of experience.",
   },
   {
     icon: ShieldCheck,
     title: "NZ Police Vetting",
-    what: "A New Zealand Police vet under the Children's Act 2014, obtained by NannyOra for every carer. Each service must obtain its own report — vets from other employers cannot be shared.",
-    why: "It's the legal safeguarding standard for anyone working with children in NZ.",
-    protects: "Serious history is caught by the same check schools and ECE centres use.",
+    what: "Police-vetting or safety-check review is shown on Premium Vetted and Specialist Care profiles. It is not a feature of every Listed or Verified profile.",
+    why: "The verification level helps you understand which evidence NannyOra has reviewed for that individual profile.",
+    protects: "You can avoid assuming a listed profile has a Police vet when it does not show that completed check.",
   },
   {
     icon: GraduationCap,
     title: "Qualification Review",
-    what: "First aid readiness assessed at induction — carers gain full certification within 4 months. Any ECE, teaching, or specialist certificates verified against issuing bodies.",
-    why: "Anyone can list a qualification — we confirm it's real and current.",
-    protects: "Specialist and ECE claims on a profile are verified, not assumed.",
+    what: "Qualifications and First Aid credentials shown as verified have been reviewed. Discuss the experience and training that is most relevant to your child.",
+    why: "A qualification can be valuable, but its relevance depends on the care role and your child’s needs.",
+    protects: "You can tell the difference between a stated credential and one marked as verified.",
   },
   {
     icon: CalendarCheck,
     title: "Trial Session",
-    what: "A short, paid trial so you watch the nanny with your children before committing.",
-    why: "The only test that truly matters is how your child actually responds.",
-    protects: "You confirm the fit first-hand — no long-term commitment on trust alone.",
+    what: "A short, paid trial gives your family a chance to observe the routine, handover and fit before committing to regular care.",
+    why: "The practical relationship matters as much as a profile or qualification.",
+    protects: "You can assess the fit first-hand before agreeing to an ongoing arrangement.",
   },
   {
     icon: Heart,
-    title: "Ongoing Feedback",
-    what: "Family feedback is monitored after matching, and profiles reflect current standing.",
-    why: "Trust isn't a one-time gate — it's maintained over time.",
-    protects: "Standards stay high long after the first booking.",
+    title: "Ongoing Check-ins",
+    what: "Keep talking about routines, safety information, boundaries and concerns after care begins.",
+    why: "Trust is not a one-time decision; a good arrangement needs clear, ongoing communication.",
+    protects: "Small concerns can be raised and addressed before they become bigger problems.",
   },
 ];
 
@@ -92,10 +92,10 @@ export default function VerificationProcessPage() {
             <span>The NannyOra Trust Standard</span>
           </div>
           <h1 className="font-heading text-4xl md:text-5xl text-foreground mb-4 leading-tight">
-            How we verify <ShinyText>every nanny</ShinyText>
+            Understand a profile&apos;s <ShinyText>verification level</ShinyText>
           </h1>
           <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-            Trust is everything in childcare. Here is exactly how every Auckland carer is checked before they meet your family — and how each step protects you.
+            Trust is everything in childcare. NannyOra displays a verification level on each public profile, so you can see what has been reviewed. Listed profiles are registered but may not have admin-verified documents; higher levels show more completed checks.
           </p>
         </div>
 
@@ -128,7 +128,7 @@ export default function VerificationProcessPage() {
         {/* Process diagram — the 7 layers at a glance */}
         <div className="mb-20">
           <h2 className="font-heading text-2xl sm:text-3xl text-foreground text-center mb-10">
-            The 7-layer process
+            Seven checks to consider before hiring
           </h2>
           <div className="relative">
             <div className="hidden lg:block absolute top-7 left-[7%] right-[7%] h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" aria-hidden="true" />
@@ -194,7 +194,7 @@ export default function VerificationProcessPage() {
         <div className="mt-20 bg-secondary/40 rounded-[2rem] p-8 md:p-10">
           <h2 className="font-heading text-2xl sm:text-3xl text-foreground mb-3">Your role matters too</h2>
           <p className="text-sm text-muted-foreground leading-relaxed mb-6 max-w-2xl">
-            We verify credentials and history — but the final decision is always yours. We recommend every family:
+            A profile level helps you understand completed checks, but the final decision is always yours. We recommend every family:
           </p>
           <ul className="grid sm:grid-cols-2 gap-3">
             {[
@@ -214,7 +214,7 @@ export default function VerificationProcessPage() {
         {/* CTA */}
         <div className="text-center mt-16">
           <h2 className="font-heading text-2xl sm:text-3xl text-foreground mb-4">
-            Verified carers, ready to meet your family
+            Review profiles with clarity
           </h2>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link href="/find-a-nanny">

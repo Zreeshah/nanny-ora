@@ -5,18 +5,18 @@ import {
 import { Reveal } from "@/components/ui/Reveal";
 
 /**
- * "The NannyOra Trust Standard" — a signature 7-layer verification timeline.
- * Soft cards on a calm vertical connector, staggered reveal. Emotionally-visible
- * trust asset. Tokens only, no new colours.
+ * "The NannyOra Trust Standard" — seven practical checks families can use when
+ * assessing a profile. The completed checks are always shown by the profile's
+ * individual verification level.
  */
 const LAYERS = [
-  { icon: Fingerprint, title: "Identity Verification", desc: "Government photo ID checked and confirmed before anything else." },
-  { icon: Video, title: "Video or In-Person Interview", desc: "A real conversation to understand character, warmth, and approach." },
-  { icon: PhoneCall, title: "Reference Calls", desc: "We personally call previous families and employers — no forms alone." },
-  { icon: ShieldCheck, title: "Police Vetting", desc: "NZ Police vetting under the Children's Act 2014 for every carer." },
-  { icon: GraduationCap, title: "Qualification Review", desc: "First aid readiness assessed — carers receive baseline induction and gain certification within 4 months. Any ECE, teaching, or specialist certificates verified against issuing bodies." },
-  { icon: CalendarCheck, title: "Trial Session", desc: "A short paid trial so you see the fit with your children first-hand." },
-  { icon: Heart, title: "Parent Feedback Monitoring", desc: "Ongoing family feedback keeps standards high, long after matching." },
+  { icon: Fingerprint, title: "Identity evidence", desc: "For profiles whose level shows identity verified, NannyOra has reviewed government photo ID." },
+  { icon: Video, title: "Meet and interview", desc: "A conversation helps you assess communication, warmth and approach to care before making a decision." },
+  { icon: PhoneCall, title: "Reference checks", desc: "Where reference checks are shown as complete, ask how the referee knew the nanny and what care they observed." },
+  { icon: ShieldCheck, title: "Police vetting", desc: "Police-vetting or safety-check review is shown on Premium Vetted and Specialist Care profiles, not on every listed profile." },
+  { icon: GraduationCap, title: "Qualifications and First Aid", desc: "Check the profile for credentials marked as verified, and discuss the experience most relevant to your child." },
+  { icon: CalendarCheck, title: "A paid trial", desc: "A short paid trial can help your family see whether the routine, communication and fit feel right." },
+  { icon: Heart, title: "Ongoing check-ins", desc: "Keep discussing routines, safety information and any concerns as the arrangement develops." },
 ];
 
 export default function TrustStandard() {
@@ -30,10 +30,10 @@ export default function TrustStandard() {
             <span>The NannyOra Trust Standard</span>
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-foreground mb-5 leading-[1.1]">
-            Our 7-layer safety check
+            Safer hiring, profile by profile
           </h2>
           <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-            Trust is everything in childcare. Before a carer ever meets your family, they pass through seven calm, thorough layers of verification.
+            Trust is everything in childcare. NannyOra shows a verification level on each profile, so you can see what has been reviewed. Listed profiles are registered but may not have admin-verified documents; higher levels show more completed checks.
           </p>
         </div>
 
@@ -79,7 +79,7 @@ export default function TrustStandard() {
 
         <div className="text-center mt-12">
           <Link href="/verification-process" className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary-light transition-colors">
-            See exactly how each check protects your family
+            See verification levels and what they mean
             <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </Link>
         </div>

@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   title: { absolute: "NannyOra — Trusted Nanny Care in Auckland" },
   description:
-    "Find trusted, specialist nannies in Auckland — including sensory-aware, ECE, and highly experienced childcare support. Verified local nannies for your family.",
+    "Explore Auckland nanny profiles with clear verification levels, relevant experience, and specialist childcare support for your family.",
 };
 
 // Featured nannies with Pexels profile images
@@ -89,7 +89,7 @@ const faqItems = [
   {
     question: "How are nannies verified on NannyOra?",
     answer:
-      "All nannies go through a multi-step review process. We verify identity documents, obtain a NZ Police vet under the Children's Act 2014, assess first aid readiness, check references by phone, and review qualifications. Our verification levels range from Listed to Specialist Care Nanny, so you can see exactly what checks have been completed.",
+      "NannyOra displays a verification level on every public profile so families can see what has been reviewed. A Listed profile is registered but may not yet have admin-verified documents. Higher levels can show completed identity, reference, qualification, First Aid and Police-vetting checks. Read the individual profile and its completed checks before shortlisting.",
   },
   {
     question: "What is a sensory-aware or specialist care nanny?",
@@ -173,7 +173,7 @@ export default function HomePage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { title: "Share your childcare needs", desc: "Tell us about your family, schedule, and any specialist care." },
-              { title: "Get matched with verified nannies", desc: "We personally match you with agency-verified local nannies." },
+              { title: "Review profiles with clarity", desc: "Compare relevant experience, visible verification levels, and the care details that matter to your family." },
               { title: "Meet & confirm your caregiver", desc: "Chat, meet, and choose the nanny who feels right for your home." },
               { title: "Begin care with ongoing support", desc: "Start care with continued support from the NannyOra team." },
             ].map((step, i) => (

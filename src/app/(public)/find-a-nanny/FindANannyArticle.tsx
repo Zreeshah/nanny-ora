@@ -675,8 +675,15 @@ export function FindANannyArticle({ allNannies }: { allNannies: NannyProfilePubl
           ,{" "}
           <Link href="/sensory-aware-nanny-auckland" className="text-primary underline underline-offset-2 font-semibold">
             sensory-aware nannies
-          </Link>{" "}
-          and{" "}
+          </Link>
+          ,{" "}
+          <Link href="/autism-nanny-auckland" className="text-primary underline underline-offset-2 font-semibold">
+            autism nanny experience in Auckland
+          </Link>,{" "}
+          <Link href="/adhd-nanny-auckland" className="text-primary underline underline-offset-2 font-semibold">
+            ADHD nanny experience in Auckland
+          </Link>
+          , and{" "}
           <Link href="/neurodiverse-childcare-auckland" className="text-primary underline underline-offset-2 font-semibold">
             neurodiverse childcare
           </Link>

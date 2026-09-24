@@ -2,15 +2,16 @@ import { BadgeCheck, ShieldCheck, HeartPulse, GraduationCap, Users, Brain, Moon,
 import { Reveal } from "@/components/ui/Reveal";
 
 /**
- * Soft "Trusted by Auckland families" reassurance strip, placed directly under
- * the hero. Two rows: baseline checks (every carer) + advanced expertise (optional).
+ * Soft reassurance strip, placed directly under the hero. Profile checks and
+ * specialist credentials are only represented when the relevant verification
+ * level has been completed.
  * Minimal icons, warm background, no hard borders. Tokens only.
  */
 const BASELINE = [
-  { icon: BadgeCheck, label: "Verified IDs" },
-  { icon: ShieldCheck, label: "Police Vetted" },
-  { icon: Users, label: "Face-to-Face Interviewed" },
-  { icon: HeartPulse, label: "First Aid Ready" },
+  { icon: BadgeCheck, label: "Identity check" },
+  { icon: ShieldCheck, label: "Police vet reviewed" },
+  { icon: Users, label: "References checked" },
+  { icon: HeartPulse, label: "First Aid confirmed" },
 ];
 
 const ADVANCED = [
@@ -47,9 +48,9 @@ export default function TrustStrip() {
     <section className="py-10 md:py-14 bg-secondary/30">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <Reveal>
-          <Row items={BASELINE} caption="Every NannyOra carer is" />
+          <Row items={BASELINE} caption="Profile checks may include" />
           <div className="my-8 h-px bg-border/40 max-w-xs mx-auto" aria-hidden="true" />
-          <Row items={ADVANCED} caption="Looking for advanced educational expertise?" />
+          <Row items={ADVANCED} caption="Specialist credentials, where verified" />
         </Reveal>
       </div>
     </section>

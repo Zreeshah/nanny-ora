@@ -17,8 +17,9 @@ export default function InteractiveHero() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Trigger staggered animations on mount
-    setMounted(true);
+    // Trigger staggered animations after the initial paint.
+    const animationFrame = window.requestAnimationFrame(() => setMounted(true));
+    return () => window.cancelAnimationFrame(animationFrame);
   }, []);
 
   return (
@@ -72,7 +73,7 @@ export default function InteractiveHero() {
                 mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
               }`}
             >
-              Premium, agency-verified nannies for flexible home-based care — matched privately to your family. Streamlined onboarding, ECE educators, and calm sensory-aware support, without the bureaucracy.
+              Auckland nanny profiles with clear verification levels for flexible home-based care. Explore relevant experience, qualifications and care approaches, then choose the fit that feels right for your family.
             </p>
 
             {/* Action Buttons */}
@@ -105,9 +106,9 @@ export default function InteractiveHero() {
                 </div>
                 <div>
                   <div className="font-bold text-foreground leading-none">
-                    <StatsTicker value={100} suffix="+" />
+                    <StatsTicker value={4} />
                   </div>
-                  <div className="text-[10px] text-muted-foreground mt-0.5">Families Vouched</div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5">Profile levels</div>
                 </div>
               </div>
 
@@ -116,8 +117,8 @@ export default function InteractiveHero() {
                   <ShieldCheck className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
                 </div>
                 <div>
-                  <div className="font-bold text-foreground leading-none">100%</div>
-                  <div className="text-[10px] text-muted-foreground mt-0.5">Vetted Standards</div>
+                  <div className="font-bold text-foreground leading-none">See</div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5">Completed checks</div>
                 </div>
               </div>
 
@@ -126,10 +127,8 @@ export default function InteractiveHero() {
                   <Star className="w-3.5 h-3.5 text-primary fill-primary" aria-hidden="true" />
                 </div>
                 <div>
-                  <div className="font-bold text-foreground leading-none">
-                    <StatsTicker value={49} suffix=" / 10" duration={1500} />
-                  </div>
-                  <div className="text-[10px] text-muted-foreground mt-0.5">Parent Rating</div>
+                  <div className="font-bold text-foreground leading-none">Meet</div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5">Before you decide</div>
                 </div>
               </div>
             </div>
@@ -168,13 +167,13 @@ export default function InteractiveHero() {
               />
             </div>
 
-            {/* Floating badge: Police Checked */}
+            {/* Floating badge: Police-vetting status is profile-specific */}
             <div className={`absolute top-[9%] left-[1%] z-20 animate-float-slow transition-all duration-1000 delay-[500ms] ease-out ${mounted ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"}`}>
               <div className="bg-card/95 backdrop-blur rounded-2xl shadow-lg px-3.5 py-2.5 flex items-center gap-2.5">
                 <span className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center"><ShieldCheck className="w-4.5 h-4.5" /></span>
                 <div>
-                  <h4 className="text-xs font-bold text-foreground leading-none">Police Checked</h4>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">Children&apos;s Act 2014</p>
+                  <h4 className="text-xs font-bold text-foreground leading-none">Police vet review</h4>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">Premium &amp; Specialist</p>
                 </div>
               </div>
             </div>
@@ -184,8 +183,8 @@ export default function InteractiveHero() {
               <div className="bg-card/95 backdrop-blur rounded-2xl shadow-lg px-3.5 py-2.5 flex items-center gap-2.5">
                 <span className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center"><GraduationCap className="w-4.5 h-4.5" /></span>
                 <div>
-                  <h4 className="text-xs font-bold text-foreground leading-none">ECE Qualified</h4>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">Registered educators</p>
+                  <h4 className="text-xs font-bold text-foreground leading-none">ECE credentials</h4>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">Where verified</p>
                 </div>
               </div>
             </div>
@@ -196,16 +195,16 @@ export default function InteractiveHero() {
                 <span className="w-8 h-8 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center"><Brain className="w-4.5 h-4.5" /></span>
                 <div>
                   <h4 className="text-xs font-bold text-foreground leading-none">Sensory-Led Nanny</h4>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">Sensory-trained care</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">Read each profile</p>
                 </div>
               </div>
             </div>
 
-            {/* Floating pill: 7-Step Verified */}
+            {/* Floating pill: verification-level transparency */}
             <div className={`absolute top-[-1%] right-[24%] z-20 animate-float-medium transition-all duration-1000 delay-[880ms] ease-out ${mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-6"}`}>
               <div className="bg-primary text-primary-foreground rounded-full shadow-lg px-3.5 py-1.5 flex items-center gap-1.5">
                 <BadgeCheck className="w-4 h-4" />
-                <span className="text-[11px] font-bold">7-Step Verified</span>
+                <span className="text-[11px] font-bold">Verification levels</span>
               </div>
             </div>
           </div>

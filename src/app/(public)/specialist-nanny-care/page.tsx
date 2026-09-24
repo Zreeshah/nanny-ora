@@ -34,6 +34,8 @@ export default function SpecialistNannyCarePage() {
       schemas={schemas} faqs={faqs}
       related={[
         { href: "/specialist-childcare-auckland", label: "Specialist childcare in Auckland", description: "Browse Auckland profiles with ECE or neurodiverse-care experience." },
+        { href: "/autism-nanny-auckland", label: "Autism nannies in Auckland", description: "Find a respectful, practical pathway for assessing autism-support experience." },
+        { href: "/adhd-nanny-auckland", label: "ADHD nannies in Auckland", description: "Plan a practical childcare brief and assess relevant ADHD-support experience." },
         { href: "/sensory-aware-nanny-auckland", label: "Sensory-aware nannies", description: "Explore the considerations for sensory-aware support in Auckland." },
         { href: "/neurodiverse-childcare-auckland", label: "Neurodiverse childcare", description: "Find Auckland care shaped around individual strengths and routines." },
         { href: "/ece-nanny-auckland", label: "ECE nannies", description: "Discover Auckland nannies with ECE or teaching experience." },

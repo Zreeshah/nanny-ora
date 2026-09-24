@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { NannyCard } from "@/components/cards/NannyCard";
 import { getPublicNannies } from "@/lib/data/nannies";
-import { Brain, Heart, Shield, ArrowRight, Sparkles, Award } from "lucide-react";
+import { Brain, Heart, ArrowRight, Sparkles, Award } from "lucide-react";
 import { ImageBand } from "@/components/ui/ImageBand";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbSchema, serviceSchema } from "@/lib/seo";
@@ -48,7 +48,7 @@ export default async function SpecialistChildcarePage() {
       />
 
       {/* Specialist Segments Selection Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6 mb-20">
         {[
           {
             icon: Brain,
@@ -57,6 +57,22 @@ export default async function SpecialistChildcarePage() {
             href: "/neurodiverse-childcare-auckland",
             color: "text-badge-specialist",
             bgColor: "bg-blue-50 border-blue-100/30",
+          },
+          {
+            icon: Brain,
+            title: "Autism Support Experience",
+            desc: "Explore Auckland nanny profiles that list relevant autism-support experience, then assess the practical fit for your family.",
+            href: "/autism-nanny-auckland",
+            color: "text-primary",
+            bgColor: "bg-primary/10 border-primary/15",
+          },
+          {
+            icon: Brain,
+            title: "ADHD Support Experience",
+            desc: "Explore Auckland nanny profiles that list ADHD-support experience, then assess the practical fit for your family.",
+            href: "/adhd-nanny-auckland",
+            color: "text-violet-700",
+            bgColor: "bg-violet-50 border-violet-100",
           },
           {
             icon: Heart,

@@ -1507,6 +1507,8 @@ This is deliberately compact.
 | Nanny Payroll             | Employment               |       P1 | LIVE    |
 | Nanny Safety              | Trust / Informational    |       P1 | LIVE    |
 | Specialist Nanny Care     | Commercial               |       P2 | LIVE    |
+| Autism Nanny Auckland     | Local Commercial         |       P1 | LIVE    |
+| ADHD Nanny Auckland       | Local Commercial         |       P1 | LIVE    |
 | Nanny vs Daycare          | Commercial Investigation |       P1 | LIVE    |
 | Nanny vs Babysitter       | Commercial Investigation |       P1 | LIVE    |
 | Nanny vs Au Pair          | Commercial Investigation |       P1 | LIVE    |
@@ -1519,7 +1521,7 @@ This is deliberately compact.
 Target:
 
 ```text
-18 strategic pages
+20 strategic pages
 +
 existing product/profile pages
 +

@@ -27,7 +27,7 @@ export default function TermsPage() {
     >
       <LegalSection n={1} title="Who we are">
         <p>
-          NannyOra is operated by <strong>[Legal entity name, NZBN]</strong> (&ldquo;we&rdquo;). We
+          NannyOra is operated by <strong>Emli&amp;Co Limited, trading as NannyOra (NZBN 9429053600813)</strong> (&ldquo;we&rdquo;). We
           provide an online platform that helps Auckland families discover, contact, and book
           vetted nannies. We are an intermediary — we are <strong>not</strong> the employer of any
           nanny, nor a party to the care arrangement between a family and a nanny.

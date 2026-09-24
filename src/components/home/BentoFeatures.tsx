@@ -1,6 +1,5 @@
 "use client";
 
-import { Card } from "@/components/ui/Card";
 import { ShieldCheck, GraduationCap, Brain, Award, ArrowUpRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 
@@ -9,7 +8,7 @@ export default function BentoFeatures() {
     {
       icon: ShieldCheck,
       title: "Strict Vetting Standards",
-      description: "Every carer goes through face-to-face interviews, double reference reviews, identity checks, and police vetting.",
+      description: "Each profile shows its verification level. Higher-level profiles may include reviewed identity, references, qualifications, and Police-vetting records.",
       tag: "Security First",
       color: "emerald",
       href: "/trust-and-safety",

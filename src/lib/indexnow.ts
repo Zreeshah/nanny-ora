@@ -27,6 +27,8 @@ export const INDEXABLE_STATIC_PATHS = [
   "nannies/hamilton",
   "nannies/christchurch",
   "nannies/wellington",
+  "autism-nanny-auckland",
+  "adhd-nanny-auckland",
   "ece-nanny-auckland",
   "neurodiverse-childcare-auckland",
   "sensory-aware-nanny-auckland",
