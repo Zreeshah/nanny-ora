@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Check, Heart, MapPin, Search, ShieldCheck, Users } from "lucide-react";
 import { Accordion } from "@/components/ui/Accordion";
@@ -18,6 +19,7 @@ export type LocationHubConfig = {
   planningIntro: string;
   considerations: { title: string; body: string }[];
   heroImageClass: string;
+  heroImage?: { src: string; alt: string; width: number; height: number };
 };
 
 function matchesLocation(nanny: NannyProfilePublic, areas: string[]) {
@@ -64,10 +66,17 @@ export async function LocationNannyHub({ config }: { config: LocationHubConfig }
                 <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed">{config.localContext}</p>
                 <div className="flex flex-wrap gap-3 mt-8"><Link href="/register-family" className="inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold px-7 py-3.5 min-h-[48px] shadow-sm hover:bg-primary-light hover:-translate-y-0.5 transition-all">Share your care brief <ArrowRight className="w-4.5 h-4.5 ml-2" aria-hidden="true" /></Link><Link href="/find-a-nanny" className="inline-flex items-center justify-center rounded-full bg-secondary text-secondary-foreground border border-border/50 font-semibold px-7 py-3.5 min-h-[48px] hover:bg-muted hover:-translate-y-0.5 transition-all">Browse active profiles</Link></div>
               </div>
-              <div className={`rounded-[2rem] border border-border/35 p-7 sm:p-9 shadow-sm ${config.heroImageClass}`}>
-                <p className="text-sm font-bold uppercase tracking-wider text-primary mb-4">Build a clearer care plan</p>
-                <div className="space-y-5">{[{ title: "Your family rhythm", body: "Work, school, travel, activities and the moments that need reliable care." }, { title: "Your child’s needs", body: "Age, routines, interests, communication and any support that helps the day go well." }, { title: "The role", body: "Hours, transport, duties, relevant experience, safety information and budget." }].map((item, index) => <div key={item.title} className="flex gap-4"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-bold">{index + 1}</span><div><h2 className="font-heading text-lg font-bold text-foreground">{item.title}</h2><p className="text-sm text-muted-foreground leading-relaxed mt-1">{item.body}</p></div></div>)}</div>
-              </div>
+              {config.heroImage ? (
+                <div className="relative aspect-[1.91/1] overflow-hidden rounded-[2rem] border border-border/35 shadow-sm bg-muted">
+                  <Image src={config.heroImage.src} alt={config.heroImage.alt} fill priority className="object-cover" sizes="(max-width: 1024px) 100vw, 46vw" />
+                  <div className="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-[2rem] pointer-events-none" />
+                </div>
+              ) : (
+                <div className={`rounded-[2rem] border border-border/35 p-7 sm:p-9 shadow-sm ${config.heroImageClass}`}>
+                  <p className="text-sm font-bold uppercase tracking-wider text-primary mb-4">Build a clearer care plan</p>
+                  <div className="space-y-5">{[{ title: "Your family rhythm", body: "Work, school, travel, activities and the moments that need reliable care." }, { title: "Your child’s needs", body: "Age, routines, interests, communication and any support that helps the day go well." }, { title: "The role", body: "Hours, transport, duties, relevant experience, safety information and budget." }].map((item, index) => <div key={item.title} className="flex gap-4"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-bold">{index + 1}</span><div><h2 className="font-heading text-lg font-bold text-foreground">{item.title}</h2><p className="text-sm text-muted-foreground leading-relaxed mt-1">{item.body}</p></div></div>)}</div>
+                </div>
+              )}
             </div>
           </div>
         </header>
@@ -121,5 +130,6 @@ export async function LocationNannyHub({ config }: { config: LocationHubConfig }
 export function locationMetadata(config: LocationHubConfig): Metadata {
   const title = `Nannies in ${config.city} — Plan Your Search`;
   const description = `Explore nanny care in ${config.city}, understand how to hire with confidence, and share your family’s care brief with NannyOra as local availability develops.`;
-  return { title, description, alternates: { canonical: config.path }, openGraph: { title, description, url: config.path, type: "website" } };
+  const image = config.heroImage ? [{ url: config.heroImage.src, width: config.heroImage.width, height: config.heroImage.height, alt: config.heroImage.alt }] : undefined;
+  return { title, description, alternates: { canonical: config.path }, openGraph: { title, description, url: config.path, type: "website", images: image }, twitter: image ? { card: "summary_large_image", title, description, images: [config.heroImage!.src] } : undefined };
 }

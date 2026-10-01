@@ -15,6 +15,12 @@ const config: LocationHubConfig = {
     { title: "Shared family support", body: "State who can collect a child, who handles handovers and what happens when a parent is delayed. A future nanny needs to know the support around the role, not only the paid hours." },
   ],
   heroImageClass: "bg-[linear-gradient(135deg,rgba(235,245,240,1),rgba(247,239,228,1))]",
+  heroImage: {
+    src: "/images/christchurch-nanny-care-featured.jpeg",
+    alt: "Professional nanny helping a Christchurch family prepare for the day at home",
+    width: 1733,
+    height: 907,
+  },
 };
 
 export const metadata = locationMetadata(config);
