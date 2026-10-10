@@ -246,6 +246,7 @@ export const AUCKLAND_REGIONS = [
   { value: "central", label: "Central Auckland" },
   { value: "east", label: "East Auckland" },
   { value: "north", label: "North Shore" },
+  { value: "northwest", label: "Northwest Auckland" },
   { value: "west", label: "West Auckland" },
   { value: "south", label: "South Auckland" },
 ] as const;

@@ -31,13 +31,16 @@ export const SUBURB_REGIONS: Record<string, string[]> = {
     "Milford", "Murrays Bay", "Northcote", "Northcote Point", "Northcross", "Oteha", "Pinehill", "Rosedale",
     "Rothesay Bay", "Sunnynook", "Stanley Bay", "Stanley Point", "Takapuna", "Torbay",
     "Totara Vale", "Unsworth Heights", "Waiake", "Wairau Valley",
-    // Rodney / Hibiscus Coast / Northwest
-    "Coatesville", "Dairy Flat", "Gulf Harbour", "Helensville", "Hobsonville", "Huapai", "Kumeu",
+    // Rodney / Hibiscus Coast
+    "Coatesville", "Dairy Flat", "Gulf Harbour", "Helensville",
     "Milldale", "Millwater", "Orewa", "Paremoremo", "Red Beach", "Redvale", "Riverhead",
     "Silverdale", "Stanmore Bay", "Taupaki", "Waimauku", "Wainui", "Whangaparāoa",
     "Waiwera", "Hatfields Beach", "Army Bay", "Manly", "Arkles Bay",
     "Tindalls Beach", "Warkworth", "Snells Beach", "Matakana", "Puhoi", "Wellsford",
     "Kaukapakapa", "Parakai", "Windsor Park", "Schnapper Rock", "Okura", "Waitoki",
+  ],
+  northwest: [
+    "Hobsonville", "Hobsonville Point", "Whenuapai", "Westgate", "Huapai", "Kumeu",
   ],
   east: [
     "Beachlands", "Botany Downs", "Bucklands Beach", "Dannemora", "Eastern Beach", "Farm Cove",
@@ -73,7 +76,7 @@ export const SUBURB_REGIONS: Record<string, string[]> = {
  *  just specific suburbs. These resolve to regions via REGION_ALIASES, so the
  *  parent filter matches them too. */
 export const AUCKLAND_REGION_LABELS: string[] = [
-  "Central Auckland", "North Shore", "East Auckland", "South Auckland", "West Auckland",
+  "Central Auckland", "North Shore", "Northwest Auckland", "East Auckland", "South Auckland", "West Auckland",
 ];
 
 /** Flat suggestion list for the suburb pickers (free entry still allowed). */
@@ -88,7 +91,8 @@ export const AUCKLAND_SUBURBS_ALL: string[] = [...AUCKLAND_REGION_LABELS, ...AUC
 const REGION_ALIASES: Record<string, string> = {
   central: "central", centralauckland: "central", cbd: "central", aucklandcentral: "central",
   north: "north", northshore: "north", northauckland: "north", rodney: "north",
-  hibiscuscoast: "north", northwest: "north", northwestauckland: "north",
+  hibiscuscoast: "north",
+  northwest: "northwest", northwestauckland: "northwest",
   east: "east", eastauckland: "east", easternsuburbs: "east", easternbays: "east",
   south: "south", southauckland: "south", franklin: "south",
   west: "west", westauckland: "west", westernsuburbs: "west",
