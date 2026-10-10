@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db/prisma";
 import { SUBURB_SLUGS } from "@/lib/constants";
+import { filterNannies, getPublicNannies } from "@/lib/data/nannies";
 
 export const INDEXNOW_HOST = "www.nannyora.co.nz";
 export const INDEXNOW_KEY = "ee7ef5e7-e305-43c5-9368-617a3ebd17e3";
@@ -56,7 +57,16 @@ export function staticIndexNowUrls() {
  */
 export async function indexNowUrls() {
   const urls = staticIndexNowUrls();
-  urls.push(...Object.keys(SUBURB_SLUGS).map((slug) => `https://${INDEXNOW_HOST}/nannies/auckland/${slug}`));
+
+  // Keep IndexNow aligned with sitemap.ts and the suburb route's robots rules.
+  // Empty suburb routes remain available to people with noindex,follow, but
+  // must not be proactively submitted as indexable URLs.
+  const allNannies = await getPublicNannies();
+  urls.push(
+    ...Object.keys(SUBURB_SLUGS)
+      .filter((slug) => filterNannies(allNannies, { suburb: SUBURB_SLUGS[slug] }).length > 0)
+      .map((slug) => `https://${INDEXNOW_HOST}/nannies/auckland/${slug}`),
+  );
 
   try {
     const nannies = await prisma.nannyProfile.findMany({
