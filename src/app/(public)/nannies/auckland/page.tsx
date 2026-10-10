@@ -141,6 +141,12 @@ export default async function AucklandNanniesPage() {
           <section id="auckland-areas" aria-labelledby="areas-heading" className="mb-20 md:mb-24 scroll-mt-28">
             <SectionHeading eyebrow="Greater Auckland" title="Browse Auckland areas"><p>NannyOra currently serves greater Auckland. These area pathways help families narrow a search, while profile availability and each nanny’s travel area determine whether a match is practical.</p></SectionHeading>
             <div className="grid sm:grid-cols-2 gap-5">{areas.map((area) => <div key={area.name} className="rounded-3xl border border-border/35 bg-card p-5 sm:p-6 shadow-sm"><h3 className="font-heading text-xl font-bold text-foreground flex items-center gap-2 mb-4"><MapPin className="w-4 h-4 text-accent" aria-hidden="true" />{area.name}</h3><div className="flex flex-wrap gap-2">{area.suburbs.map(([slug, suburb]) => <Link key={slug} href={`/nannies/auckland/${slug}`}><Badge variant="outline" size="md" className="cursor-pointer hover:border-primary transition-colors">{suburb}</Badge></Link>)}</div></div>)}</div>
+            <Link href="/nannies/auckland/northwest-auckland" className="group mt-5 block rounded-3xl border border-accent/25 bg-accent/10 p-5 sm:p-6 transition-all hover:-translate-y-0.5 hover:shadow-md">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div><p className="text-xs font-bold uppercase tracking-wider text-accent mb-2">Local directory coming soon</p><h3 className="font-heading text-xl font-bold text-foreground flex items-center gap-2"><MapPin className="w-4 h-4 text-accent" aria-hidden="true" />Northwest Auckland</h3><p className="mt-2 text-sm text-muted-foreground leading-relaxed">Plan care across Hobsonville, Hobsonville Point, Whenuapai, Westgate, Huapai and Kumeū. This hub will show profiles only when they explicitly list local coverage.</p></div>
+                <span className="inline-flex items-center gap-1.5 text-sm font-bold text-primary group-hover:text-primary-light transition-colors shrink-0">Explore the Northwest hub <ArrowRight className="w-4 h-4" aria-hidden="true" /></span>
+              </div>
+            </Link>
             <p className="text-xs text-muted-foreground mt-4">A suburb page is a directory pathway, not a promise that a nanny is currently available there. Search nearby areas when your first choice has no suitable profile.</p>
           </section>
 
