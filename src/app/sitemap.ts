@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db/prisma";
 import { SUBURB_SLUGS } from "@/lib/constants";
 import { getPublicNannies, filterNannies } from "@/lib/data/nannies";
 import { INDEXABLE_STATIC_PATHS } from "@/lib/indexnow";
-import { getNorthwestAucklandNannies, hasIndexableNorthwestAucklandCoverage, NORTHWEST_AUCKLAND_PATH } from "@/lib/northwest-auckland";
+import { getHobsonvilleNannies, getNorthwestAucklandNannies, hasIndexableHobsonvilleCoverage, hasIndexableNorthwestAucklandCoverage, HOBSONVILLE_PATH, NORTHWEST_AUCKLAND_PATH } from "@/lib/northwest-auckland";
 
 const BASE = "https://www.nannyora.co.nz";
 
@@ -34,6 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // One DB read, filtered in memory.
   let suburbEntries: MetadataRoute.Sitemap = [];
   let northwestAucklandEntry: MetadataRoute.Sitemap = [];
+  let hobsonvilleEntry: MetadataRoute.Sitemap = [];
   try {
     const allNannies = await getPublicNannies();
     suburbEntries = Object.keys(SUBURB_SLUGS)
@@ -49,6 +50,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (hasIndexableNorthwestAucklandCoverage(northwestNannies)) {
       northwestAucklandEntry = [{
         url: `${BASE}${NORTHWEST_AUCKLAND_PATH}`,
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.7,
+      }];
+    }
+
+    const hobsonvilleNannies = getHobsonvilleNannies(allNannies);
+    if (hasIndexableHobsonvilleCoverage(hobsonvilleNannies)) {
+      hobsonvilleEntry = [{
+        url: `${BASE}${HOBSONVILLE_PATH}`,
         lastModified: now,
         changeFrequency: "weekly",
         priority: 0.7,
@@ -77,5 +88,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("sitemap: nanny query failed:", error);
   }
 
-  return [...staticEntries, ...suburbEntries, ...northwestAucklandEntry, ...nannyEntries];
+  return [...staticEntries, ...suburbEntries, ...northwestAucklandEntry, ...hobsonvilleEntry, ...nannyEntries];
 }

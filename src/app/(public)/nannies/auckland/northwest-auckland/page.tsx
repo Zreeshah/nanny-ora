@@ -10,6 +10,7 @@ import {
   getNorthwestAucklandCoverage,
   getNorthwestAucklandNannies,
   hasIndexableNorthwestAucklandCoverage,
+  HOBSONVILLE_PATH,
   NORTHWEST_AUCKLAND_AREAS,
   NORTHWEST_AUCKLAND_PATH,
 } from "@/lib/northwest-auckland";
@@ -177,6 +178,12 @@ export default async function NorthwestAucklandNanniesPage() {
           <section aria-labelledby="areas-heading" className="mb-20 md:mb-24">
             <div className="max-w-3xl mb-8"><p className="text-xs font-bold uppercase tracking-wider text-accent mb-3">The local cluster</p><h2 id="areas-heading" className="font-heading text-3xl sm:text-4xl text-foreground">Northwest Auckland areas this page is built for</h2><p className="mt-4 text-[15px] sm:text-base text-muted-foreground leading-[1.8]">This is one regional hub, not a set of near-identical suburb pages. It gives families a single place to plan care across the connected Northwest area while NannyOra builds verified local profile coverage.</p></div>
             <div className="flex flex-wrap gap-3">{NORTHWEST_AUCKLAND_AREAS.map((area) => <Badge key={area} variant="outline" size="md">{area}</Badge>)}</div>
+            <div className="mt-7 max-w-2xl rounded-3xl border border-border/35 bg-card p-6 shadow-sm">
+              <p className="text-xs font-bold uppercase tracking-wider text-accent">Hobsonville care planning</p>
+              <h3 className="mt-2 font-heading text-2xl text-foreground">Looking specifically for Hobsonville?</h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Visit the dedicated Hobsonville guide for a more focused plan around local travel, after-school timing and when this page will show confirmed Hobsonville profiles.</p>
+              <Link href={HOBSONVILLE_PATH} className="mt-4 inline-flex items-center text-sm font-semibold text-primary hover:text-primary-light transition-colors">Explore Hobsonville nanny planning <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" /></Link>
+            </div>
           </section>
 
           <section aria-labelledby="next-steps-heading" className="mb-20 md:mb-24">

@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db/prisma";
 import { SUBURB_SLUGS } from "@/lib/constants";
 import { filterNannies, getPublicNannies } from "@/lib/data/nannies";
-import { getNorthwestAucklandNannies, hasIndexableNorthwestAucklandCoverage, NORTHWEST_AUCKLAND_PATH } from "@/lib/northwest-auckland";
+import { getHobsonvilleNannies, getNorthwestAucklandNannies, hasIndexableHobsonvilleCoverage, hasIndexableNorthwestAucklandCoverage, HOBSONVILLE_PATH, NORTHWEST_AUCKLAND_PATH } from "@/lib/northwest-auckland";
 
 export const INDEXNOW_HOST = "www.nannyora.co.nz";
 export const INDEXNOW_KEY = "ee7ef5e7-e305-43c5-9368-617a3ebd17e3";
@@ -72,6 +72,11 @@ export async function indexNowUrls() {
   const northwestNannies = getNorthwestAucklandNannies(allNannies);
   if (hasIndexableNorthwestAucklandCoverage(northwestNannies)) {
     urls.push(`https://${INDEXNOW_HOST}${NORTHWEST_AUCKLAND_PATH}`);
+  }
+
+  const hobsonvilleNannies = getHobsonvilleNannies(allNannies);
+  if (hasIndexableHobsonvilleCoverage(hobsonvilleNannies)) {
+    urls.push(`https://${INDEXNOW_HOST}${HOBSONVILLE_PATH}`);
   }
 
   try {
