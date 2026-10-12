@@ -77,7 +77,7 @@ export default async function AutismNannyAucklandPage() {
         "A clear plan before regular care",
       ]}
       toc={[
-        { id: "what-this-page-is-for", label: "What this page is for" },
+        { id: "finding-a-respectful-care-match", label: "Finding a respectful care match" },
         { id: "available-profiles", label: "Profiles with relevant experience" },
         { id: "write-the-brief", label: "Write a useful care brief" },
         { id: "choose-a-match", label: "Choose a respectful match" },
@@ -101,7 +101,7 @@ export default async function AutismNannyAucklandPage() {
       ctaBody="NannyOra currently supports greater Auckland families. Browse relevant profiles, share a clear care brief and take time to assess the relationship before regular care begins."
     >
       <GuideSection
-        id="what-this-page-is-for"
+        id="finding-a-respectful-care-match"
         title="An autism nanny role should be practical, respectful and clearly defined"
         intro={<Prose>Families often search for an autism nanny because ordinary childcare options do not reflect the routines, communication preferences or transitions that shape their child&apos;s day. The useful goal is not to find a generic label. It is to find a nanny with relevant, demonstrated childcare experience who can work within a thoughtful family plan.</Prose>}
       >
@@ -115,7 +115,7 @@ export default async function AutismNannyAucklandPage() {
       <GuideSection
         id="available-profiles"
         title="Auckland nanny profiles with Autism Support Experience"
-        intro={<Prose>This section uses the live NannyOra directory. A profile appears here only when the nanny has selected Autism Support Experience on their profile. Read the full profile, its verification level and the visible evidence before deciding whether to make contact.</Prose>}
+        intro={<Prose>The profiles shown here list Autism Support Experience as part of their profile information. Read the full profile, its verification level and the visible evidence before deciding whether to make contact.</Prose>}
       >
         {autismNannies.length > 0 ? (
           <div className="grid sm:grid-cols-2 gap-5">
@@ -124,7 +124,7 @@ export default async function AutismNannyAucklandPage() {
         ) : (
           <div className="rounded-3xl border border-amber-200/70 bg-amber-50/60 p-6 sm:p-8">
             <h3 className="font-heading text-xl font-bold text-foreground">No active profile currently lists this experience</h3>
-            <p className="text-sm text-foreground/75 leading-relaxed mt-3">That does not establish that no suitable Auckland nanny exists. It means NannyOra will not imply a current match where a profile has not selected this experience. Browse the wider directory, describe the experience you need in your care brief and ask candidates for specific, relevant examples.</p>
+            <p className="text-sm text-foreground/75 leading-relaxed mt-3">This does not mean there is no suitable Auckland nanny. Browse the wider directory, describe the experience you need in your care brief and ask candidates for specific, relevant examples.</p>
             <Link href="/find-a-nanny" className="inline-flex items-center mt-5 text-sm font-bold text-primary underline underline-offset-2">Browse Auckland profiles</Link>
           </div>
         )}

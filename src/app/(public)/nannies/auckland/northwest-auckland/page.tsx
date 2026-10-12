@@ -18,18 +18,18 @@ import { breadcrumbSchema, faqSchema } from "@/lib/seo";
 import { ArrowRight, CalendarCheck, FileText, MapPin, Search, ShieldCheck, Users } from "lucide-react";
 
 const title = "Nannies in Northwest Auckland | Find Local Nanny Care";
-const description = "Plan in-home childcare in Hobsonville, Whenuapai, Westgate, Huapai and Kumeū. Northwest Auckland nanny profiles are being added to NannyOra.";
+const description = "Plan in-home childcare in Hobsonville, Whenuapai, Westgate, Huapai and Kumeū. Explore practical next steps for finding the right nanny for your family.";
 
 export const revalidate = 300;
 
 const faqs = [
   {
     question: "Are NannyOra nannies currently available in Northwest Auckland?",
-    answer: "NannyOra does not currently show an active public profile that explicitly lists Hobsonville, Hobsonville Point, Whenuapai, Westgate, Huapai or Kumeū. This local directory is being prepared. Families can browse the wider Auckland directory and register their care brief while local profile coverage grows.",
+    answer: "There are no current public profiles that list Hobsonville, Hobsonville Point, Whenuapai, Westgate, Huapai or Kumeū. You can still browse the wider Auckland directory and register a care brief with the schedule, travel needs and experience that matter to your family.",
   },
   {
     question: "Which Northwest Auckland areas will this directory cover?",
-    answer: "This page is for families looking for a nanny in Hobsonville, Hobsonville Point, Whenuapai, Westgate, Huapai and Kumeū. A nanny will appear here only when their own profile lists one of those places as a base suburb or stated travel area.",
+    answer: "Families in Hobsonville, Hobsonville Point, Whenuapai, Westgate, Huapai and Kumeū can use this guide to plan a local search. Before you shortlist someone, confirm that their stated travel area, route and weekly availability work for your household.",
   },
   {
     question: "Can I still start looking for a nanny?",
@@ -137,7 +137,7 @@ export default async function NorthwestAucklandNanniesPage() {
             <div className="max-w-3xl">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-bold uppercase tracking-wider mb-5"><MapPin className="w-3.5 h-3.5" aria-hidden="true" /> Northwest Auckland care planning</div>
               <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl text-foreground leading-[1.05] tracking-tight mb-6">Nannies in Northwest Auckland</h1>
-              <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-3xl">{hasProfiles ? "Browse NannyOra profiles that explicitly list a Northwest Auckland area. Compare the experience, travel coverage, availability and verification information shown before you enquire." : "Planning in-home childcare around Hobsonville, Whenuapai, Westgate, Huapai or Kumeū? NannyOra is preparing this local directory. We do not currently have a public profile that explicitly lists one of these areas."}</p>
+              <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-3xl">{hasProfiles ? "Browse NannyOra profiles that list a Northwest Auckland area. Compare the experience, travel coverage, availability and verification information shown before you enquire." : "Planning in-home childcare around Hobsonville, Whenuapai, Westgate, Huapai or Kumeū? Start with the care your family needs, then browse Auckland profiles and confirm whether the practical details fit."}</p>
               <div className="flex flex-wrap gap-3 mt-8">
                 <Link href="/find-a-nanny" className="inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold px-7 py-3.5 min-h-[48px] shadow-sm hover:bg-primary-light hover:-translate-y-0.5 transition-all">Browse Auckland nannies <ArrowRight className="w-4.5 h-4.5 ml-2" aria-hidden="true" /></Link>
                 <Link href="/register-family" className="inline-flex items-center justify-center rounded-full bg-secondary text-secondary-foreground border border-border/50 font-semibold px-7 py-3.5 min-h-[48px] hover:bg-muted hover:-translate-y-0.5 transition-all">Register your family</Link>
@@ -152,14 +152,14 @@ export default async function NorthwestAucklandNanniesPage() {
             <section aria-labelledby="coming-soon-heading" className="mb-20 md:mb-24 rounded-[2rem] border border-accent/25 bg-accent/10 p-7 sm:p-10">
               <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-accent mb-3">Local profiles coming soon</p>
-                  <h2 id="coming-soon-heading" className="font-heading text-3xl sm:text-4xl text-foreground">A local listing should reflect real local coverage.</h2>
-                  <p className="mt-4 text-[15px] sm:text-base text-muted-foreground leading-[1.8]">Rather than presenting broad Auckland coverage as a confirmed Northwest match, this page will show profiles only when a nanny explicitly lists one of these areas. In the meantime, you can make your care brief clear and use the wider directory to explore current Auckland options.</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-accent mb-3">Planning your search</p>
+                  <h2 id="coming-soon-heading" className="font-heading text-3xl sm:text-4xl text-foreground">Start with the details that make care work.</h2>
+                  <p className="mt-4 text-[15px] sm:text-base text-muted-foreground leading-[1.8]">There are no local profiles to browse here today. A clear brief still puts you in a stronger position: include your children’s ages, the hours you need, pickup or travel requirements, household routines and the experience that matters most.</p>
                 </div>
                 <div className="rounded-3xl border border-border/35 bg-card p-6">
                   <Users className="h-6 w-6 text-accent mb-4" aria-hidden="true" />
-                  <h3 className="font-heading text-xl text-foreground">What changes when profiles are added?</h3>
-                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed">This page automatically displays only profiles with explicit Northwest coverage. It will become search-indexable once there are at least three profiles across two named localities.</p>
+                  <h3 className="font-heading text-xl text-foreground">What you can do now</h3>
+                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed">Browse the wider Auckland directory, then register your family with the care you need. It is always worth confirming a nanny’s travel, schedule and role fit directly before you meet.</p>
                 </div>
               </div>
             </section>
@@ -169,30 +169,30 @@ export default async function NorthwestAucklandNanniesPage() {
             <section aria-labelledby="profiles-heading" className="mb-20 md:mb-24">
               <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-8">
                 <div className="max-w-3xl"><p className="text-xs font-bold uppercase tracking-wider text-accent mb-3">Current profile coverage</p><h2 id="profiles-heading" className="font-heading text-3xl sm:text-4xl text-foreground">Nanny profiles for Northwest Auckland</h2><p className="mt-4 text-[15px] sm:text-base text-muted-foreground leading-[1.8]">The current profiles below explicitly list {coverage.join(", ") || "a Northwest Auckland locality"}. Confirm the specific travel route, schedule and role directly before you shortlist.</p></div>
-                {!isIndexable && <Badge variant="outline" size="md">Local directory growing</Badge>}
+                {!isIndexable && <Badge variant="outline" size="md">New local profiles</Badge>}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">{nannies.map((nanny) => <NannyCard key={nanny.id} nanny={nanny} />)}</div>
             </section>
           )}
 
           <section aria-labelledby="areas-heading" className="mb-20 md:mb-24">
-            <div className="max-w-3xl mb-8"><p className="text-xs font-bold uppercase tracking-wider text-accent mb-3">The local cluster</p><h2 id="areas-heading" className="font-heading text-3xl sm:text-4xl text-foreground">Northwest Auckland areas this page is built for</h2><p className="mt-4 text-[15px] sm:text-base text-muted-foreground leading-[1.8]">This is one regional hub, not a set of near-identical suburb pages. It gives families a single place to plan care across the connected Northwest area while NannyOra builds verified local profile coverage.</p></div>
+            <div className="max-w-3xl mb-8"><p className="text-xs font-bold uppercase tracking-wider text-accent mb-3">Northwest Auckland</p><h2 id="areas-heading" className="font-heading text-3xl sm:text-4xl text-foreground">Care planning across your local area</h2><p className="mt-4 text-[15px] sm:text-base text-muted-foreground leading-[1.8]">Whether your week centres on Hobsonville, Whenuapai, Westgate, Huapai or Kumeū, the practical details matter: where care begins, school or activity travel, handovers, and the hours that need to be covered.</p></div>
             <div className="flex flex-wrap gap-3">{NORTHWEST_AUCKLAND_AREAS.map((area) => <Badge key={area} variant="outline" size="md">{area}</Badge>)}</div>
             <div className="mt-7 max-w-2xl rounded-3xl border border-border/35 bg-card p-6 shadow-sm">
               <p className="text-xs font-bold uppercase tracking-wider text-accent">Hobsonville care planning</p>
               <h3 className="mt-2 font-heading text-2xl text-foreground">Looking specifically for Hobsonville?</h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Visit the dedicated Hobsonville guide for a more focused plan around local travel, after-school timing and when this page will show confirmed Hobsonville profiles.</p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Visit the Hobsonville guide for a more focused way to think through local travel, after-school timing and the weekly routine your nanny would need to support.</p>
               <Link href={HOBSONVILLE_PATH} className="mt-4 inline-flex items-center text-sm font-semibold text-primary hover:text-primary-light transition-colors">Explore Hobsonville nanny planning <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" /></Link>
             </div>
           </section>
 
           <section aria-labelledby="next-steps-heading" className="mb-20 md:mb-24">
-            <div className="max-w-3xl mb-8"><p className="text-xs font-bold uppercase tracking-wider text-accent mb-3">Start with the right information</p><h2 id="next-steps-heading" className="font-heading text-3xl sm:text-4xl text-foreground">What to do while local profiles are being added</h2><p className="mt-4 text-[15px] sm:text-base text-muted-foreground leading-[1.8]">A useful search begins with the practical details that determine fit. This helps NannyOra families compare wider Auckland profiles honestly and makes a future local match easier to assess.</p></div>
+            <div className="max-w-3xl mb-8"><p className="text-xs font-bold uppercase tracking-wider text-accent mb-3">Start with the right information</p><h2 id="next-steps-heading" className="font-heading text-3xl sm:text-4xl text-foreground">How to begin a thoughtful nanny search</h2><p className="mt-4 text-[15px] sm:text-base text-muted-foreground leading-[1.8]">A useful search begins with the practical details that determine fit. They make it easier to compare candidates honestly and have a more useful first conversation.</p></div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">{nextSteps.map((step, index) => <div key={step.title} className="relative rounded-3xl border border-border/35 bg-card p-6 shadow-sm"><span className="font-heading text-5xl font-black text-secondary absolute right-4 top-3">0{index + 1}</span><div className="relative mb-5 flex h-11 w-11 items-center justify-center rounded-2xl bg-accent/10 text-accent"><step.icon className="h-5 w-5" aria-hidden="true" /></div><h3 className="relative font-heading text-lg font-bold text-foreground mb-2">{step.title}</h3><p className="relative text-sm leading-relaxed text-muted-foreground">{step.body}</p></div>)}</div>
           </section>
 
           <section aria-labelledby="care-needs-heading" className="mb-20 md:mb-24">
-            <div className="max-w-3xl mb-8"><p className="text-xs font-bold uppercase tracking-wider text-accent mb-3">Start with the role</p><h2 id="care-needs-heading" className="font-heading text-3xl sm:text-4xl text-foreground">The care needs families commonly plan for</h2><p className="mt-4 text-[15px] sm:text-base text-muted-foreground leading-[1.8]">Your care brief should describe the arrangement rather than assume that a location label proves a particular service is available. When local profiles are added, use the details on each profile to confirm relevant experience, hours and availability.</p></div>
+            <div className="max-w-3xl mb-8"><p className="text-xs font-bold uppercase tracking-wider text-accent mb-3">Start with the role</p><h2 id="care-needs-heading" className="font-heading text-3xl sm:text-4xl text-foreground">The care needs families commonly plan for</h2><p className="mt-4 text-[15px] sm:text-base text-muted-foreground leading-[1.8]">Describe the arrangement clearly from the start. When you find a potential match, check their experience, hours, travel and availability against the role your family actually needs.</p></div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">{[{ title: "Full-time or regular care", body: "Clarify the weekly hours, guaranteed work, school-holiday expectations and the employment setup before you search." }, { title: "Part-time care", body: "Set out the fixed days, handovers with whānau or preschool, and whether the schedule can work alongside another role." }, { title: "Newborn care", body: "Look for demonstrable newborn experience, parent-led routines, safe-sleep awareness and a role that is clearly within childcare boundaries." }, { title: "After-school care", body: "Confirm the pickup window, transport permissions, activities, homework support, meal routine and end-of-day handover." }].map((need) => <div key={need.title} className="rounded-3xl border border-border/35 bg-card p-6 shadow-sm"><h3 className="font-heading text-lg font-bold text-foreground mb-2">{need.title}</h3><p className="text-sm text-muted-foreground leading-relaxed">{need.body}</p></div>)}</div>
           </section>
 
@@ -203,7 +203,7 @@ export default async function NorthwestAucklandNanniesPage() {
 
           <section aria-labelledby="faq-heading" className="max-w-3xl mx-auto mb-20 md:mb-24"><p className="text-xs font-bold uppercase tracking-wider text-accent mb-3">Northwest Auckland nanny questions</p><h2 id="faq-heading" className="font-heading text-3xl sm:text-4xl text-foreground mb-8">Frequently asked questions</h2><Accordion items={faqs} /></section>
 
-          <section className="max-w-4xl mx-auto"><div className="rounded-[2rem] bg-secondary p-8 sm:p-10 md:p-12 text-center border border-border/35"><h2 className="font-heading text-3xl md:text-4xl text-foreground">Start your Northwest Auckland nanny search with a clear brief.</h2><p className="mx-auto mt-3 max-w-2xl text-muted-foreground leading-relaxed">Local profiles are coming soon. You can still explore current Auckland nannies or register your family so your care requirements are ready when the right match appears.</p><div className="mt-7 flex flex-wrap items-center justify-center gap-3"><Link href="/find-a-nanny" className="inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold px-7 py-3.5 min-h-[48px] shadow-sm hover:bg-primary-light hover:-translate-y-0.5 transition-all">Browse Auckland nannies <ArrowRight className="w-4.5 h-4.5 ml-2" aria-hidden="true" /></Link><Link href="/register-family" className="inline-flex items-center justify-center rounded-full bg-accent text-accent-foreground font-semibold px-7 py-3.5 min-h-[48px] hover:bg-accent-light hover:-translate-y-0.5 transition-all">Register your family</Link></div></div></section>
+          <section className="max-w-4xl mx-auto"><div className="rounded-[2rem] bg-secondary p-8 sm:p-10 md:p-12 text-center border border-border/35"><h2 className="font-heading text-3xl md:text-4xl text-foreground">Start your Northwest Auckland nanny search with a clear brief.</h2><p className="mx-auto mt-3 max-w-2xl text-muted-foreground leading-relaxed">Tell us about the care that would make your week work, or explore current Auckland profiles and take the next step when the schedule and experience feel right.</p><div className="mt-7 flex flex-wrap items-center justify-center gap-3"><Link href="/find-a-nanny" className="inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold px-7 py-3.5 min-h-[48px] shadow-sm hover:bg-primary-light hover:-translate-y-0.5 transition-all">Browse Auckland nannies <ArrowRight className="w-4.5 h-4.5 ml-2" aria-hidden="true" /></Link><Link href="/register-family" className="inline-flex items-center justify-center rounded-full bg-accent text-accent-foreground font-semibold px-7 py-3.5 min-h-[48px] hover:bg-accent-light hover:-translate-y-0.5 transition-all">Register your family</Link></div></div></section>
         </main>
       </div>
     </>

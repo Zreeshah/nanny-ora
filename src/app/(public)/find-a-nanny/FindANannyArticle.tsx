@@ -114,7 +114,7 @@ const TAKEAWAYS = [
   "A Police vet is valuable but is only a point-in-time check. Identity, interviews, referee calls, qualification checks, a paid trial and ongoing communication matter too.",
   "NannyOra displays verification levels. Read the badge and completed checks on each profile rather than assuming every listed profile has the same status.",
   "Many regular nanny arrangements are employment relationships. Use a written agreement and confirm minimum pay, leave, breaks, record-keeping, tax, KiwiSaver and ACC responsibilities before care starts.",
-  "NannyOra currently serves greater Auckland. Hamilton, Christchurch and Wellington are future expansion areas, not current service promises.",
+  "NannyOra currently serves greater Auckland. Families planning care in Hamilton, Christchurch or Wellington can use the local guides to prepare a clear brief.",
 ];
 
 const WHY_FAMILIES = [
@@ -337,7 +337,7 @@ const FAQS: FAQ[] = [
   { question: "Should I reimburse mileage?", answer: "Agree on this before hiring. If the nanny uses a personal vehicle for authorised work trips, document mileage, parking and expense treatment, check insurance for work use and consult current IRD guidance or payroll advice on reimbursement." },
   { question: "Can a nanny care for a child with autism, ADHD or sensory needs?", answer: "Yes, when the nanny has suitable experience and the match is right. Ask for concrete examples, verify credentials where claimed, share care plans and define when the nanny should coordinate with or defer to health and education professionals." },
   { question: "Can I replace a nanny if the match does not work?", answer: "You can end an employment relationship only by following the agreement and New Zealand employment law, including good-faith and fair-process requirements where applicable. NannyOra can support a new search, but platform access does not remove employer obligations." },
-  { question: "Does NannyOra cover all of New Zealand?", answer: "Not yet. NannyOra currently serves greater Auckland. Hamilton, Christchurch and Wellington should be described as planned expansion areas until active service launches." },
+  { question: "Does NannyOra cover all of New Zealand?", answer: "Not yet. NannyOra currently serves greater Auckland. Families planning care in Hamilton, Christchurch or Wellington can use their local guide to prepare a clear brief around their schedule and area." },
   { question: "What should I do next?", answer: "Write down your children’s ages, required days and hours, suburb, essential duties, must-have checks and total budget. Then browse Auckland nanny profiles, register as a family or post a job." },
 ];
 
@@ -972,14 +972,13 @@ export function FindANannyArticle({ allNannies }: { allNannies: NannyProfilePubl
             </Link>
           </div>
 
-          {[{ name: "Hamilton", body: "Hamilton is a planned expansion area. NannyOra does not present active local coverage until profiles and operational support are live.", href: "/nannies/hamilton", linkLabel: "Plan your Hamilton nanny search" },
-           { name: "Christchurch", body: "Christchurch is a planned expansion area. Use the local hub to plan a care brief and register interest while profiles are not yet publicly live.", href: "/nannies/christchurch", linkLabel: "Plan your Christchurch nanny search" },
-           { name: "Wellington", body: "Wellington is a planned expansion area. Use the local hub to share an honest expression of interest while active local profiles develop.", href: "/nannies/wellington", linkLabel: "Plan your Wellington nanny search" }].map((c) => (
+          {[{ name: "Hamilton", body: "Planning care in Hamilton? Use the local guide to shape a clear brief around your suburb, weekly schedule and family routine.", href: "/nannies/hamilton", linkLabel: "Plan your Hamilton nanny search" },
+           { name: "Christchurch", body: "Planning care in Christchurch? Use the local guide to set out the routes, handovers and support that would make your week easier.", href: "/nannies/christchurch", linkLabel: "Plan your Christchurch nanny search" },
+           { name: "Wellington", body: "Planning care in Wellington? Use the local guide to describe your travel, handovers and the practical shape of the role.", href: "/nannies/wellington", linkLabel: "Plan your Wellington nanny search" }].map((c) => (
             <div key={c.name} className="bg-secondary/40 rounded-3xl p-6 border border-border/30">
               <div className="flex items-center gap-2 mb-2">
                 <MapPin className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
                 <h3 className="font-heading text-xl font-bold text-foreground">{c.name}</h3>
-                <span className="text-[10px] uppercase tracking-wider bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">Coming later</span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">{c.body}</p>
               {"href" in c && c.href ? (

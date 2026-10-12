@@ -4,10 +4,10 @@ const config: LocationHubConfig = {
   city: "Christchurch",
   path: "/nannies/christchurch",
   areas: ["christchurch", "Riccarton", "Fendalton", "Merivale", "St Albans", "Papanui", "Cashmere", "Halswell"],
-  areaIntro: "A Christchurch care brief works best when it starts with the places your child actually moves through: home, school or preschool, activities and the adults who share pickup or handover. These area names help us understand future travel needs; they do not promise a current local match.",
-  localContext: "Plan a nanny search around the rhythm of your Christchurch family. NannyOra is preparing for Christchurch, with a practical place to understand the process and share the care that would make your week work.",
+  areaIntro: "A Christchurch care brief works best when it begins with the places your child moves through: home, school or preschool, activities and the adults who share pickup or handover. Include these details so a potential nanny can understand the travel and handover involved.",
+  localContext: "Planning care in Christchurch? Start with the rhythm of your week—your schedule, practical routes and the support that would make family life easier.",
   careIntro: "A nanny can be a useful option when your care needs need to connect home life, school or preschool, changing work hours and a child’s individual routine. The value is not a generic label—it is a carefully defined role and an adult your child can get to know over time.",
-  planningIntro: "Start with the routes, transitions and responsibilities that make a Christchurch weekday difficult. That gives a future candidate a useful picture of the job and gives your family a fair way to compare experience and availability.",
+  planningIntro: "Start with the routes, transitions and responsibilities that make a Christchurch weekday difficult. That gives a potential nanny a useful picture of the role and gives your family a fair way to compare experience and availability.",
   considerations: [
     { title: "Home, school and activity routes", body: "List every regular pickup, drop-off and activity location, then state which journeys are essential. This helps clarify whether a driver, vehicle use or travel reimbursement is part of the role." },
     { title: "Care across a changing week", body: "Separate term-time hours, preschool days, school holidays and occasional appointments. Candidates can assess a clear roster more fairly than a broad request for flexibility." },

@@ -58,7 +58,7 @@ export default function NannyCostPage() {
       description={description}
       imageTags={["family", "planning", "nanny", "budget"]}
       imageSeed="nanny-cost-nz"
-      highlights={["Market context, not promises", "Total-budget planning", "NZ employer considerations", "Questions for a fair offer"]}
+      highlights={["Understand local cost factors", "Total-budget planning", "NZ employer considerations", "Questions for a fair offer"]}
       toc={[
         { id: "cost-vs-platform-pricing", label: "Nanny cost vs platform pricing" },
         { id: "hourly-rates", label: "Hourly-rate context" },
@@ -95,7 +95,7 @@ export default function NannyCostPage() {
       <GuideSection id="hourly-rates" title="Typical nanny hourly-rate context in New Zealand" intro={<Prose>There is no official national nanny-rate table and NannyOra does not set a mandatory rate. The right number comes from a clear role, recent local market evidence and the legal minimum that applies to the employee or worker.</Prose>}>
         <Prose>From 1 April 2026, the adult minimum wage is NZ$23.95 per hour before tax. That is a legal floor for eligible employees, not a typical experienced-nanny rate or a complete budget. See <SourceLink href="https://www.employment.govt.nz/pay-and-hours/pay-and-wages/minimum-wage/minimum-wage-rates-and-types">Employment New Zealand’s current minimum-wage rates</SourceLink> before making an offer.</Prose>
         <InfoCard title="Auckland listing snapshot—not a rate card" tone="important"><Prose>Recent Auckland nanny job advertisements can show rates from roughly NZ$28 to NZ$35+ per hour for different scopes and schedules. For example, current Red Robin listings include roles around $28–$30, $30–$35 and $34 per hour. Treat advertised jobs as a starting point for comparing similar work, not a national average, a promise of availability or a rate NannyOra endorses. Check live <SourceLink href="https://redrobin.co.nz/jobs-board/">New Zealand nanny job listings</SourceLink> close to your hiring date.</Prose></InfoCard>
-        <Prose>Auckland can have a particularly competitive market because of commute, travel and demand, but families should not assume that another location will be cheaper or that an Auckland range automatically transfers. Compare the actual local role, candidate pool and travel area. As NannyOra expands beyond Auckland, local pages should show only real availability and current local context.</Prose>
+        <Prose>Auckland can have a particularly competitive market because of commute, travel and demand, but families should not assume that another location will be cheaper or that an Auckland range automatically transfers. Compare the actual local role, candidate pool and travel area.</Prose>
       </GuideSection>
 
       <GuideSection id="what-changes-cost" title="What makes one nanny role cost more than another" intro={<Prose>Pay reflects the role you are asking someone to take on. These factors help explain differences without treating a child or a caregiver as a commodity.</Prose>}>

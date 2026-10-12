@@ -14,7 +14,7 @@ const faqs: GuideFaq[] = [
   { question: "Can a nanny provide therapy or medical treatment?", answer: "A nanny’s role should stay within their training, agreed duties and safe boundaries. A nanny can follow parent-provided routines and care plans where appropriate, but should not be presented as a replacement for a registered health or education professional." },
   { question: "How do I hire a nanny for a neurodiverse child?", answer: "Write a strengths-based brief, explain practical routines and sensory needs, ask candidates for specific examples of relevant experience, contact referees, arrange a paid trial and agree communication and escalation boundaries. NannyOra currently supports families in greater Auckland." },
   { question: "Should I share my child’s diagnosis with a nanny?", answer: "Share only what is relevant to helping the nanny provide safe, respectful care. Practical information about communication, triggers, regulation, strengths, medication, emergency plans and professional boundaries is often more useful than a label alone." },
-  { question: "Are specialist NannyOra profiles available throughout New Zealand?", answer: "NannyOra currently serves greater Auckland. The site’s Auckland specialist-care pages can help families browse active local profiles; future locations should not be treated as current availability." },
+  { question: "Are specialist NannyOra profiles available throughout New Zealand?", answer: "NannyOra currently serves greater Auckland. If you are planning care in another city, use the local guide to define your care brief and confirm practical availability directly with a prospective nanny." },
 ];
 
 const careAreas = [
