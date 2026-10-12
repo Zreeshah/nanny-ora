@@ -1,47 +1,31 @@
-import { Star } from "lucide-react";
-import { getInitials } from "@/lib/utils";
+import { CheckCircle2 } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 
 /**
- * Elegant testimonial cards led by an emotional headline. Replaces the earlier
- * repeating marquee — fewer, larger, calmer cards with a soft silhouette
- * avatar, suburb, and child age. Tokens only.
+ * Calm, practical shortlist guidance in the visual slot that previously held
+ * unverified testimonial copy. The cards give families an honest next step
+ * without presenting placeholder reviews as customer evidence.
  */
-const testimonials = [
+const shortlistSteps = [
   {
-    headline: "Our evenings became peaceful again.",
-    quote: "Emma's sensory-aware approach transformed bedtime with our autistic son. The calm she brings is incredible.",
-    author: "Liam & Sarah H.",
-    location: "Remuera",
-    relation: "Parents of Leo, 4",
+    headline: "Describe the real week.",
+    quote: "Set out the children’s ages, regular hours, transport, routines and the moments where care needs to be dependable.",
+    label: "1. Write the brief",
   },
   {
-    headline: "Centre-quality learning, at home.",
-    quote: "Aroha brought her ECE background straight into our living room. Our twins adore her and we trust her completely.",
-    author: "Ngaire T.",
-    location: "Ponsonby",
-    relation: "Mother of twins, 3",
+    headline: "Read the evidence shown.",
+    quote: "Compare the profile’s stated travel area, experience, availability and verification level—without assuming every profile has the same checks.",
+    label: "2. Compare profiles",
   },
   {
-    headline: "Absolute peace of mind.",
-    quote: "The police vetting and verification gave us total confidence. Mia has been amazing with our toddler.",
-    author: "David & Jess M.",
-    location: "Devonport",
-    relation: "Parents of Sophie, 2",
+    headline: "Meet with a purpose.",
+    quote: "Use consistent interview questions, speak with appropriate referees and make time to discuss the practical details of the role.",
+    label: "3. Assess the fit",
   },
   {
-    headline: "A weight lifted from our shoulders.",
-    quote: "Our son has ADHD and struggles with transitions. Our nanny brought routines that just worked.",
-    author: "Rachel L.",
-    location: "Mount Eden",
-    relation: "Mother of Mason, 6",
-  },
-  {
-    headline: "She extends their learning through play.",
-    quote: "As a registered teacher, Sarah doesn't just watch our kids — she grows them. Highly recommend.",
-    author: "Matthew K.",
-    location: "Epsom",
-    relation: "Father of Oliver & Lily",
+    headline: "Start with clear terms.",
+    quote: "If you decide to proceed, agree pay, duties, safety information, a paid trial where appropriate and written employment terms before regular care begins.",
+    label: "4. Begin clearly",
   },
 ];
 
@@ -51,37 +35,27 @@ export default function MarqueeTestimonials() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-xl mx-auto mb-14">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-bold uppercase tracking-wider mb-3">
-            <Star className="w-3.5 h-3.5 fill-accent" />
-            <span>Trust &amp; Connection</span>
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            <span>A considered nanny search</span>
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-foreground">
-            Loved by Auckland families
+            A clear path to a confident choice
           </h2>
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {testimonials.map((t, i) => (
-            <Reveal key={t.author} delay={(i % 3) * 80} direction="up">
+          {shortlistSteps.map((step, i) => (
+            <Reveal key={step.label} delay={(i % 3) * 80} direction="up">
               <figure className="h-full flex flex-col bg-card rounded-3xl p-7 sm:p-8 shadow-sm hover:shadow-md transition-all duration-300">
-                <div className="flex items-center gap-1 text-accent mb-4">
-                  {[...Array(5)].map((_, s) => (
-                    <Star key={s} className="w-4 h-4 fill-current stroke-none" />
-                  ))}
-                </div>
+                <CheckCircle2 className="w-5 h-5 text-accent mb-4" aria-hidden="true" />
                 <blockquote className="flex-1">
                   <p className="font-heading text-xl sm:text-2xl text-foreground leading-snug mb-3">
-                    &ldquo;{t.headline}&rdquo;
+                    {step.headline}
                   </p>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{t.quote}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{step.quote}</p>
                 </blockquote>
                 <figcaption className="flex items-center gap-3 mt-6 pt-5 border-t border-border/30">
-                  <span className="w-11 h-11 rounded-full bg-secondary text-primary font-heading font-bold text-sm flex items-center justify-center flex-shrink-0">
-                    {getInitials(t.author)}
-                  </span>
-                  <div className="min-w-0">
-                    <div className="text-sm font-bold text-foreground truncate">{t.author}</div>
-                    <div className="text-xs text-muted-foreground">{t.relation} · {t.location}</div>
-                  </div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-primary">{step.label}</span>
                 </figcaption>
               </figure>
             </Reveal>

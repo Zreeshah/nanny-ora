@@ -5,6 +5,7 @@ import { Accordion } from "@/components/ui/Accordion";
 import { NannyCard } from "@/components/cards/NannyCard";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getPublicNannies } from "@/lib/data/nannies";
+import { hasIndexableCityCoverage } from "@/lib/location-coverage";
 import { breadcrumbSchema } from "@/lib/seo";
 import type { NannyProfilePublic } from "@/types";
 import { ArrowRight, CalendarCheck, Check, Heart, MapPin, Search, ShieldCheck, Users } from "lucide-react";
@@ -12,13 +13,6 @@ import { ArrowRight, CalendarCheck, Check, Heart, MapPin, Search, ShieldCheck, U
 const title = "Nannies in Hamilton — Plan Your Search";
 const description = "Explore nanny care in Hamilton, understand how to hire with confidence, and share a clear care brief with NannyOra.";
 const path = "/nannies/hamilton";
-
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: path },
-  openGraph: { title, description, url: path, type: "website", images: [{ url: "/images/hamilton-nanny-family-hero.png", width: 1536, height: 1024, alt: "Family planning nanny care at home" }] },
-};
 
 export const revalidate = 300;
 
@@ -38,20 +32,34 @@ const hiringSteps = [
   { icon: Heart, title: "Start with clarity", body: "Put duties, pay, safety information and regular check-ins into a clear working plan." },
 ];
 
-const faqs = [
-  { question: "Can I find a nanny in Hamilton through NannyOra?", answer: "There are no current public nanny profiles for Hamilton. You can still register a clear care brief with your suburb, schedule, travel needs and the experience that matters to your family." },
-  { question: "Which Hamilton areas can I include in my care brief?", answer: "You can share the area that is most practical for your family, including Hamilton East, Rototuna, Flagstaff, Chartwell, Hillcrest, Dinsdale, St Andrews or Nawton. When you speak with a potential nanny, confirm that the travel route and weekly schedule work for both of you." },
-  { question: "How do I hire a nanny in Hamilton safely?", answer: "Start with a clear role, check evidence that is relevant to your child, use structured interview questions, speak with referees and arrange a paid trial where appropriate. A written agreement and household safety plan should be in place before regular care starts." },
-  { question: "How much does a nanny cost in Hamilton?", answer: "There is no single rate. Experience, hours, number of children, responsibilities, travel, specialist needs and the employment arrangement all affect the total. Compare the whole role, not just an advertised hourly figure." },
-  { question: "Are all NannyOra profiles verified?", answer: "No. NannyOra displays different verification levels, so a listed profile is not the same as a Premium Vetted or Specialist Care profile. Read the individual profile and completed checks before you shortlist." },
-  { question: "Can a Hamilton family register before profiles are available?", answer: "Yes. Use the family registration form to describe your suburb, schedule and care needs. It helps you set out the role clearly before you begin conversations with potential nannies." },
-];
-
 function servesHamilton(nanny: NannyProfilePublic) {
   return [nanny.suburb, ...nanny.areasCovered].some((area) => {
     const normalised = area.toLowerCase().trim();
     return HAMILTON_AREAS.some((hamiltonArea) => normalised.includes(hamiltonArea));
   });
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const profiles = (await getPublicNannies()).filter(servesHamilton);
+  const isIndexable = hasIndexableCityCoverage(profiles);
+  const metadataTitle = isIndexable ? "Nannies in Hamilton | Find Local Nanny Care" : title;
+  const metadataDescription = isIndexable
+    ? "Browse current nanny profiles covering Hamilton. Compare experience, stated travel areas, availability and verification details on NannyOra."
+    : description;
+
+  return {
+    title: metadataTitle,
+    description: metadataDescription,
+    alternates: { canonical: path },
+    robots: isIndexable ? undefined : { index: false, follow: true },
+    openGraph: {
+      title: metadataTitle,
+      description: metadataDescription,
+      url: path,
+      type: "website",
+      images: [{ url: "/images/hamilton-nanny-family-hero.png", width: 1536, height: 1024, alt: "Family planning nanny care at home" }],
+    },
+  };
 }
 
 function SectionHeading({ eyebrow, title: heading, children }: { eyebrow?: string; title: string; children?: React.ReactNode }) {
@@ -67,12 +75,21 @@ function SectionHeading({ eyebrow, title: heading, children }: { eyebrow?: strin
 export default async function HamiltonNanniesPage() {
   const allNannies = await getPublicNannies();
   const hamiltonNannies = allNannies.filter(servesHamilton);
+  const hasProfiles = hamiltonNannies.length > 0;
   const profileItems = hamiltonNannies.slice(0, 6).map((nanny, index) => ({
     "@type": "ListItem",
     position: index + 1,
     url: `https://www.nannyora.co.nz/nannies/${nanny.slug}`,
     name: nanny.name,
   }));
+  const faqs = [
+    { question: "Can I find a nanny in Hamilton through NannyOra?", answer: hasProfiles ? `Yes. ${hamiltonNannies.length} current public profile${hamiltonNannies.length === 1 ? "" : "s"} list Hamilton or a named local travel area. Check each profile’s availability and travel details before you enquire.` : "There are no current public nanny profiles for Hamilton. You can still register a clear care brief with your suburb, schedule, travel needs and the experience that matters to your family." },
+    { question: "Which Hamilton areas can I include in my care brief?", answer: "You can share the area that is most practical for your family, including Hamilton East, Rototuna, Flagstaff, Chartwell, Hillcrest, Dinsdale, St Andrews or Nawton. When you speak with a potential nanny, confirm that the travel route and weekly schedule work for both of you." },
+    { question: "How do I hire a nanny in Hamilton safely?", answer: "Start with a clear role, check evidence that is relevant to your child, use structured interview questions, speak with referees and arrange a paid trial where appropriate. A written agreement and household safety plan should be in place before regular care starts." },
+    { question: "How much does a nanny cost in Hamilton?", answer: "There is no single rate. Experience, hours, number of children, responsibilities, travel, specialist needs and the employment arrangement all affect the total. Compare the whole role, not just an advertised hourly figure." },
+    { question: "Are all NannyOra profiles verified?", answer: "No. NannyOra displays different verification levels, so a listed profile is not the same as a Premium Vetted or Specialist Care profile. Read the individual profile and completed checks before you shortlist." },
+    { question: "Can a Hamilton family register before profiles are available?", answer: "Yes. Use the family registration form to describe your suburb, schedule and care needs. It helps you set out the role clearly before you begin conversations with potential nannies." },
+  ];
   const schemas = [
     breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Nannies in Hamilton", path }]),
     {

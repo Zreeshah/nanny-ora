@@ -8,14 +8,14 @@ import { Reveal } from "@/components/ui/Reveal";
  * SEO surface, linking to the relevant landing pages where they exist.
  */
 const EXPERTISE = [
-  { icon: Baby, title: "Newborn Care", desc: "Gentle routines for the first precious months.", tint: "bg-amber-50 text-amber-600", href: "/find-a-nanny" },
-  { icon: Brain, title: "ADHD Support", desc: "Structure and calm for busy, brilliant minds.", tint: "bg-teal-50 text-teal-600", href: "/neurodiverse-childcare-auckland" },
-  { icon: Sparkles, title: "Autism Support", desc: "Sensory-aware, predictable, comforting care.", tint: "bg-blue-50 text-blue-600", href: "/sensory-aware-nanny-auckland" },
-  { icon: Clock, title: "After-School Care", desc: "Warm pick-ups, homework help, and downtime.", tint: "bg-emerald-50 text-emerald-600", href: "/find-a-nanny" },
-  { icon: BookOpen, title: "Montessori Learning", desc: "Play-led, independence-building activities.", tint: "bg-amber-50 text-amber-600", href: "/ece-nanny-auckland" },
-  { icon: Languages, title: "Bilingual Care", desc: "Everyday language woven into gentle play.", tint: "bg-teal-50 text-teal-600", href: "/find-a-nanny" },
-  { icon: Moon, title: "Overnight Care", desc: "Calm bedtimes and reassuring night support.", tint: "bg-blue-50 text-blue-600", href: "/find-a-nanny" },
-  { icon: Users, title: "Twins & Multiples", desc: "Experienced hands for double the love.", tint: "bg-emerald-50 text-emerald-600", href: "/find-a-nanny" },
+  { icon: Baby, title: "Newborn Care", desc: "Ask about recent infant-care experience and routines.", tint: "bg-amber-50 text-amber-600", href: "/find-a-nanny" },
+  { icon: Brain, title: "ADHD Support", desc: "Explore profiles that list relevant experience.", tint: "bg-teal-50 text-teal-600", href: "/adhd-nanny-auckland" },
+  { icon: Sparkles, title: "Autism Support", desc: "Discuss routines, sensory needs and care boundaries.", tint: "bg-blue-50 text-blue-600", href: "/autism-nanny-auckland" },
+  { icon: Clock, title: "After-School Care", desc: "Clarify pickup, activities, homework and handover.", tint: "bg-emerald-50 text-emerald-600", href: "/find-a-nanny" },
+  { icon: BookOpen, title: "ECE Background", desc: "Check qualifications or registration where claimed.", tint: "bg-amber-50 text-amber-600", href: "/ece-nanny-auckland" },
+  { icon: Languages, title: "Bilingual Care", desc: "Ask what language experience fits your family.", tint: "bg-teal-50 text-teal-600", href: "/find-a-nanny" },
+  { icon: Moon, title: "Overnight Care", desc: "Agree the schedule, duties and sleeping arrangements.", tint: "bg-blue-50 text-blue-600", href: "/find-a-nanny" },
+  { icon: Users, title: "Twins & Multiples", desc: "Discuss the specific support your household needs.", tint: "bg-emerald-50 text-emerald-600", href: "/find-a-nanny" },
 ];
 
 export default function SpecialistExpertise() {
@@ -30,7 +30,7 @@ export default function SpecialistExpertise() {
             Care shaped around your child
           </h2>
           <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-            Not generic babysitting — specialist Auckland nannies matched to exactly the support your family needs.
+            Use these topics to guide a careful search, then confirm the experience and availability shown on each individual profile.
           </p>
         </div>
 

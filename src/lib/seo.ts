@@ -11,7 +11,7 @@ export function organizationSchema() {
     url: SITE_URL,
     logo: LOGO,
     description:
-      "NannyOra connects Auckland families with verified, specialist nannies — sensory-aware, ECE-qualified, and highly experienced.",
+      "NannyOra is an online marketplace where Auckland families can browse nanny profiles, compare displayed verification information and plan in-home childcare.",
     areaServed: { "@type": "City", name: "Auckland", addressCountry: "NZ" },
   };
 }
@@ -27,21 +27,6 @@ export function websiteSchema() {
       target: { "@type": "EntryPoint", urlTemplate: `${SITE_URL}/find-a-nanny?q={search_term_string}` },
       "query-input": "required name=search_term_string",
     },
-  };
-}
-
-/** ChildCare LocalBusiness — helps local-pack / map relevance for Auckland. */
-export function localBusinessSchema() {
-  return {
-    "@context": "https://schema.org",
-    "@type": "ChildCare",
-    name: "NannyOra",
-    url: SITE_URL,
-    logo: LOGO,
-    image: `${SITE_URL}/opengraph-image`,
-    description: "Verified, specialist nanny care for Auckland families.",
-    areaServed: { "@type": "City", name: "Auckland", addressCountry: "NZ" },
-    address: { "@type": "PostalAddress", addressLocality: "Auckland", addressRegion: "Auckland", addressCountry: "NZ" },
   };
 }
 

@@ -17,7 +17,11 @@ const config: LocationHubConfig = {
   heroImageClass: "bg-[linear-gradient(135deg,rgba(236,242,250,1),rgba(241,238,249,1))]",
 };
 
-export const metadata = locationMetadata(config);
+export const revalidate = 300;
+
+export async function generateMetadata() {
+  return locationMetadata(config);
+}
 
 export default function WellingtonNanniesPage() {
   return <LocationNannyHub config={config} />;

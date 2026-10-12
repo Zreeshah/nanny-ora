@@ -4,6 +4,7 @@ import { SUBURB_SLUGS } from "@/lib/constants";
 import { getPublicNannies, filterNannies } from "@/lib/data/nannies";
 import { INDEXABLE_STATIC_PATHS } from "@/lib/indexnow";
 import { getHobsonvilleNannies, getNorthwestAucklandNannies, hasIndexableHobsonvilleCoverage, hasIndexableNorthwestAucklandCoverage, HOBSONVILLE_PATH, NORTHWEST_AUCKLAND_PATH } from "@/lib/northwest-auckland";
+import { CITY_HUBS, getNanniesForAreas, hasIndexableCityCoverage } from "@/lib/location-coverage";
 
 const BASE = "https://www.nannyora.co.nz";
 
@@ -13,7 +14,7 @@ const STATIC: { path: string; priority: number; freq: MetadataRoute.Sitemap[numb
   if (path === "") return { path, priority: 1.0, freq: "daily" };
   if (path === "find-a-nanny") return { path, priority: 0.9, freq: "daily" };
   if (["nanny-vetting", "nanny-cost", "nannies/auckland", "autism-nanny-auckland", "adhd-nanny-auckland", "ece-nanny-auckland", "neurodiverse-childcare-auckland", "sensory-aware-nanny-auckland", "specialist-childcare-auckland"].includes(path)) return { path, priority: 0.8, freq: path === "nannies/auckland" ? "weekly" : "monthly" };
-  if (["nanny-interview-questions", "how-to-hire-a-nanny", "nanny-contract", "nanny-payroll", "nanny-safety", "nanny-vs-daycare", "nanny-vs-babysitter", "nanny-vs-au-pair", "specialist-nanny-care", "parent-resources", "nannies/hamilton", "nannies/christchurch", "nannies/wellington", "childcare-support", "how-it-works", "apply-as-nanny", "membership"].includes(path)) return { path, priority: 0.7, freq: "monthly" };
+  if (["nanny-interview-questions", "how-to-hire-a-nanny", "nanny-contract", "nanny-payroll", "nanny-safety", "nanny-vs-daycare", "nanny-vs-babysitter", "nanny-vs-au-pair", "specialist-nanny-care", "parent-resources", "childcare-support", "how-it-works", "apply-as-nanny", "membership"].includes(path)) return { path, priority: 0.7, freq: "monthly" };
   if (["trust-and-safety", "verification-process"].includes(path)) return { path, priority: 0.6, freq: "monthly" };
   if (path === "pricing") return { path, priority: 0.5, freq: "monthly" };
   return { path, priority: 0.3, freq: "yearly" };
@@ -35,6 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let suburbEntries: MetadataRoute.Sitemap = [];
   let northwestAucklandEntry: MetadataRoute.Sitemap = [];
   let hobsonvilleEntry: MetadataRoute.Sitemap = [];
+  let cityEntries: MetadataRoute.Sitemap = [];
   try {
     const allNannies = await getPublicNannies();
     suburbEntries = Object.keys(SUBURB_SLUGS)
@@ -65,6 +67,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.7,
       }];
     }
+
+    cityEntries = CITY_HUBS
+      .filter((cityHub) => hasIndexableCityCoverage(getNanniesForAreas(allNannies, cityHub.areas)))
+      .map((cityHub) => ({
+        url: `${BASE}${cityHub.path}`,
+        lastModified: now,
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      }));
   } catch (error) {
     console.error("sitemap: local directory query failed:", error);
   }
@@ -88,5 +99,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("sitemap: nanny query failed:", error);
   }
 
-  return [...staticEntries, ...suburbEntries, ...northwestAucklandEntry, ...hobsonvilleEntry, ...nannyEntries];
+  return [...staticEntries, ...suburbEntries, ...northwestAucklandEntry, ...hobsonvilleEntry, ...cityEntries, ...nannyEntries];
 }

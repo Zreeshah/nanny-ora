@@ -5,7 +5,7 @@ export const parentFaqs = [
   {
     question: "How does payroll work? Do I have to handle it myself?",
     answer:
-      "In New Zealand, nannies are legally classified as household employees, meaning you cannot pay them cash-in-hand or treat them as independent contractors. You are responsible for deducting PAYE tax, ACC levies, and KiwiSaver. We believe hiring a nanny should be a joy, not a headache. That's why we recommend using a payroll system to take the stress out of your employer obligations. It's mobile friendly, automates the entire process, handles the IRD filings, tracks holiday pay, and pays your nanny directly.\n\nThe DIY Way: You can choose to register as a domestic employer with the IRD and run payroll yourself using your own software or spreadsheet system.",
+      "Payroll responsibilities depend on the real employment arrangement and current Inland Revenue rules. Regular in-home care at set times often has employee features, but families should not assume the answer from the job title alone. Check the current Employment New Zealand and IRD guidance, then decide whether to run payroll yourself or use a provider that fits the arrangement.",
   },
   {
     question: "What is included in a nanny's standard job description?",
@@ -15,12 +15,12 @@ export const parentFaqs = [
   {
     question: "Are we required to pay for public holidays and sick leave?",
     answer:
-      "Yes. Under the Holidays Act 2003, if a public holiday falls on a day your nanny would normally work, they are entitled to the day off with regular pay. If they agree to work, you must pay them Time and a Half plus give them an alternative day off (day in lieu). Nannies also qualify for 10 days of paid sick leave per year after 6 months of continuous employment.",
+      "Employees can have statutory holiday and leave entitlements when the relevant eligibility rules are met. Public-holiday payment and alternative-holiday treatment depend on whether the day would otherwise be a working day and whether the employee works. Set the arrangement up correctly and use current Employment New Zealand guidance for the individual circumstances.",
   },
   {
     question: "Can we use a 90-day trial period?",
     answer:
-      "Yes, as a household employer, you are legally entitled to include a 90-day trial period. However, for it to be legally valid, the employment contract must be fully signed by both you and the nanny before their very first day of work.",
+      "A 90-day trial may be possible only when the current legal requirements are met. It needs to be in a written employment agreement that is signed before employment begins, and earlier paid work can affect whether it is valid. Read current Employment New Zealand guidance or seek advice before relying on a trial provision.",
   },
 ];
 
@@ -28,26 +28,26 @@ export const nannyFaqs = [
   {
     question: "Am I an employee or a contractor?",
     answer:
-      "You are an employee. In New Zealand, the law states that private in-home nannies cannot be independent contractors. This means you are entitled to full employment rights, including a written employment agreement, paid annual leave (4 weeks), paid sick leave, and employer KiwiSaver contributions (if eligible).",
+      "Employment status depends on the real working relationship, not simply the label used in an agreement. Regular care in a family home at set times may have employee features, but each arrangement needs to be assessed against current New Zealand legal and tax guidance. Get advice if the status is unclear.",
   },
   {
     question: "How do I get reimbursed if I drive the children in my own car?",
     answer:
-      "If you use your personal vehicle for work-related tasks (like school runs or taking the kids to the park), your employer must reimburse you. You should keep an accurate logbook of your kilometres. Your employer will then reimburse you tax-free per kilometre, usually matching the current standard Inland Revenue (IRD) mileage rates.",
+      "Agree vehicle use, mileage, parking and insurance before the role starts. Keep accurate records of authorised work travel and check current IRD guidance or payroll advice for the appropriate reimbursement and tax treatment.",
   },
   {
     question: "What are the rules regarding privacy and social media?",
     answer:
-      "Trust and discretion are vital. You must respect the family's privacy and keep all household matters strictly confidential. You must never post photos or videos of the children, or mention details about the family on your personal social media accounts (such as Instagram, TikTok, Facebook, or Xiaohongshu) without explicit written permission from the parents.",
+      "Privacy expectations should be written into the agreement and discussed before care starts. Families and nannies should agree how photos, social media, household information, messaging and emergency contacts will be handled. Written parent permission is a sensible minimum before sharing identifiable information about a child.",
   },
   {
     question: "What should I do if a child becomes unwell during my shift?",
     answer:
-      "Your first priority is comfort and safety. Assess the symptoms, administer any parent-approved first aid or medication (according to the family's health policy), and contact the parents immediately to notify them. If it is an emergency, always call 111 first before notifying the parents.",
+      "Follow the family’s written emergency and health plan, contact the parent or nominated emergency contact, and seek urgent help through 111 when there is an emergency. Medication should only be administered in line with the family’s clear written instructions and the caregiver’s competence.",
   },
   {
     question: "Do I need to cook?",
     answer:
-      "Yes, but only for the children. You are expected to prepare nutritious, balanced meals and snacks for the children during your shift, and clean up the kitchen afterward. You are not expected to cook dinner for the parents or the wider household unless this was explicitly agreed upon and written into your contract.",
+      "Only duties agreed for the role are expected. Child-related meals, snacks and tidying are common in some nanny roles, while general household cooking or cleaning should be explicitly agreed, reflected in the time and pay, and recorded in the written terms.",
   },
 ];

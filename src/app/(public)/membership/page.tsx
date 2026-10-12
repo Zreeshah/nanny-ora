@@ -10,9 +10,9 @@ import { breadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/membership" },
-  title: "Membership — Unlock Verified Auckland Nannies",
+  title: "Membership — Unlock Auckland Nanny Profiles",
   description:
-    "Become a NannyOra member to message verified nannies, shortlist favourites, request meet-and-greets, post jobs and make secure bookings. From NZ$39/month.",
+    "Become a NannyOra member to message nanny profiles, shortlist favourites, request meet-and-greets, post jobs and make secure bookings. From NZ$39/month.",
 };
 
 export default async function MembershipPage() {
@@ -40,11 +40,10 @@ export default async function MembershipPage() {
           <span>Membership</span>
         </div>
         <h1 className="font-heading text-4xl sm:text-5xl text-foreground mb-5 leading-tight">
-          Unlock <ShinyText>verified nannies</ShinyText>
+          Unlock <ShinyText>more profile features</ShinyText>
         </h1>
         <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-          NannyOra isn&apos;t an open marketplace. Every nanny completes our full compliance
-          process before they appear. Membership gives you direct access to them.
+          Browse public profiles for free, then use membership to unlock features such as full profiles, messaging, shortlisting, meet-and-greet requests, job posts and secure bookings. Read each profile&apos;s verification level rather than assuming every nanny has completed the same checks.
         </p>
       </div>
 

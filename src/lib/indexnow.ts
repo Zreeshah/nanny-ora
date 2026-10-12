@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db/prisma";
 import { SUBURB_SLUGS } from "@/lib/constants";
 import { filterNannies, getPublicNannies } from "@/lib/data/nannies";
 import { getHobsonvilleNannies, getNorthwestAucklandNannies, hasIndexableHobsonvilleCoverage, hasIndexableNorthwestAucklandCoverage, HOBSONVILLE_PATH, NORTHWEST_AUCKLAND_PATH } from "@/lib/northwest-auckland";
+import { CITY_HUBS, getNanniesForAreas, hasIndexableCityCoverage } from "@/lib/location-coverage";
 
 export const INDEXNOW_HOST = "www.nannyora.co.nz";
 export const INDEXNOW_KEY = "ee7ef5e7-e305-43c5-9368-617a3ebd17e3";
@@ -26,9 +27,6 @@ export const INDEXABLE_STATIC_PATHS = [
   "specialist-nanny-care",
   "parent-resources",
   "nannies/auckland",
-  "nannies/hamilton",
-  "nannies/christchurch",
-  "nannies/wellington",
   "autism-nanny-auckland",
   "adhd-nanny-auckland",
   "ece-nanny-auckland",
@@ -78,6 +76,12 @@ export async function indexNowUrls() {
   if (hasIndexableHobsonvilleCoverage(hobsonvilleNannies)) {
     urls.push(`https://${INDEXNOW_HOST}${HOBSONVILLE_PATH}`);
   }
+
+  CITY_HUBS.forEach((cityHub) => {
+    if (hasIndexableCityCoverage(getNanniesForAreas(allNannies, cityHub.areas))) {
+      urls.push(`https://${INDEXNOW_HOST}${cityHub.path}`);
+    }
+  });
 
   try {
     const nannies = await prisma.nannyProfile.findMany({

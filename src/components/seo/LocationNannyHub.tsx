@@ -6,8 +6,8 @@ import { Accordion } from "@/components/ui/Accordion";
 import { NannyCard } from "@/components/cards/NannyCard";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getPublicNannies } from "@/lib/data/nannies";
+import { getNanniesForAreas, hasIndexableCityCoverage } from "@/lib/location-coverage";
 import { breadcrumbSchema } from "@/lib/seo";
-import type { NannyProfilePublic } from "@/types";
 
 export type LocationHubConfig = {
   city: string;
@@ -22,13 +22,6 @@ export type LocationHubConfig = {
   heroImage?: { src: string; alt: string; width: number; height: number };
 };
 
-function matchesLocation(nanny: NannyProfilePublic, areas: string[]) {
-  return [nanny.suburb, ...nanny.areasCovered].some((area) => {
-    const normalised = area.toLowerCase().trim();
-    return areas.some((locationArea) => normalised.includes(locationArea.toLowerCase()));
-  });
-}
-
 function SectionHeading({ eyebrow, title, children }: { eyebrow?: string; title: string; children?: React.ReactNode }) {
   return (
     <div className="max-w-2xl mb-8">
@@ -40,12 +33,15 @@ function SectionHeading({ eyebrow, title, children }: { eyebrow?: string; title:
 }
 
 export async function LocationNannyHub({ config }: { config: LocationHubConfig }) {
-  const profiles = (await getPublicNannies()).filter((nanny) => matchesLocation(nanny, config.areas));
-  const title = `Nannies in ${config.city} — Plan Your Search`;
-  const description = `Explore nanny care in ${config.city}, understand how to hire with confidence, and share a clear care brief with NannyOra.`;
+  const profiles = getNanniesForAreas(await getPublicNannies(), config.areas);
+  const hasProfiles = profiles.length > 0;
+  const title = hasProfiles ? `Nannies in ${config.city} | Find Local Nanny Care` : `Nannies in ${config.city} — Plan Your Search`;
+  const description = hasProfiles
+    ? `Browse current nanny profiles covering ${config.city}. Compare experience, stated travel areas, availability and verification details on NannyOra.`
+    : `Explore nanny care in ${config.city}, understand how to hire with confidence, and share a clear care brief with NannyOra.`;
   const profileItems = profiles.slice(0, 6).map((nanny, index) => ({ "@type": "ListItem", position: index + 1, url: `https://www.nannyora.co.nz/nannies/${nanny.slug}`, name: nanny.name }));
   const faqs = [
-    { question: `Can I find a nanny in ${config.city} through NannyOra?`, answer: `There are no current public nanny profiles for ${config.city}. You can still register a clear care brief with your area, hours, travel needs and the experience that matters to your family.` },
+    { question: `Can I find a nanny in ${config.city} through NannyOra?`, answer: hasProfiles ? `Yes. ${profiles.length} current public profile${profiles.length === 1 ? "" : "s"} list ${config.city} or a named local travel area. Check each profile’s availability and travel details before you enquire.` : `There are no current public nanny profiles for ${config.city}. You can still register a clear care brief with your area, hours, travel needs and the experience that matters to your family.` },
     { question: `Which ${config.city} areas can I include in my care brief?`, answer: `You can share the area that is practical for your family, including ${config.areas.slice(1).join(", ")}. When you speak with a potential nanny, confirm that the travel route and weekly schedule work for both of you.` },
     { question: `How do I hire a nanny in ${config.city} safely?`, answer: "Start with a clear role, check evidence relevant to your child, use structured interview questions, speak with referees and arrange a paid trial where appropriate. A written agreement and household safety plan should be in place before regular care starts." },
     { question: `How much does a nanny cost in ${config.city}?`, answer: "There is no single local rate. Experience, hours, number of children, responsibilities, travel, specialist needs and the employment arrangement all affect the total. Compare the whole role, not only an advertised hourly figure." },
@@ -127,9 +123,13 @@ export async function LocationNannyHub({ config }: { config: LocationHubConfig }
   );
 }
 
-export function locationMetadata(config: LocationHubConfig): Metadata {
-  const title = `Nannies in ${config.city} — Plan Your Search`;
-  const description = `Explore nanny care in ${config.city}, understand how to hire with confidence, and share a clear care brief with NannyOra.`;
+export async function locationMetadata(config: LocationHubConfig): Promise<Metadata> {
+  const profiles = getNanniesForAreas(await getPublicNannies(), config.areas);
+  const isIndexable = hasIndexableCityCoverage(profiles);
+  const title = isIndexable ? `Nannies in ${config.city} | Find Local Nanny Care` : `Nannies in ${config.city} — Plan Your Search`;
+  const description = isIndexable
+    ? `Browse current nanny profiles covering ${config.city}. Compare experience, stated travel areas, availability and verification details on NannyOra.`
+    : `Explore nanny care in ${config.city}, understand how to hire with confidence, and share a clear care brief with NannyOra.`;
   const image = config.heroImage ? [{ url: config.heroImage.src, width: config.heroImage.width, height: config.heroImage.height, alt: config.heroImage.alt }] : undefined;
-  return { title, description, alternates: { canonical: config.path }, openGraph: { title, description, url: config.path, type: "website", images: image }, twitter: image ? { card: "summary_large_image", title, description, images: [config.heroImage!.src] } : undefined };
+  return { title, description, alternates: { canonical: config.path }, robots: isIndexable ? undefined : { index: false, follow: true }, openGraph: { title, description, url: config.path, type: "website", images: image }, twitter: image ? { card: "summary_large_image", title, description, images: [config.heroImage!.src] } : undefined };
 }

@@ -23,7 +23,11 @@ const config: LocationHubConfig = {
   },
 };
 
-export const metadata = locationMetadata(config);
+export const revalidate = 300;
+
+export async function generateMetadata() {
+  return locationMetadata(config);
+}
 
 export default function ChristchurchNanniesPage() {
   return <LocationNannyHub config={config} />;

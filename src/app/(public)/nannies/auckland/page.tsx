@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/Badge";
 import { NannyCard } from "@/components/cards/NannyCard";
 import { ImageBand } from "@/components/ui/ImageBand";
 import { getPublicNannies } from "@/lib/data/nannies";
-import { breadcrumbSchema, localBusinessSchema } from "@/lib/seo";
+import { breadcrumbSchema } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { ArrowRight, CalendarCheck, Check, Heart, MapPin, Search, ShieldCheck, Users } from "lucide-react";
 
@@ -74,7 +74,6 @@ export default async function AucklandNanniesPage() {
     name: nanny.name,
   }));
   const schemas = [
-    localBusinessSchema(),
     breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Nannies in Auckland", path }]),
     {
       "@context": "https://schema.org",

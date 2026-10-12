@@ -7,18 +7,18 @@ export default function BentoFeatures() {
   const items = [
     {
       icon: ShieldCheck,
-      title: "Strict Vetting Standards",
+      title: "Profile Verification Information",
       description: "Each profile shows its verification level. Higher-level profiles may include reviewed identity, references, qualifications, and Police-vetting records.",
-      tag: "Security First",
+      tag: "Profile clarity",
       color: "emerald",
       href: "/trust-and-safety",
       className: "md:col-span-2 md:row-span-1 bg-gradient-to-br from-emerald-50/20 via-transparent to-transparent",
     },
     {
       icon: GraduationCap,
-      title: "ECE Educators",
-      description: "Access registered teachers and carers certified in Early Childhood Education.",
-      tag: "Professional Care",
+      title: "ECE Background",
+      description: "Explore profiles that list ECE experience, qualifications or registration, then confirm the details that matter to your family.",
+      tag: "Relevant experience",
       color: "blue",
       href: "/ece-nanny-auckland",
       className: "md:col-span-1 md:row-span-1 bg-gradient-to-br from-blue-50/20 via-transparent to-transparent",
@@ -26,7 +26,7 @@ export default function BentoFeatures() {
     {
       icon: Brain,
       title: "Sensory-Aware & Neurodiverse Care",
-      description: "Dedicated nannies trained in ADHD, Autism, and sensory processing needs to create calm, structured spaces.",
+      description: "Use profile details and a careful conversation to assess whether a nanny’s experience is relevant to your child’s needs.",
       tag: "Specialist Care",
       color: "teal",
       href: "/sensory-aware-nanny-auckland",
@@ -34,9 +34,9 @@ export default function BentoFeatures() {
     },
     {
       icon: Award,
-      title: "Auckland Experienced Carers",
-      description: "Professionals with 5 to 15+ years of active, hands-on childcare experience in local suburbs.",
-      tag: "High Trust",
+      title: "Auckland Nanny Profiles",
+      description: "Compare the experience, stated travel area, availability and verification information shown on individual profiles.",
+      tag: "Local discovery",
       color: "amber",
       href: "/specialist-childcare-auckland",
       className: "md:col-span-2 md:row-span-1 bg-gradient-to-br from-amber-50/20 via-transparent to-transparent",
@@ -57,13 +57,13 @@ export default function BentoFeatures() {
         <div className="max-w-3xl mb-12 md:mb-16">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary text-primary text-xs font-bold uppercase tracking-wider mb-4">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Premium Standards</span>
+            <span>Careful profile comparison</span>
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-foreground leading-[1.1] mb-5">
-            Specialist care, backed by high-trust experience
+            Start with relevant evidence
           </h2>
           <p className="text-muted-foreground text-base sm:text-lg max-w-xl">
-            We vet beyond the basics to bring you specialist Auckland nannies who match your child&apos;s educational and emotional needs.
+            Each family’s needs are different. Review the verification information and experience shown on a profile, then use a conversation, references and a paid trial where appropriate to assess the fit.
           </p>
         </div>
 

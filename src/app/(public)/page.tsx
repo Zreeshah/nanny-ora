@@ -2,25 +2,22 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import { Accordion } from "@/components/ui/Accordion";
 import { FaqGroups } from "@/components/FaqGroups";
-import { Badge, VerificationBadge } from "@/components/ui/Badge";
 import {
   Heart,
   Brain,
   GraduationCap,
   Award,
-  MapPin,
-  Clock,
   ArrowRight,
   Check,
   Sparkles,
 } from "lucide-react";
-import { formatRate } from "@/lib/utils";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { organizationSchema, websiteSchema, localBusinessSchema, faqSchema } from "@/lib/seo";
+import { organizationSchema, websiteSchema, faqSchema } from "@/lib/seo";
 import { parentFaqs, nannyFaqs } from "@/lib/faq";
+import { getPublicNannies } from "@/lib/data/nannies";
+import { NannyCard } from "@/components/cards/NannyCard";
 import InteractiveHero from "@/components/home/InteractiveHero";
 import TrustStrip from "@/components/home/TrustStrip";
 import TrustStandard from "@/components/home/TrustStandard";
@@ -45,46 +42,6 @@ export const metadata: Metadata = {
     "Explore Auckland nanny profiles with clear verification levels, relevant experience, and specialist childcare support for your family.",
 };
 
-// Featured nannies with Pexels profile images
-const featuredNannies = [
-  {
-    id: "nanny-001",
-    name: "Sarah M.",
-    suburb: "Remuera",
-    hourlyRate: 35,
-    yearsExperience: 8,
-    bio: "Passionate early childhood educator with 8+ years caring for children of all ages.",
-    verificationLevel: "VERIFIED" as const,
-    specialistTags: ["ECE Teacher", "Newborn Care", "First Aid"],
-    whyLoved: "Creates calm, playful learning routines.",
-    imageUrl: "https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=600&h=750&fit=crop",
-  },
-  {
-    id: "nanny-002",
-    name: "Emma T.",
-    suburb: "Ponsonby",
-    hourlyRate: 42,
-    yearsExperience: 12,
-    bio: "Registered teacher with specialist training in sensory-aware childcare.",
-    verificationLevel: "SPECIALIST" as const,
-    specialistTags: ["Sensory-Aware", "ADHD Support", "Registered Teacher"],
-    whyLoved: "Turns tough evenings into peaceful ones.",
-    imageUrl: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=600&h=750&fit=crop",
-  },
-  {
-    id: "nanny-003",
-    name: "Mia J.",
-    suburb: "Devonport",
-    hourlyRate: 30,
-    yearsExperience: 5,
-    bio: "Warm nanny who loves outdoor activities and creative play. First aid certified.",
-    verificationLevel: "PREMIUM_VETTED" as const,
-    specialistTags: ["First Aid", "After-School", "Montessori"],
-    whyLoved: "Makes outdoor adventures the day's highlight.",
-    imageUrl: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600&h=750&fit=crop",
-  },
-];
-
 const faqItems = [
   {
     question: "How are nannies verified on NannyOra?",
@@ -94,28 +51,31 @@ const faqItems = [
   {
     question: "What is a sensory-aware or specialist care nanny?",
     answer:
-      "These are nannies with specific training and experience supporting children who may be neurodiverse, have sensory processing needs, or benefit from a calm, structured care environment. They may include registered teachers, early intervention professionals, and carers with autism or ADHD support experience.",
+      "Some nanny profiles list specialist experience, such as sensory-aware care, ECE, autism or ADHD support. Read the individual profile, ask for concrete examples that are relevant to your child, and confirm any qualification or verification information shown before you decide whether the match is suitable.",
   },
   {
     question: "How much does it cost to use NannyOra?",
     answer:
-      "Creating a parent account and browsing nanny profiles is free. Nanny rates are set by each individual nanny and are shown on their profile. We're working on premium features for the future, but the core platform is free for families.",
+      "Creating a family account and browsing public profiles is free. Parent membership unlocks features including messaging, full profiles, shortlisting, meet-and-greet requests, job posts and secure bookings. Nanny rates are set by individual nannies; see the current pricing page before joining.",
   },
   {
     question: "What areas does NannyOra cover?",
     answer:
-      "NannyOra currently serves the greater Auckland area, including suburbs like Remuera, Ponsonby, Grey Lynn, Devonport, Takapuna, Epsom, Mount Eden, and more. We're expanding across Auckland and plan to serve other NZ cities in the future.",
+      "Current public directory profiles are in greater Auckland. NannyOra also provides planning guides for Hamilton, Christchurch and Wellington; those guides do not promise local profile availability. Check the relevant directory page before you shortlist a nanny.",
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const featuredNannies = (await getPublicNannies())
+    .filter((nanny) => (nanny.placementStatus || "AVAILABLE") === "AVAILABLE")
+    .slice(0, 3);
+
   return (
     <div className="space-y-4 md:space-y-8">
       <JsonLd
         data={[
           organizationSchema(),
           websiteSchema(),
-          localBusinessSchema(),
           faqSchema([...parentFaqs, ...nannyFaqs]),
         ]}
       />
@@ -226,14 +186,14 @@ export default function HomePage() {
                 Specialist sensory-aware childcare
               </h2>
               <p className="text-muted-foreground text-sm sm:text-base mb-8 leading-relaxed">
-                Families with neurodiverse children or those with sensory processing needs deserve carers who truly understand. Our specialist nannies bring trained, lived experience to support your children in a calm, comforting, and structured environment.
+                Families can use profile information to identify experience that may be relevant to sensory needs, neurodiversity or a calm, structured routine. Discuss the child&apos;s individual support plan, the caregiver&apos;s practical experience and appropriate professional boundaries before making a decision.
               </p>
               <div className="grid sm:grid-cols-2 gap-4 mb-8">
                 {[
-                  { icon: Brain, label: "Sensory-aware approaches", desc: "Trained in sensory regulation" },
-                  { icon: Sparkles, label: "Autism & ADHD experience", desc: "Support for neurodiverse kids" },
-                  { icon: GraduationCap, label: "Early intervention support", desc: "Developmental milestone focus" },
-                  { icon: Heart, label: "Calm, structured settings", desc: "Stable care and routines" },
+                  { icon: Brain, label: "Sensory-aware approaches", desc: "Ask how routines are adapted" },
+                  { icon: Sparkles, label: "Autism & ADHD experience", desc: "Check the profile and examples" },
+                  { icon: GraduationCap, label: "Relevant background", desc: "Confirm claimed qualifications" },
+                  { icon: Heart, label: "Calm, structured settings", desc: "Agree the care plan together" },
                 ].map((item) => (
                   <div key={item.label} className="flex gap-3 items-start p-3 bg-secondary/20 rounded-2xl border border-border/10">
                     <div className="w-8 h-8 rounded-lg bg-blue-50 text-badge-specialist flex items-center justify-center flex-shrink-0 border border-blue-100/30">
@@ -257,75 +217,28 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== FEATURED AUCKLAND NANNIES ===== */}
+      {/* ===== CURRENT AUCKLAND NANNY PROFILES ===== */}
       <section className="py-16 md:py-24 bg-secondary/15 border-t border-border/25">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-foreground mb-4">
-              Featured <ShinyText>Auckland nannies</ShinyText>
+              Current <ShinyText>Auckland nanny profiles</ShinyText>
             </h2>
             <p className="text-muted-foreground text-sm sm:text-base">
-              Meet some of the trusted, verified carers in our Auckland community.
+              Browse current public profiles and compare the experience, availability and verification information each nanny has provided.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredNannies.map((nanny, i) => (
-              <Card key={nanny.id} hover padding="none" className="relative overflow-hidden bg-card border border-border/40 flex flex-col">
-                <BorderBeam duration={14} delay={i * 4} />
-                {/* Large candid photo */}
-                <div className="relative aspect-[4/5] w-full overflow-hidden">
-                  <Image
-                    src={nanny.imageUrl}
-                    alt={nanny.name}
-                    fill
-                    className="object-cover transition-transform duration-500 hover:scale-[1.03]"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/75 via-primary/10 to-transparent" />
-                  {/* Layered tags */}
-                  <div className="absolute top-3 left-3">
-                    <VerificationBadge level={nanny.verificationLevel} />
-                  </div>
-                  <div className="absolute top-3 right-3 bg-card/90 backdrop-blur text-primary text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
-                    {formatRate(nanny.hourlyRate)}
-                  </div>
-                  <div className="absolute bottom-3 left-4 right-4 text-white">
-                    <h3 className="font-heading text-xl font-bold leading-tight">{nanny.name}</h3>
-                    <div className="flex items-center gap-1.5 text-xs text-white/85 mt-0.5">
-                      <MapPin className="w-3.5 h-3.5" aria-hidden="true" />
-                      <span>{nanny.suburb}</span>
-                      <span className="opacity-60">·</span>
-                      <Clock className="w-3.5 h-3.5" aria-hidden="true" />
-                      <span>{nanny.yearsExperience}+ yrs</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Body */}
-                <div className="p-5 flex flex-col flex-1">
-                  <div className="flex items-start gap-2 mb-4">
-                    <Heart className="w-4 h-4 text-accent fill-accent flex-shrink-0 mt-0.5" aria-hidden="true" />
-                    <p className="text-sm font-semibold text-foreground leading-snug">
-                      {nanny.whyLoved}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-wrap gap-1.5 mb-5">
-                    {nanny.specialistTags.map((tag) => (
-                      <Badge key={tag} variant="specialist" size="sm">{tag}</Badge>
-                    ))}
-                  </div>
-
-                  <Link href={`/nannies/${nanny.id}`} className="mt-auto">
-                    <Button variant="outline" fullWidth size="sm" className="rounded-full">
-                      View profile
-                    </Button>
-                  </Link>
-                </div>
-              </Card>
-            ))}
-          </div>
+          {featuredNannies.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredNannies.map((nanny) => <NannyCard key={nanny.id} nanny={nanny} />)}
+            </div>
+          ) : (
+            <div className="max-w-3xl mx-auto rounded-3xl border border-border/35 bg-card p-7 sm:p-9 text-center">
+              <h3 className="font-heading text-2xl text-foreground">No public profiles are available to feature right now</h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">You can still create a clear care brief and return to the directory when a suitable profile is available.</p>
+            </div>
+          )}
 
           <div className="text-center mt-10">
             <Link href="/find-a-nanny">
@@ -344,7 +257,7 @@ export default function HomePage() {
       {/* ===== LIFESTYLE GALLERY ===== */}
       <LifestyleGallery />
 
-      {/* ===== TESTIMONIALS ===== */}
+      {/* ===== SHORTLIST GUIDANCE ===== */}
       <MarqueeTestimonials />
 
       {/* ===== DUAL CTA — FOR FAMILIES / FOR NANNIES (asymmetric) ===== */}
@@ -363,9 +276,9 @@ export default function HomePage() {
               </h3>
               <ul className="space-y-2.5 mb-8 max-w-sm">
                 {[
-                  "Verified, local nannies matched to your family",
-                  "Filter by specialist skills, ECE & sensory support",
-                  "Full profiles with every check clearly shown",
+                  "Compare displayed verification levels and profile details",
+                  "Filter by location, care type and relevant experience",
+                  "Use interviews, references and a paid trial to assess fit",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2.5 text-sm text-foreground/75">
                     <Check className="w-4 h-4 text-accent flex-shrink-0 mt-0.5 stroke-[2.5]" aria-hidden="true" />
