@@ -27,7 +27,7 @@ const rows = [
 export default function NannyVsBabysitterPage() {
   const schemas = [articleSchema({ headline: title, description, path, datePublished: "2026-08-24" }), breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Find a Nanny", path: "/find-a-nanny" }, { name: "Nanny vs Babysitter", path }]), faqSchema(faqs)];
   return (
-    <EditorialGuide eyebrow="Childcare comparison guide" title={title} description={description} imageTags={["babysitting", "family", "home", "care"]} imageSeed="nanny-vs-babysitter" highlights={["Regular care vs occasional help", "Choose by the real role", "Set expectations early", "Keep children’s safety central"]}
+    <EditorialGuide eyebrow="Childcare comparison guide" title={title} description={description} imageTags={["real-shared-reading", "babysitting", "family", "home", "care"]} imageSeed="nanny-vs-babysitter" highlights={["Regular care vs occasional help", "Choose by the real role", "Set expectations early", "Keep children’s safety central"]}
       toc={[{ id: "titles-are-not-rules", label: "Titles are not rules" }, { id: "key-differences", label: "Key differences" }, { id: "when-nanny-fits", label: "When a nanny fits" }, { id: "when-babysitter-fits", label: "When a babysitter fits" }, { id: "moving-to-regular-care", label: "Moving to regular care" }, { id: "safe-start", label: "A safe start for either role" }]}
       schemas={schemas} faqs={faqs}
       related={[

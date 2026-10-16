@@ -55,7 +55,7 @@ export default function NannySafetyPage() {
       eyebrow="NannyOra family safety guide"
       title={title}
       description={description}
-      imageTags={["safety", "trusted", "nanny", "childcare"]}
+      imageTags={["real-infant-mirror-play", "safety", "trusted", "nanny", "childcare"]}
       imageSeed="nanny-safety-nz"
       highlights={["First-day checklist", "Emergency planning", "Safe sleep and transport", "Shared responsibility"]}
       toc={[

@@ -115,7 +115,7 @@ export default function RegisterFamilyPage() {
       </div>
 
       <ImageBand
-        tags={["family", "find", "book", "care"]}
+        tags={["real-family-activity", "family", "find", "book", "care"]}
         seed="register-family"
         aspect="aspect-[16/6]"
         className="mb-8"

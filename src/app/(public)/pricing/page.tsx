@@ -43,7 +43,7 @@ export default function PricingPage() {
         </p>
       </div>
 
-      <ImageBand tags={["family", "find", "professional", "care"]} seed="pricing" aspect="aspect-[16/6]" className="mb-16" />
+      <ImageBand tags={["real-one-to-one-care", "family", "find", "professional", "care"]} seed="pricing" aspect="aspect-[16/6]" className="mb-16" />
 
       {/* ===== FOR FAMILIES ===== */}
       <section className="mb-20">

@@ -41,7 +41,7 @@ const resources = [
 export default function ParentResourcesPage() {
   const schemas = [articleSchema({ headline: title, description, path, datePublished: "2026-08-24" }), breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Find a Nanny", path: "/find-a-nanny" }, { name: "Parent Resources", path }]), faqSchema(faqs)];
   return (
-    <EditorialGuide eyebrow="NannyOra family hub" title={title} description={description} imageTags={["family", "planning", "care", "home"]} imageSeed="parent-resources" highlights={["Choose with clarity", "Hire with evidence", "Set up a fair role", "Keep support practical"]}
+    <EditorialGuide eyebrow="NannyOra family hub" title={title} description={description} imageTags={["real-family-activity", "family", "planning", "care", "home"]} imageSeed="parent-resources" highlights={["Choose with clarity", "Hire with evidence", "Set up a fair role", "Keep support practical"]}
       toc={[{ id: "where-to-start", label: "Where to start" }, { id: "resource-library", label: "Resource library" }, { id: "hiring-path", label: "Your hiring path" }, { id: "working-relationship", label: "A strong working relationship" }, { id: "when-you-need-help", label: "When you need more help" }]}
       schemas={schemas} faqs={faqs}
       related={[

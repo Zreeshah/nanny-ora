@@ -400,7 +400,7 @@ export function FindANannyArticle({ allNannies }: { allNannies: NannyProfilePubl
         </P>
       </Article>
 
-      <ImageBand tags={["find-a-nanny-band"]} seed="find-a-nanny" aspect="aspect-[16/6]" priority className="mb-2" />
+      <ImageBand tags={["real-group-activity"]} seed="find-a-nanny" aspect="aspect-[16/6]" priority className="mb-2" />
 
       <div id="directory" className="scroll-mt-24 mb-10">
         <FindANannyClient allNannies={allNannies} />

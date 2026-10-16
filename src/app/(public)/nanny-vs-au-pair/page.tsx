@@ -27,7 +27,7 @@ const rows = [
 export default function NannyVsAuPairPage() {
   const schemas = [articleSchema({ headline: title, description, path, datePublished: "2026-08-24" }), breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Find a Nanny", path: "/find-a-nanny" }, { name: "Nanny vs Au Pair", path }]), faqSchema(faqs)];
   return (
-    <EditorialGuide eyebrow="Childcare comparison guide" title={title} description={description} imageTags={["family", "home", "care", "travel"]} imageSeed="nanny-vs-au-pair" highlights={["Compare the whole arrangement", "Protect home privacy", "Test childcare fit", "Confirm current obligations"]}
+    <EditorialGuide eyebrow="Childcare comparison guide" title={title} description={description} imageTags={["real-outdoor-care", "family", "home", "care", "travel"]} imageSeed="nanny-vs-au-pair" highlights={["Compare the whole arrangement", "Protect home privacy", "Test childcare fit", "Confirm current obligations"]}
       toc={[{ id: "two-different-arrangements", label: "Two different arrangements" }, { id: "side-by-side", label: "Nanny vs au pair" }, { id: "professional-nanny", label: "When a nanny fits" }, { id: "live-in-arrangement", label: "When an au pair may fit" }, { id: "questions-before", label: "Questions to resolve first" }, { id: "make-it-safe", label: "Make the arrangement safe" }]}
       schemas={schemas} faqs={faqs}
       related={[

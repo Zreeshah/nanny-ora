@@ -39,7 +39,7 @@ export default async function SensoryAwareNannyPage() {
 
       {/* Contextual hero image */}
       <ImageBand
-        tags={["sensory", "neurodiverse", "specialist", "care"]}
+        tags={["real-tactile-play", "sensory", "neurodiverse", "specialist", "care"]}
         seed="sensory-aware-nanny"
         aspect="aspect-[16/7]"
         priority

@@ -39,7 +39,7 @@ export default async function EceNannyPage() {
 
       {/* Contextual hero image */}
       <ImageBand
-        tags={["ece", "teacher", "specialist", "professional"]}
+        tags={["real-early-learning", "ece", "teacher", "specialist", "professional"]}
         seed="ece-nanny-auckland"
         aspect="aspect-[16/7]"
         priority

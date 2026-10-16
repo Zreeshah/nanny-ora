@@ -32,8 +32,8 @@ import { VideoPlayer } from "@/components/ui/VideoPlayer";
 import { BorderBeam } from "@/components/ui/BorderBeam";
 import { pickImages } from "@/lib/images";
 
-const homeSensoryImage = pickImages({ tags: ["sensory", "neurodiverse", "specialist"], count: 1, seed: "home-sensory" })[0];
-const finalCtaImage = pickImages({ tags: ["family", "find", "trust", "care"], count: 1, seed: "home-final-cta" })[0];
+const homeSensoryImage = pickImages({ tags: ["real-sensory-water", "sensory", "neurodiverse", "specialist"], count: 1, seed: "home-sensory" })[0];
+const finalCtaImage = pickImages({ tags: ["real-infant-care"], count: 1, seed: "home-final-cta" })[0];
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },

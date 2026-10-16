@@ -29,7 +29,7 @@ const careAreas = [
 export default function SpecialistNannyCarePage() {
   const schemas = [articleSchema({ headline: title, description, path, datePublished: "2026-08-24" }), breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Find a Nanny", path: "/find-a-nanny" }, { name: "Specialist Nanny Care", path }]), faqSchema(faqs)];
   return (
-    <EditorialGuide eyebrow="Individual childcare support" title={title} description={description} imageTags={["sensory", "newborn", "ece", "care"]} imageSeed="specialist-nanny-care" highlights={["Start with your child", "Test relevant experience", "Respect safe boundaries", "Plan a supported start"]}
+    <EditorialGuide eyebrow="Individual childcare support" title={title} description={description} imageTags={["real-sensory-water", "sensory", "newborn", "ece", "care"]} imageSeed="specialist-nanny-care" highlights={["Start with your child", "Test relevant experience", "Respect safe boundaries", "Plan a supported start"]}
       toc={[{ id: "what-specialist-means", label: "What specialist care means" }, { id: "care-areas", label: "Areas of experience" }, { id: "write-a-brief", label: "Write a useful care brief" }, { id: "select-a-match", label: "Select the right match" }, { id: "safe-boundaries", label: "Safe boundaries and communication" }, { id: "auckland-care", label: "Specialist care in Auckland" }]}
       schemas={schemas} faqs={faqs}
       related={[

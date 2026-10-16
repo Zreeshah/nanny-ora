@@ -7,7 +7,7 @@ import { Reveal } from "@/components/ui/Reveal";
  * Pinterest-style uneven cards via CSS columns; images from the local library.
  */
 const gallery = pickImages({
-  tags: ["care", "family", "find", "professional", "sensory", "newborn", "ece"],
+  tags: ["real-care"],
   count: 8,
   seed: "home-lifestyle-gallery",
 });

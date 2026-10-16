@@ -153,7 +153,7 @@ export default function HowToHireANannyPage() {
       eyebrow="NannyOra parent guide"
       title={title}
       description={description}
-      imageTags={["family", "planning", "nanny", "home"]}
+      imageTags={["real-construction-play", "family", "planning", "nanny", "home"]}
       imageSeed="how-to-hire-a-nanny"
       highlights={["Start with a clear brief", "Check evidence", "Use a paid trial", "Set up a fair role"]}
       toc={[

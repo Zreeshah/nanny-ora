@@ -54,7 +54,7 @@ export default function NannyInterviewQuestionsPage() {
       eyebrow="NannyOra parent guide"
       title={title}
       description={description}
-      imageTags={["professional", "interview", "nanny", "family"]}
+      imageTags={["real-interactive-reading", "professional", "interview", "nanny", "family"]}
       imageSeed="nanny-interview-questions"
       highlights={["60+ practical prompts", "Age-specific scenarios", "Fair comparison scorecard", "Paid-trial guidance"]}
       toc={[

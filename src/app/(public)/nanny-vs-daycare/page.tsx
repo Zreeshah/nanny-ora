@@ -50,7 +50,7 @@ export default function NannyVsDaycarePage() {
       eyebrow="Childcare comparison guide"
       title={title}
       description={description}
-      imageTags={["family", "childcare", "play", "home"]}
+      imageTags={["real-play-at-home", "family", "childcare", "play", "home"]}
       imageSeed="nanny-vs-daycare"
       highlights={["Compare the real day", "Consider your child’s routine", "Include the full commitment", "Make a confident next step"]}
       toc={[

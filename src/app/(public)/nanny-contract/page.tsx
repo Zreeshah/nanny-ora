@@ -55,7 +55,7 @@ export default function NannyContractPage() {
       eyebrow="NannyOra employment guide"
       title={title}
       description={description}
-      imageTags={["professional", "family", "nanny", "agreement"]}
+      imageTags={["real-outdoor-infant-play", "professional", "family", "nanny", "agreement"]}
       imageSeed="nanny-contract-nz"
       highlights={["NZ employment context", "Nanny-specific clauses", "Plain-language checklist", "Payroll handoff"]}
       toc={[
