@@ -5,8 +5,6 @@ const footerLinks = {
   "For Families": [
     { href: "/find-a-nanny", label: "Find a Nanny" },
     { href: "/how-to-hire-a-nanny", label: "How to Hire a Nanny" },
-    { href: "/nannies/auckland", label: "Auckland Nanny Directory" },
-    { href: "/nannies/hamilton", label: "Hamilton Nanny Planning" },
     { href: "/register-family", label: "Register as a Family" },
     { href: "/post-a-job", label: "Post a Job" },
     { href: "/how-it-works", label: "How It Works" },
@@ -16,6 +14,14 @@ const footerLinks = {
     { href: "/nanny-payroll", label: "Nanny Payroll Guide" },
     { href: "/nanny-cost", label: "Nanny Cost Guide" },
     { href: "/parent-resources", label: "Parent Resources" },
+  ],
+  "Locations": [
+    { href: "/nannies/auckland", label: "Auckland" },
+    { href: "/nannies/auckland/northwest-auckland", label: "Northwest Auckland" },
+    { href: "/nannies/auckland/hobsonville", label: "Hobsonville" },
+    { href: "/nannies/hamilton", label: "Hamilton" },
+    { href: "/nannies/christchurch", label: "Christchurch" },
+    { href: "/nannies/wellington", label: "Wellington" },
   ],
   "For Nannies": [
     { href: "/apply-as-nanny", label: "Apply as a Nanny" },
@@ -47,7 +53,7 @@ export function Footer() {
     <footer className="bg-secondary/30 border-t border-border/30 mt-auto text-foreground">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         {/* Top section */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-8 mb-12">
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
               <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">{category}</h3>

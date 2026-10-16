@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
-import { Menu, X, User, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 
@@ -15,10 +15,22 @@ const navLinks = [
   { href: "/pricing", label: "Pricing" },
 ];
 
+const locationLinks = [
+  { href: "/nannies/auckland", label: "Auckland" },
+  { href: "/nannies/auckland/northwest-auckland", label: "Northwest Auckland" },
+  { href: "/nannies/auckland/hobsonville", label: "Hobsonville" },
+  { href: "/nannies/hamilton", label: "Hamilton" },
+  { href: "/nannies/christchurch", label: "Christchurch" },
+  { href: "/nannies/wellington", label: "Wellington" },
+];
+
 export function Header() {
   const pathname = usePathname();
   const { data: session, status } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [desktopLocationsOpen, setDesktopLocationsOpen] = useState(false);
+  const [mobileLocationsOpen, setMobileLocationsOpen] = useState(false);
+  const isLocationPage = pathname.startsWith("/nannies/");
 
   const isLoggedIn = status === "authenticated" && session?.user;
   const role = (session?.user as any)?.role;
@@ -61,6 +73,46 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setDesktopLocationsOpen((open) => !open)}
+                className={cn(
+                  "inline-flex items-center gap-1 px-4 py-1.5 text-xs font-semibold rounded-full transition-all duration-300",
+                  isLocationPage || desktopLocationsOpen
+                    ? "text-primary-foreground bg-primary shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                )}
+                aria-haspopup="true"
+                aria-expanded={desktopLocationsOpen}
+                aria-controls="desktop-locations-menu"
+              >
+                Locations
+                <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", desktopLocationsOpen && "rotate-180")} aria-hidden="true" />
+              </button>
+              {desktopLocationsOpen && (
+                <div
+                  id="desktop-locations-menu"
+                  className="absolute right-0 top-full mt-2 w-56 rounded-2xl border border-border/40 bg-background p-2 shadow-xl"
+                >
+                  {locationLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setDesktopLocationsOpen(false)}
+                      className={cn(
+                        "block rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                        pathname === link.href
+                          ? "bg-primary/5 text-primary"
+                          : "text-foreground/80 hover:bg-secondary/50 hover:text-foreground"
+                      )}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Desktop Actions */}
@@ -141,6 +193,45 @@ export function Header() {
                   {link.label}
                 </Link>
               ))}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setMobileLocationsOpen((open) => !open)}
+                  className={cn(
+                    "flex w-full items-center justify-between px-4 py-3 text-base font-semibold rounded-2xl transition-colors min-h-[44px]",
+                    isLocationPage || mobileLocationsOpen
+                      ? "text-primary bg-primary/5"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/40"
+                  )}
+                  aria-expanded={mobileLocationsOpen}
+                  aria-controls="mobile-locations-menu"
+                >
+                  Locations
+                  <ChevronDown className={cn("w-4 h-4 transition-transform", mobileLocationsOpen && "rotate-180")} aria-hidden="true" />
+                </button>
+                {mobileLocationsOpen && (
+                  <div id="mobile-locations-menu" className="ml-4 mt-1 border-l border-border/40 pl-3">
+                    {locationLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          setMobileLocationsOpen(false);
+                        }}
+                        className={cn(
+                          "block rounded-xl px-3 py-2.5 text-sm font-medium transition-colors min-h-[44px]",
+                          pathname === link.href
+                            ? "text-primary bg-primary/5"
+                            : "text-muted-foreground hover:text-foreground hover:bg-secondary/40"
+                        )}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             <div className="mt-4 pt-4 border-t border-border/20 space-y-2 px-4">
               {isLoggedIn ? (
