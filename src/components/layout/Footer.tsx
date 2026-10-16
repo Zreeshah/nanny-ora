@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { locationNavigation } from "@/lib/location-navigation";
 
 const footerLinks = {
   "For Families": [
@@ -14,14 +15,6 @@ const footerLinks = {
     { href: "/nanny-payroll", label: "Nanny Payroll Guide" },
     { href: "/nanny-cost", label: "Nanny Cost Guide" },
     { href: "/parent-resources", label: "Parent Resources" },
-  ],
-  "Locations": [
-    { href: "/nannies/auckland", label: "Auckland" },
-    { href: "/nannies/auckland/northwest-auckland", label: "Northwest Auckland" },
-    { href: "/nannies/auckland/hobsonville", label: "Hobsonville" },
-    { href: "/nannies/hamilton", label: "Hamilton" },
-    { href: "/nannies/christchurch", label: "Christchurch" },
-    { href: "/nannies/wellington", label: "Wellington" },
   ],
   "For Nannies": [
     { href: "/apply-as-nanny", label: "Apply as a Nanny" },
@@ -71,6 +64,49 @@ export function Footer() {
               </ul>
             </div>
           ))}
+          <div>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">Locations</h3>
+            <ul className="space-y-2.5">
+              {locationNavigation.map((location) => (
+                <li key={location.href}>
+                  <Link
+                    href={location.href}
+                    className="text-sm font-semibold text-foreground/80 hover:text-primary transition-colors duration-200"
+                  >
+                    {location.label}
+                  </Link>
+                  {location.children && (
+                    <ul className="mt-2 ml-2 border-l border-border/40 pl-2 space-y-2">
+                      {location.children.map((subregion) => (
+                        <li key={subregion.href}>
+                          <Link
+                            href={subregion.href}
+                            className="text-sm font-medium text-foreground/75 hover:text-primary transition-colors duration-200"
+                          >
+                            {subregion.label}
+                          </Link>
+                          {subregion.children && (
+                            <ul className="mt-1 ml-2 border-l border-border/40 pl-2 space-y-1">
+                              {subregion.children.map((suburb) => (
+                                <li key={suburb.href}>
+                                  <Link
+                                    href={suburb.href}
+                                    className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors duration-200"
+                                  >
+                                    {suburb.label}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         {/* Divider */}

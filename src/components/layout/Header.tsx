@@ -7,21 +7,13 @@ import { cn } from "@/lib/utils";
 import { Menu, X, LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { locationNavigation, type LocationNavigationLink } from "@/lib/location-navigation";
 
 const navLinks = [
   { href: "/find-a-nanny", label: "Find a Nanny" },
   { href: "/how-it-works", label: "How It Works" },
   { href: "/trust-and-safety", label: "Trust & Safety" },
   { href: "/pricing", label: "Pricing" },
-];
-
-const locationLinks = [
-  { href: "/nannies/auckland", label: "Auckland" },
-  { href: "/nannies/auckland/northwest-auckland", label: "Northwest Auckland" },
-  { href: "/nannies/auckland/hobsonville", label: "Hobsonville" },
-  { href: "/nannies/hamilton", label: "Hamilton" },
-  { href: "/nannies/christchurch", label: "Christchurch" },
-  { href: "/nannies/wellington", label: "Wellington" },
 ];
 
 export function Header() {
@@ -31,6 +23,36 @@ export function Header() {
   const [desktopLocationsOpen, setDesktopLocationsOpen] = useState(false);
   const [mobileLocationsOpen, setMobileLocationsOpen] = useState(false);
   const isLocationPage = pathname.startsWith("/nannies/");
+
+  const renderLocationLinks = (links: LocationNavigationLink[], depth = 0) => (
+    <div className={depth === 0 ? "space-y-0.5" : "ml-3 border-l border-border/40 pl-2"}>
+      {links.map((link) => {
+        const isCurrentLocation = pathname === link.href || pathname.startsWith(`${link.href}/`);
+
+        return (
+          <div key={link.href}>
+            <Link
+              href={link.href}
+              onClick={() => {
+                setDesktopLocationsOpen(false);
+                setMobileMenuOpen(false);
+                setMobileLocationsOpen(false);
+              }}
+              className={cn(
+                "block rounded-xl px-3 py-2.5 text-sm font-medium transition-colors min-h-[44px]",
+                isCurrentLocation
+                  ? "bg-primary/5 text-primary"
+                  : "text-foreground/80 hover:bg-secondary/50 hover:text-foreground"
+              )}
+            >
+              {link.label}
+            </Link>
+            {link.children && renderLocationLinks(link.children, depth + 1)}
+          </div>
+        );
+      })}
+    </div>
+  );
 
   const isLoggedIn = status === "authenticated" && session?.user;
   const role = (session?.user as any)?.role;
@@ -93,23 +115,9 @@ export function Header() {
               {desktopLocationsOpen && (
                 <div
                   id="desktop-locations-menu"
-                  className="absolute right-0 top-full mt-2 w-56 rounded-2xl border border-border/40 bg-background p-2 shadow-xl"
+                  className="absolute right-0 top-full mt-2 w-64 rounded-2xl border border-border/40 bg-background p-2 shadow-xl"
                 >
-                  {locationLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setDesktopLocationsOpen(false)}
-                      className={cn(
-                        "block rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                        pathname === link.href
-                          ? "bg-primary/5 text-primary"
-                          : "text-foreground/80 hover:bg-secondary/50 hover:text-foreground"
-                      )}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
+                  {renderLocationLinks(locationNavigation)}
                 </div>
               )}
             </div>
@@ -211,24 +219,7 @@ export function Header() {
                 </button>
                 {mobileLocationsOpen && (
                   <div id="mobile-locations-menu" className="ml-4 mt-1 border-l border-border/40 pl-3">
-                    {locationLinks.map((link) => (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        onClick={() => {
-                          setMobileMenuOpen(false);
-                          setMobileLocationsOpen(false);
-                        }}
-                        className={cn(
-                          "block rounded-xl px-3 py-2.5 text-sm font-medium transition-colors min-h-[44px]",
-                          pathname === link.href
-                            ? "text-primary bg-primary/5"
-                            : "text-muted-foreground hover:text-foreground hover:bg-secondary/40"
-                        )}
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
+                    {renderLocationLinks(locationNavigation)}
                   </div>
                 )}
               </div>
