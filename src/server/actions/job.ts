@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth/auth";
 import { jobPostSchema, type JobPostInput } from "@/lib/validations";
 import { notifyAdminNewJob, sendJobStatusUpdate, notifyAdminJobApplication } from "@/lib/email";
 import { requireMembership } from "@/lib/membership";
+import { notifyMatchingNanniesForJob } from "./matching-notifications";
 import type { ActionResult } from "./auth";
 
 export async function createJobPost(input: JobPostInput): Promise<ActionResult> {
@@ -79,6 +80,13 @@ export async function updateJobStatus(
 
     // Best-effort: tell the parent their job post status changed.
     await sendJobStatusUpdate(job.parent.name, job.parent.email, job.title, status);
+
+    // Notify only when the job crosses into its live state. Re-saving an
+    // already-approved job will not repeat the match emails.
+    if (status === "APPROVED" && job.status !== "APPROVED") {
+      const result = await notifyMatchingNanniesForJob(job);
+      console.log(`job match notifications: job=${job.id} matched=${result.matched} sent=${result.sent}`);
+    }
 
     return { success: true };
   } catch (error) {

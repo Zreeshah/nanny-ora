@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth/auth";
+import { nannyMatchesJob } from "@/lib/job-matching";
 import { SAFETY_CHECKS } from "@/lib/constants";
 import { requireMembership } from "@/lib/membership";
 import type { ActionResult } from "./auth";
@@ -121,7 +122,7 @@ export async function getNannyDashboard(): Promise<ActionResult> {
     const profile = await prisma.nannyProfile.findUnique({ where: { userId } });
     if (!profile) return { success: true, data: empty };
 
-    const [profileViews, newEnquiries, recentEnquiries, matchingJobs, recentJobs, reviews, myApplications] = await Promise.all([
+    const [profileViews, newEnquiries, recentEnquiries, liveJobs, reviews, myApplications] = await Promise.all([
       prisma.profileView.count({ where: { nannyId: profile.id } }),
       prisma.enquiry.count({ where: { nannyId: profile.id, status: "NEW" } }),
       prisma.enquiry.findMany({
@@ -130,12 +131,11 @@ export async function getNannyDashboard(): Promise<ActionResult> {
         orderBy: { createdAt: "desc" },
         take: 5,
       }),
-      prisma.jobPost.count({ where: { status: "APPROVED" } }),
       prisma.jobPost.findMany({
         where: { status: "APPROVED" },
         select: { id: true, title: true, suburb: true, hourlyBudget: true, daysRequired: true, careType: true },
         orderBy: { createdAt: "desc" },
-        take: 3,
+        take: 100,
       }),
       prisma.review.findMany({ where: { nannyId: profile.id }, select: { rating: true } }),
       prisma.jobApplication.findMany({ where: { nannyProfileId: profile.id }, select: { jobId: true }, take: 100 }),
@@ -144,6 +144,7 @@ export async function getNannyDashboard(): Promise<ActionResult> {
     const applicableFields = CHECK_FIELDS.filter((f) => (profile as any)[f] !== "NOT_APPLICABLE");
     const verifiedChecks = applicableFields.filter((f) => (profile as any)[f] === "VERIFIED").length;
     const avgRating = reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0;
+    const matchedJobs = liveJobs.filter((job) => nannyMatchesJob(profile, job));
 
     return {
       success: true,
@@ -157,8 +158,8 @@ export async function getNannyDashboard(): Promise<ActionResult> {
           status: e.status,
           createdAt: e.createdAt,
         })),
-        matchingJobs,
-        recentJobs,
+        matchingJobs: matchedJobs.length,
+        recentJobs: matchedJobs.slice(0, 3),
         appliedJobIds: myApplications.map((a) => a.jobId),
         // the nanny's real 7-step vetting statuses, in official order
         checks: SAFETY_CHECKS.map((c) => ({ name: c.title, status: (profile as any)[c.key] || "NOT_STARTED" })),

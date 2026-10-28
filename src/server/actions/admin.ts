@@ -4,6 +4,8 @@ import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth/auth";
 import { supabaseServer, SUPABASE_BUCKET } from "@/lib/supabase/server";
 import { sendVerificationUpdate } from "@/lib/email";
+import { isPublicNannyStatus } from "@/lib/job-matching";
+import { notifyMatchingParentsForNanny } from "./matching-notifications";
 import type { ActionResult } from "./auth";
 
 // Helper to check admin access
@@ -38,6 +40,13 @@ export async function updateNannyStatus(
 
     // Best-effort: tell the nanny their status changed.
     await sendVerificationUpdate(profile.user.name, profile.user.email, adminStatus);
+
+    // A parent alert is warranted only when this profile first becomes public,
+    // not when an already-public nanny moves between verification levels.
+    if (!isPublicNannyStatus(profile.adminStatus) && isPublicNannyStatus(adminStatus) && profile.placementStatus === "AVAILABLE") {
+      const result = await notifyMatchingParentsForNanny(profile);
+      console.log(`nanny match notifications: nanny=${profile.id} matched=${result.matched} sent=${result.sent}`);
+    }
 
     return { success: true };
   } catch (error) {
@@ -303,6 +312,12 @@ export async function updatePlacement(
   }
 
   try {
+    const profile = await prisma.nannyProfile.findUnique({
+      where: { id: nannyProfileId },
+      include: { user: { select: { name: true, email: true } } },
+    });
+    if (!profile) return { success: false, error: "Nanny profile not found." };
+
     await prisma.nannyProfile.update({
       where: { id: nannyProfileId },
       data: {
@@ -314,6 +329,14 @@ export async function updatePlacement(
         ...(data.paidConfirmed !== undefined ? { paidConfirmed: data.paidConfirmed } : {}),
       },
     });
+
+    // A nanny returning from a placement can be a new opportunity for parents
+    // with still-live jobs. No email is sent when an already-available profile
+    // is merely edited or re-saved.
+    if (profile.placementStatus !== "AVAILABLE" && data.placementStatus === "AVAILABLE" && isPublicNannyStatus(profile.adminStatus)) {
+      const result = await notifyMatchingParentsForNanny(profile);
+      console.log(`available nanny match notifications: nanny=${profile.id} matched=${result.matched} sent=${result.sent}`);
+    }
     return { success: true };
   } catch (error) {
     console.error("Update placement error:", error);

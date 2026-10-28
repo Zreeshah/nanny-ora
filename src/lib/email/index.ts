@@ -207,3 +207,39 @@ export function sendNewMessageNotification(toName: string, toEmail: string, from
 export function notifyAdminJobApplication(nannyName: string, jobTitle: string): Promise<boolean> {
   return notifyAdmin("New job application", "New job application", `<p><strong>${escapeHtml(nannyName)}</strong> applied to <strong>${escapeHtml(jobTitle)}</strong>.</p>`, { label: "Review jobs", href: `${SITE_URL}/admin/jobs` });
 }
+
+/** Alert a nanny when an approved job meets the exact automated match rules. */
+export function sendMatchingJobNotification(
+  nannyName: string,
+  nannyEmail: string,
+  job: { title: string; suburb: string; careType: string; hourlyBudget: number },
+): Promise<boolean> {
+  const body = `<p>Hi ${escapeHtml(nannyName)},</p>
+    <p>A newly approved family job may suit your profile:</p>
+    <p><strong>${escapeHtml(job.title)}</strong><br/>
+    ${escapeHtml(job.suburb)} · Up to NZ$${escapeHtml(String(job.hourlyBudget))}/hour</p>
+    <p>We matched it using your stated travel area, care type, availability status and hourly rate. Please review the job details before applying, especially the family&apos;s schedule and any specialist support requested.</p>`;
+  return sendEmail({
+    to: nannyEmail,
+    subject: `A family job may match your profile — ${job.title}`,
+    html: emailShell("A new matching job is live", body, { label: "View matching jobs", href: `${SITE_URL}/dashboard/nanny` }),
+  });
+}
+
+/** Alert a parent when a newly public or newly available nanny meets their live job criteria. */
+export function sendMatchingNannyNotification(
+  parentName: string,
+  parentEmail: string,
+  nanny: { slug: string | null; suburb: string; user: { name: string } },
+  job: { title: string },
+): Promise<boolean> {
+  const profileUrl = nanny.slug ? `${SITE_URL}/nannies/${nanny.slug}` : `${SITE_URL}/find-a-nanny`;
+  const body = `<p>Hi ${escapeHtml(parentName)},</p>
+    <p><strong>${escapeHtml(nanny.user.name)}</strong> has become available to view for your live job, <strong>${escapeHtml(job.title)}</strong>.</p>
+    <p>The match is based on the stated suburb or travel area, care type, availability status and hourly budget. Please review the full profile and confirm schedule, experience and family fit before making contact.</p>`;
+  return sendEmail({
+    to: parentEmail,
+    subject: `A nanny may match your job — ${nanny.user.name}`,
+    html: emailShell("A nanny may suit your family", body, { label: "View nanny profile", href: profileUrl }),
+  });
+}
