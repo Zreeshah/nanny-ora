@@ -196,8 +196,9 @@ export default async function AdminDashboard() {
       </div>
 
       {/* ===== REVIEW QUEUES ===== */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         {[
+          { href: "/admin/families", label: "Family accounts", count: stats.totalParents, sub: "view care briefs & activity", icon: UserPlus, tint: "bg-emerald-50 text-emerald-600" },
           { href: "/admin/nannies", label: "Carer applications", count: stats.pendingNannies, icon: Users, tint: "bg-amber-50 text-badge-premium" },
           { href: "/admin/jobs", label: "Job postings", count: stats.pendingJobs, icon: Briefcase, tint: "bg-primary/5 text-primary" },
           { href: "/admin/enquiries", label: "Parent enquiries", count: stats.newEnquiries, icon: MessageCircle, tint: "bg-accent/5 text-accent" },
@@ -207,7 +208,7 @@ export default async function AdminDashboard() {
               <span className={`w-11 h-11 rounded-2xl flex items-center justify-center ${q.tint}`}><q.icon className="w-5 h-5" /></span>
               <div className="flex-1">
                 <p className="text-sm font-bold text-foreground">{q.label}</p>
-                <p className="text-[11px] text-muted-foreground">{q.count} awaiting review</p>
+                <p className="text-[11px] text-muted-foreground">{q.sub || `${q.count} awaiting review`}</p>
               </div>
               <ArrowUpRight className="w-4 h-4 text-muted-foreground" />
             </Card>

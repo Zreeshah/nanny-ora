@@ -163,7 +163,12 @@ export function notifyAdminNewNanny(name: string, email: string): Promise<boolea
 }
 
 export function notifyAdminNewParent(name: string, email: string): Promise<boolean> {
-  return notifyAdmin("New family registration", "New family registration", `<p><strong>${escapeHtml(name)}</strong> (${escapeHtml(email)}) has registered as a family.</p>`);
+  return notifyAdmin(
+    "New family registration",
+    "New family registration",
+    `<p><strong>${escapeHtml(name)}</strong> (${escapeHtml(email)}) has registered as a family.</p>`,
+    { label: "View family accounts", href: `${SITE_URL}/admin/families` },
+  );
 }
 
 export function notifyAdminNewEnquiry(parentName: string, nannyName: string, message: string): Promise<boolean> {

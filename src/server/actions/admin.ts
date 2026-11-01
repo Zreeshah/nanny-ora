@@ -234,6 +234,102 @@ export async function getAdminStats(): Promise<ActionResult> {
   }
 }
 
+// --- Family management ---
+
+/**
+ * Returns the information an administrator needs to follow up with a family.
+ * Password hashes and other authentication data are deliberately never selected.
+ */
+export async function getAdminFamilies(): Promise<ActionResult> {
+  const authErr = await requireAdmin();
+  if (authErr) return authErr;
+
+  try {
+    const profiles = await prisma.parentProfile.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 250,
+      select: {
+        id: true,
+        suburb: true,
+        childAgeRange: true,
+        careTypeNeeded: true,
+        preferredDays: true,
+        startDate: true,
+        specialistNeeds: true,
+        notes: true,
+        createdAt: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            membership: {
+              select: {
+                plan: true,
+                status: true,
+                currentPeriodEnd: true,
+                cancelAtPeriodEnd: true,
+              },
+            },
+            jobPosts: {
+              orderBy: { createdAt: "desc" },
+              take: 5,
+              select: {
+                id: true,
+                title: true,
+                suburb: true,
+                careType: true,
+                status: true,
+                createdAt: true,
+              },
+            },
+            enquiriesSent: {
+              orderBy: { createdAt: "desc" },
+              take: 5,
+              select: {
+                id: true,
+                status: true,
+                createdAt: true,
+                nanny: { select: { user: { select: { name: true } } } },
+              },
+            },
+            _count: { select: { jobPosts: true, enquiriesSent: true } },
+          },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      data: profiles.map((profile) => ({
+        id: profile.user.id,
+        name: profile.user.name,
+        email: profile.user.email,
+        phone: profile.user.phone,
+        createdAt: profile.createdAt,
+        profile: {
+          id: profile.id,
+          suburb: profile.suburb,
+          childAgeRange: profile.childAgeRange,
+          careTypeNeeded: profile.careTypeNeeded,
+          preferredDays: profile.preferredDays,
+          startDate: profile.startDate,
+          specialistNeeds: profile.specialistNeeds,
+          notes: profile.notes,
+        },
+        membership: profile.user.membership,
+        jobs: profile.user.jobPosts,
+        enquiries: profile.user.enquiriesSent,
+        counts: profile.user._count,
+      })),
+    };
+  } catch (error) {
+    console.error("Get admin families error:", error);
+    return { success: false, error: "Failed to load families." };
+  }
+}
+
 // --- Get All Nannies (Admin) ---
 
 export async function getAdminNannies(filters?: {
