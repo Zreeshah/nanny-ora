@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth/auth";
 import { familyOnboardingSchema, type FamilyOnboardingInput, type ParentIntakeInput } from "@/lib/validations";
+import { parseFamilyProfileNotes, serialiseFamilyProfileNotes } from "@/lib/family-profile-notes";
 import { sendParentWelcome, notifyAdminNewFamilyCareBrief } from "@/lib/email";
 import { getNannyMatchesForJob } from "./matching-notifications";
 import type { ActionResult } from "./auth";
@@ -22,7 +23,7 @@ export async function registerParentWithFirstJob(input: FamilyOnboardingInput): 
 
     const {
       name, email, phone, suburb, childAgeRange, careTypeNeeded, preferredDays,
-      startDate, specialistNeeds, notes, password, primaryCareType, title,
+      startDate, specialistNeeds, careLocations, notes, password, primaryCareType, title,
       childCount, childAges, hourlyBudget, jobDescription,
     } = parsed.data;
 
@@ -55,7 +56,7 @@ export async function registerParentWithFirstJob(input: FamilyOnboardingInput): 
           preferredDays,
           startDate: startDate || null,
           specialistNeeds: specialistNeeds || "",
-          notes: notes || "",
+          notes: serialiseFamilyProfileNotes(careLocations, notes),
         },
       });
 
@@ -71,7 +72,9 @@ export async function registerParentWithFirstJob(input: FamilyOnboardingInput): 
           startDate,
           hourlyBudget,
           specialistSupport: specialistNeeds || "",
-          description: jobDescription,
+          description: careLocations.trim()
+            ? `${jobDescription.trim()}\n\nOther care locations or travel notes: ${careLocations.trim()}`
+            : jobDescription,
           status: "PENDING",
           contactEmail: email,
           contactPhone: phone || null,
@@ -124,6 +127,9 @@ export async function updateParentProfile(data: Partial<ParentIntakeInput>): Pro
       return { success: false, error: "Profile not found" };
     }
 
+    const storedNotes = parseFamilyProfileNotes(profile.notes);
+    const shouldUpdateNotes = data.careLocations !== undefined || data.notes !== undefined;
+
     await prisma.parentProfile.update({
       where: { id: profile.id },
       data: {
@@ -133,7 +139,12 @@ export async function updateParentProfile(data: Partial<ParentIntakeInput>): Pro
         ...(data.preferredDays && { preferredDays: data.preferredDays }),
         ...(data.startDate !== undefined && { startDate: data.startDate || null }),
         ...(data.specialistNeeds !== undefined && { specialistNeeds: data.specialistNeeds || "" }),
-        ...(data.notes !== undefined && { notes: data.notes || "" }),
+        ...(shouldUpdateNotes && {
+          notes: serialiseFamilyProfileNotes(
+            data.careLocations ?? storedNotes.careLocations,
+            data.notes ?? storedNotes.additionalNotes,
+          ),
+        }),
       },
     });
 
@@ -154,6 +165,7 @@ export async function getMyParentProfile(): Promise<ActionResult> {
     const profile = await prisma.parentProfile.findUnique({ where: { userId: session.user.id } });
     if (!profile) return { success: true, data: null };
     const parse = (v: string) => { try { const p = JSON.parse(v); return Array.isArray(p) ? p : []; } catch { return []; } };
+    const storedNotes = parseFamilyProfileNotes(profile.notes);
     return {
       success: true,
       data: {
@@ -163,7 +175,8 @@ export async function getMyParentProfile(): Promise<ActionResult> {
         preferredDays: profile.preferredDays,
         startDate: profile.startDate || "",
         specialistNeeds: profile.specialistNeeds,
-        notes: profile.notes,
+        careLocations: storedNotes.careLocations,
+        notes: storedNotes.additionalNotes,
       },
     };
   } catch (error) {

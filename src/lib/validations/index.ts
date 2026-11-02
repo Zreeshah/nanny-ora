@@ -21,6 +21,7 @@ export const parentIntakeSchema = z.object({
   preferredDays: z.string().min(1, "Please describe your preferred days/times"),
   startDate: z.string().optional(),
   specialistNeeds: z.string().optional(),
+  careLocations: z.string().trim().max(500, "Care locations must be 500 characters or fewer").optional().default(""),
   notes: z.string().optional(),
 });
 export type ParentIntakeInput = z.infer<typeof parentIntakeSchema>;

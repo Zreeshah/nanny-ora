@@ -13,6 +13,7 @@ const valid = {
   preferredDays: "Monday to Friday, 3pm–6pm",
   startDate: "2026-12-01",
   specialistNeeds: "",
+  careLocations: "Hobsonville home; Albany school pick-up",
   notes: "",
   title: "After-school nanny for two children",
   childCount: 2,

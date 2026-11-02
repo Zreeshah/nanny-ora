@@ -111,6 +111,7 @@ export default function RegisterFamilyPage() {
       preferredDays: valueFor("preferredDays"),
       startDate: valueFor("startDate"),
       specialistNeeds: valueFor("specialistNeeds"),
+      careLocations: valueFor("careLocations"),
       notes: valueFor("notes"),
       title: valueFor("title"),
       childCount: Number(valueFor("childCount")),
@@ -181,6 +182,7 @@ export default function RegisterFamilyPage() {
               <Select name="primaryCareType" label="Primary care type for this job" required error={errors.primaryCareType} options={primaryCareOptions} placeholder={selectedCareTypes.length ? "Select your primary care type" : "Select care needed above first"} className="rounded-2xl" />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><Input name="preferredDays" label="Days / hours needed" required error={errors.preferredDays} placeholder="e.g. Mon–Fri, 8am–3pm" className="rounded-2xl" /><Input name="startDate" label="Preferred start date" type="date" required error={errors.startDate} className="rounded-2xl" /></div>
               <Textarea name="specialistNeeds" label="Specialist requirements (optional)" placeholder="e.g. sensory-aware experience, ECE background, autism/ADHD support experience…" helperText="Describe the experience that would help your family; avoid sharing medical details you would not want in a job post." className="min-h-[100px] rounded-2xl" />
+              <Textarea name="careLocations" label="Other care locations or travel notes (optional)" maxLength={500} placeholder="e.g. Care at home in Hobsonville; school pick-up in Albany." helperText="Include school or daycare pickups, a second household, or travel constraints. Your suburb remains the primary matching location." className="min-h-[100px] rounded-2xl" />
             </div>
           </section>
 

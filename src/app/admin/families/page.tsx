@@ -34,6 +34,7 @@ type Family = {
     preferredDays: string;
     startDate: string | null;
     specialistNeeds: string;
+    careLocations: string;
     notes: string;
   };
   membership: { plan: string; status: string; currentPeriodEnd: Date | null; cancelAtPeriodEnd: boolean } | null;
@@ -177,6 +178,7 @@ export default function AdminFamiliesPage() {
                         <div><dt className="text-muted-foreground">Children&apos;s ages</dt><dd className="mt-0.5 font-semibold text-foreground">{displayList(family.profile.childAgeRange) || "Not specified"}</dd></div>
                         <div><dt className="text-muted-foreground">Preferred days</dt><dd className="mt-0.5 font-semibold text-foreground">{family.profile.preferredDays || "Not specified"}</dd></div>
                         <div><dt className="text-muted-foreground">Preferred start</dt><dd className="mt-0.5 font-semibold text-foreground">{family.profile.startDate || "Not specified"}</dd></div>
+                        {family.profile.careLocations && <div className="sm:col-span-2"><dt className="text-muted-foreground">Other care locations or travel notes</dt><dd className="mt-0.5 text-foreground whitespace-pre-wrap">{family.profile.careLocations}</dd></div>}
                         {family.profile.specialistNeeds && <div className="sm:col-span-2"><dt className="text-muted-foreground">Specialist requirements</dt><dd className="mt-0.5 text-foreground whitespace-pre-wrap">{family.profile.specialistNeeds}</dd></div>}
                         {family.profile.notes && <div className="sm:col-span-2"><dt className="text-muted-foreground">Notes</dt><dd className="mt-0.5 text-foreground whitespace-pre-wrap">{family.profile.notes}</dd></div>}
                       </dl>

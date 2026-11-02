@@ -22,6 +22,7 @@ export default function ParentProfilePage() {
   const [preferredDays, setPreferredDays] = useState("");
   const [startDate, setStartDate] = useState("");
   const [specialistNeeds, setSpecialistNeeds] = useState("");
+  const [careLocations, setCareLocations] = useState("");
   const [notes, setNotes] = useState("");
 
   useEffect(() => {
@@ -34,6 +35,7 @@ export default function ParentProfilePage() {
           setPreferredDays(res.data.preferredDays);
           setStartDate(res.data.startDate);
           setSpecialistNeeds(res.data.specialistNeeds);
+          setCareLocations(res.data.careLocations);
           setNotes(res.data.notes);
         }
       })
@@ -58,6 +60,7 @@ export default function ParentProfilePage() {
       preferredDays,
       startDate: startDate || undefined,
       specialistNeeds,
+      careLocations,
       notes,
     });
     setSaving(false);
@@ -127,6 +130,7 @@ export default function ParentProfilePage() {
           </div>
 
           <Textarea label="Specialist needs" value={specialistNeeds} onChange={(e) => setSpecialistNeeds(e.target.value)} placeholder="e.g. sensory-aware training, autism/ADHD support..." className="min-h-[90px] rounded-2xl" />
+          <Textarea label="Other care locations or travel notes" value={careLocations} onChange={(e) => setCareLocations(e.target.value)} maxLength={500} helperText="Include school or daycare pickups, a second household, or travel constraints. Your primary suburb remains the main matching location." placeholder="e.g. Care at home in Hobsonville; school pick-up in Albany." className="min-h-[90px] rounded-2xl" />
           <Textarea label="Anything else?" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Family routines, preferences..." className="min-h-[90px] rounded-2xl" />
 
           {error && <p className="text-sm text-destructive" role="alert">{error}</p>}

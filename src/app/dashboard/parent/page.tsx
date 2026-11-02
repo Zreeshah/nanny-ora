@@ -374,6 +374,12 @@ export default function ParentDashboard() {
                   <span>Preferred Days</span>
                   <span className="font-bold text-foreground text-right">{profile.preferredDays || "—"}</span>
                 </div>
+                {profile.careLocations && (
+                  <div className="space-y-1.5 pt-1">
+                    <span>Other care locations</span>
+                    <span className="block font-bold text-foreground leading-relaxed">{profile.careLocations}</span>
+                  </div>
+                )}
               </div>
             ) : (
               <p className="text-xs text-muted-foreground">

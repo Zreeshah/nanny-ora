@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth/auth";
 import { nannyMatchesJob } from "@/lib/job-matching";
+import { parseFamilyProfileNotes } from "@/lib/family-profile-notes";
 import { SAFETY_CHECKS } from "@/lib/constants";
 import { getMembership, requireMembership } from "@/lib/membership";
 import type { ActionResult } from "./auth";
@@ -260,6 +261,7 @@ export async function getParentDashboard(): Promise<ActionResult> {
               careTypeNeeded: parseArr(profile.careTypeNeeded),
               preferredDays: profile.preferredDays,
               specialistNeeds: profile.specialistNeeds,
+              careLocations: parseFamilyProfileNotes(profile.notes).careLocations,
             }
           : null,
         recommended: recommended.map((n) => ({

@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth/auth";
 import { supabaseServer, SUPABASE_BUCKET } from "@/lib/supabase/server";
 import { sendVerificationUpdate } from "@/lib/email";
 import { isPublicNannyStatus } from "@/lib/job-matching";
+import { parseFamilyProfileNotes } from "@/lib/family-profile-notes";
 import { notifyMatchingParentsForNanny } from "./matching-notifications";
 import type { ActionResult } from "./auth";
 
@@ -302,27 +303,31 @@ export async function getAdminFamilies(): Promise<ActionResult> {
 
     return {
       success: true,
-      data: profiles.map((profile) => ({
-        id: profile.user.id,
-        name: profile.user.name,
-        email: profile.user.email,
-        phone: profile.user.phone,
-        createdAt: profile.createdAt,
-        profile: {
-          id: profile.id,
-          suburb: profile.suburb,
-          childAgeRange: profile.childAgeRange,
-          careTypeNeeded: profile.careTypeNeeded,
-          preferredDays: profile.preferredDays,
-          startDate: profile.startDate,
-          specialistNeeds: profile.specialistNeeds,
-          notes: profile.notes,
-        },
-        membership: profile.user.membership,
-        jobs: profile.user.jobPosts,
-        enquiries: profile.user.enquiriesSent,
-        counts: profile.user._count,
-      })),
+      data: profiles.map((profile) => {
+        const storedNotes = parseFamilyProfileNotes(profile.notes);
+        return {
+          id: profile.user.id,
+          name: profile.user.name,
+          email: profile.user.email,
+          phone: profile.user.phone,
+          createdAt: profile.createdAt,
+          profile: {
+            id: profile.id,
+            suburb: profile.suburb,
+            childAgeRange: profile.childAgeRange,
+            careTypeNeeded: profile.careTypeNeeded,
+            preferredDays: profile.preferredDays,
+            startDate: profile.startDate,
+            specialistNeeds: profile.specialistNeeds,
+            careLocations: storedNotes.careLocations,
+            notes: storedNotes.additionalNotes,
+          },
+          membership: profile.user.membership,
+          jobs: profile.user.jobPosts,
+          enquiries: profile.user.enquiriesSent,
+          counts: profile.user._count,
+        };
+      }),
     };
   } catch (error) {
     console.error("Get admin families error:", error);
