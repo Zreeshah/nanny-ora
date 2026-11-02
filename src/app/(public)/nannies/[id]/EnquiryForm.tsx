@@ -23,7 +23,7 @@ export default function EnquiryForm({
   isMember?: boolean;
 }) {
   const { data: session, status } = useSession();
-  const role = (session?.user as any)?.role;
+  const role = (session?.user as { role?: string } | undefined)?.role;
   const [upgradeOpen, setUpgradeOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [email, setEmail] = useState("");
@@ -38,12 +38,12 @@ export default function EnquiryForm({
       <Card className="sticky top-24 border-l-4 border-l-accent">
         <h3 className="font-semibold text-foreground mb-2">Interested in {firstName}?</h3>
         <p className="text-xs text-muted-foreground mb-4">
-          Create a free family account to send an enquiry. All messages are private.
+          Create your family account and care brief first. We&apos;ll show suitable matches, then membership unlocks direct, private messaging.
         </p>
-        <Link href={`/register-family?nanny=${nannyId}`}>
+        <Link href="/register-family">
           <Button variant="accent" fullWidth className="rounded-full shadow-lg">
             <Send className="w-4 h-4 mr-2" aria-hidden="true" />
-            Send Enquiry
+            Create account &amp; care brief
           </Button>
         </Link>
       </Card>
