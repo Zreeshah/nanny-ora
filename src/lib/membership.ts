@@ -132,10 +132,11 @@ export const isMember = async (): Promise<boolean> => (await getMembership()).is
 
 /**
  * Membership is the live access policy: non-members can browse, but membership
- * is required for contact, shortlisting, jobs and bookings. An explicit `false`
- * is retained only as an emergency maintenance override.
+ * is required for contact, shortlisting, jobs and bookings. This is intentionally
+ * not controlled by the legacy environment flag, which was left set to `false`
+ * in production during the pre-membership soft launch.
  */
-export const membershipEnforced = (): boolean => process.env.MEMBERSHIP_ENFORCED !== "false";
+export const membershipEnforced = (): boolean => true;
 
 /** The message shown wherever a locked feature is hit. */
 export const UPGRADE_MESSAGE =
