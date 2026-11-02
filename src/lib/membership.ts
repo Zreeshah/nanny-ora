@@ -131,12 +131,11 @@ export async function getMembership(): Promise<MembershipInfo> {
 export const isMember = async (): Promise<boolean> => (await getMembership()).isMember;
 
 /**
- * Master switch for the gate. OFF by default so the system can ship and be tested
- * in production (checkout + dashboard fully work) WITHOUT locking existing free
- * parents out of messaging/shortlisting. Set MEMBERSHIP_ENFORCED=true (with live
- * payment keys in place) to actually enforce — takes effect with no redeploy.
+ * Membership is the live access policy: non-members can browse, but membership
+ * is required for contact, shortlisting, jobs and bookings. An explicit `false`
+ * is retained only as an emergency maintenance override.
  */
-export const membershipEnforced = (): boolean => process.env.MEMBERSHIP_ENFORCED === "true";
+export const membershipEnforced = (): boolean => process.env.MEMBERSHIP_ENFORCED !== "false";
 
 /** The message shown wherever a locked feature is hit. */
 export const UPGRADE_MESSAGE =

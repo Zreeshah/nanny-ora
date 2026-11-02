@@ -13,7 +13,7 @@ import { createReview } from "@/server/actions/reviews";
 import {
   MessageCircle, Briefcase, Search, Heart, Eye, MapPin,
   CheckCircle, Calendar, ArrowRight, Star,
-  FileText, Bell, Users, Send, PlusCircle, Sparkles
+  FileText, Bell, Users, Send, PlusCircle, Sparkles, Lock,
 } from "lucide-react";
 
 function RateNanny({ nannyId, existingRating }: { nannyId: string; existingRating: number | null }) {
@@ -92,6 +92,8 @@ export default function ParentDashboard() {
   const myJobs: any[] = dash?.jobs ?? [];
   const recommended: any[] = dash?.recommended ?? [];
   const profile = dash?.profile;
+  const hasMembership = Boolean(dash?.isMember);
+  const matchingNannyCount = dash?.matchingNannyCount ?? 0;
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -278,12 +280,15 @@ export default function ParentDashboard() {
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-heading text-xl font-bold text-foreground flex items-center gap-2">
                 <Star className="w-5 h-5 text-badge-premium fill-badge-premium" aria-hidden="true" />
-                Recommended Auckland Nannies
+                Nannies matching your care brief
               </h2>
             </div>
+            <p className="text-xs text-muted-foreground leading-relaxed -mt-2 mb-4">
+              {dash ? `${matchingNannyCount} currently available profile${matchingNannyCount === 1 ? "" : "s"} match the stated location, care type and hourly budget in your active job${matchingNannyCount === 1 ? "" : "s"}. Always confirm the full schedule and family fit.` : "Checking your active care brief against available profiles…"}
+            </p>
             <div className="space-y-3">
               {recommended.length === 0 && (
-                <p className="text-sm text-muted-foreground py-6 text-center">Loading recommendations…</p>
+                <p className="text-sm text-muted-foreground py-6 text-center">{dash ? "No exact profile matches are available right now. Your care brief remains saved while availability changes." : "Loading matches…"}</p>
               )}
               {recommended.map((nanny) => (
                 <div
@@ -314,6 +319,13 @@ export default function ParentDashboard() {
                 </div>
               ))}
             </div>
+            {!hasMembership && recommended.length > 0 && (
+              <div className="mt-5 rounded-2xl border border-primary/15 bg-primary/5 p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+                <span className="w-9 h-9 rounded-xl bg-card text-primary flex items-center justify-center shrink-0"><Lock className="w-4 h-4" aria-hidden="true" /></span>
+                <p className="flex-1 text-xs text-muted-foreground leading-relaxed">Membership unlocks full profiles and direct, on-platform contact with suitable nannies.</p>
+                <Link href="/membership"><Button variant="primary" size="sm" className="rounded-full text-xs">View membership</Button></Link>
+              </div>
+            )}
             <div className="mt-5 pt-4 border-t border-border/40 text-center">
               <Link href="/find-a-nanny">
                 <Button variant="outline" size="sm" className="rounded-full">

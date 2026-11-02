@@ -25,6 +25,24 @@ export const parentIntakeSchema = z.object({
 });
 export type ParentIntakeInput = z.infer<typeof parentIntakeSchema>;
 
+// --- Family onboarding: one account plus the family's first care brief ---
+// The first job is created in the same transaction as the parent profile, so
+// a completed onboarding can never leave an account without its stated role.
+export const familyOnboardingSchema = parentIntakeSchema.extend({
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  startDate: z.string().min(1, "Please select a preferred start date"),
+  primaryCareType: z.enum(careTypeValues),
+  title: z.string().min(5, "Job title must be at least 5 characters"),
+  childCount: z.coerce.number().int().min(1, "At least one child is required"),
+  childAges: z.string().min(1, "Please describe your children's ages"),
+  hourlyBudget: z.coerce.number().min(20, "Minimum budget is $20/hr").max(150, "Maximum budget is $150/hr"),
+  jobDescription: z.string().min(20, "Please provide at least 20 characters about the role"),
+}).refine((data) => data.careTypeNeeded.includes(data.primaryCareType), {
+  message: "Choose a primary care type from the care you selected",
+  path: ["primaryCareType"],
+});
+export type FamilyOnboardingInput = z.infer<typeof familyOnboardingSchema>;
+
 // --- Referee Schema ---
 export const refereeSchema = z.object({
   name: z.string().min(2, "Referee name is required"),

@@ -2,19 +2,29 @@
 
 import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth/auth";
-import { parentIntakeSchema, type ParentIntakeInput } from "@/lib/validations";
-import { sendParentWelcome, notifyAdminNewParent } from "@/lib/email";
+import { familyOnboardingSchema, type FamilyOnboardingInput, type ParentIntakeInput } from "@/lib/validations";
+import { sendParentWelcome, notifyAdminNewFamilyCareBrief } from "@/lib/email";
+import { getNannyMatchesForJob } from "./matching-notifications";
 import type { ActionResult } from "./auth";
 import bcrypt from "bcryptjs";
 
-export async function registerParent(input: ParentIntakeInput & { password: string }): Promise<ActionResult> {
+/**
+ * Creates a family account, their profile and their first job in one atomic
+ * transaction. The job is PENDING until an admin reviews it; it is never made
+ * public simply because an account was created.
+ */
+export async function registerParentWithFirstJob(input: FamilyOnboardingInput): Promise<ActionResult> {
   try {
-    const parsed = parentIntakeSchema.safeParse(input);
+    const parsed = familyOnboardingSchema.safeParse(input);
     if (!parsed.success) {
       return { success: false, error: parsed.error.issues[0]?.message || "Invalid input" };
     }
 
-    const { name, email, phone, suburb, childAgeRange, careTypeNeeded, preferredDays, startDate, specialistNeeds, notes } = parsed.data;
+    const {
+      name, email, phone, suburb, childAgeRange, careTypeNeeded, preferredDays,
+      startDate, specialistNeeds, notes, password, primaryCareType, title,
+      childCount, childAges, hourlyBudget, jobDescription,
+    } = parsed.data;
 
     // Check existing user
     const existing = await prisma.user.findUnique({ where: { email } });
@@ -22,9 +32,9 @@ export async function registerParent(input: ParentIntakeInput & { password: stri
       return { success: false, error: "An account with this email already exists." };
     }
 
-    // Create user + parent profile in a transaction
-    const passwordHash = await bcrypt.hash(input.password || "temp123456", 10);
+    const passwordHash = await bcrypt.hash(password, 10);
 
+    // Account, care profile and first job must succeed or fail together.
     const result = await prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
         data: {
@@ -49,16 +59,52 @@ export async function registerParent(input: ParentIntakeInput & { password: stri
         },
       });
 
-      return { userId: user.id, profileId: profile.id };
+      const job = await tx.jobPost.create({
+        data: {
+          parentId: user.id,
+          title,
+          suburb,
+          careType: primaryCareType,
+          daysRequired: preferredDays,
+          childCount,
+          childAges,
+          startDate,
+          hourlyBudget,
+          specialistSupport: specialistNeeds || "",
+          description: jobDescription,
+          status: "PENDING",
+          contactEmail: email,
+          contactPhone: phone || null,
+        },
+      });
+
+      return { userId: user.id, profileId: profile.id, jobId: job.id };
     });
 
-    // Best-effort welcome + admin notification.
-    await sendParentWelcome(name, email);
-    await notifyAdminNewParent(name, email);
+    // The family receives one confirmation with public match previews only.
+    // An admin receives one actionable review notification. Delivery failures
+    // never undo the successful registration transaction.
+    let matches: Awaited<ReturnType<typeof getNannyMatchesForJob>> = [];
+    try {
+      matches = await getNannyMatchesForJob({
+        id: result.jobId,
+        suburb,
+        careType: primaryCareType,
+        hourlyBudget,
+      });
+    } catch (error) {
+      // A matching lookup is helpful, but must never make a successfully saved
+      // account and care brief appear to fail to the family.
+      console.error("Initial nanny match lookup failed:", error);
+    }
+    await Promise.allSettled([
+      sendParentWelcome(name, email, { jobTitle: title, matchPreviews: matches.slice(0, 3), matchCount: matches.length }),
+      notifyAdminNewFamilyCareBrief(name, email, title, suburb),
+    ]);
 
-    return { success: true, data: result };
+    return { success: true, data: { ...result, matchCount: matches.length } };
   } catch (error) {
-    console.error("Register parent error:", error);
+    console.error("Register parent with first job error:", error);
     return { success: false, error: "Something went wrong. Please try again." };
   }
 }

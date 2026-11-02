@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db/prisma";
 import { auth } from "@/lib/auth/auth";
 import { nannyMatchesJob } from "@/lib/job-matching";
 import { SAFETY_CHECKS } from "@/lib/constants";
-import { requireMembership } from "@/lib/membership";
+import { getMembership, requireMembership } from "@/lib/membership";
 import type { ActionResult } from "./auth";
 
 // The 7 vetting checks that make up "verification progress" (single source: SAFETY_CHECKS).
@@ -185,7 +185,7 @@ export async function getParentDashboard(): Promise<ActionResult> {
     const userId = session?.user?.id;
     if (!userId) return { success: true, data: empty };
 
-    const [enquiriesSent, activeJobs, viewed, favourites, recentEnquiries, jobs, myReviews, profile, recommended] = await Promise.all([
+    const [enquiriesSent, activeJobs, viewed, favourites, recentEnquiries, jobs, myReviews, profile, candidateNannies, membership] = await Promise.all([
       prisma.enquiry.count({ where: { parentId: userId } }),
       prisma.jobPost.count({ where: { parentId: userId, status: { in: ["PENDING", "APPROVED"] } } }),
       prisma.profileView.findMany({ where: { viewerId: userId }, distinct: ["nannyId"], select: { nannyId: true } }),
@@ -204,7 +204,7 @@ export async function getParentDashboard(): Promise<ActionResult> {
       prisma.jobPost.findMany({
         where: { parentId: userId },
         select: {
-          id: true, title: true, careType: true, daysRequired: true, hourlyBudget: true, status: true,
+          id: true, title: true, suburb: true, careType: true, daysRequired: true, hourlyBudget: true, status: true,
           applications: { select: { nanny: { select: { id: true, user: { select: { name: true } } } } }, take: 10 },
         },
         orderBy: { createdAt: "desc" },
@@ -213,12 +213,32 @@ export async function getParentDashboard(): Promise<ActionResult> {
       prisma.review.findMany({ where: { parentId: userId }, select: { nannyId: true, rating: true } }),
       prisma.parentProfile.findUnique({ where: { userId } }),
       prisma.nannyProfile.findMany({
-        where: { adminStatus: { in: ["APPROVED", "VERIFIED", "SPECIALIST"] } },
-        include: { user: { select: { name: true } } },
+        where: { adminStatus: { in: ["APPROVED", "VERIFIED", "SPECIALIST"] }, placementStatus: "AVAILABLE" },
+        select: {
+          id: true,
+          suburb: true,
+          areasCovered: true,
+          careTypes: true,
+          hourlyRate: true,
+          yearsExperience: true,
+          verificationLevel: true,
+          specialistTags: true,
+          adminStatus: true,
+          placementStatus: true,
+          user: { select: { name: true } },
+        },
         orderBy: { createdAt: "desc" },
-        take: 3,
+        take: 1000,
       }),
+      getMembership(),
     ]);
+
+    // Recommendations are genuine matches against this parent's active care
+    // briefs, not simply the most recently approved nanny profiles.
+    const activeCareBriefs = jobs.filter((job) => ["PENDING", "APPROVED"].includes(job.status));
+    const recommended = candidateNannies.filter((nanny) =>
+      activeCareBriefs.some((job) => nannyMatchesJob(nanny, job)),
+    ).slice(0, 6);
 
     return {
       success: true,
@@ -226,6 +246,8 @@ export async function getParentDashboard(): Promise<ActionResult> {
         enquiriesSent,
         activeJobs,
         carersViewed: viewed.length,
+        isMember: membership.isMember,
+        matchingNannyCount: recommended.length,
         jobs: jobs.map((j) => ({
           ...j,
           applications: undefined,

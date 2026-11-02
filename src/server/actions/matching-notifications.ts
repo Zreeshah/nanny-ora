@@ -6,6 +6,7 @@ import { sendMatchingJobNotification, sendMatchingNannyNotification } from "@/li
 
 type NannyWithUser = MatchableNanny & {
   slug: string | null;
+  verificationLevel: string;
   user: { name: string; email: string };
 };
 
@@ -13,6 +14,51 @@ type JobWithParent = MatchableJob & {
   title: string;
   parent: { name: string; email: string };
 };
+
+/** Public, contact-safe match previews for a family's own dashboard and email. */
+export type NannyMatchPreview = {
+  id: string;
+  slug: string | null;
+  name: string;
+  suburb: string;
+  hourlyRate: number;
+  verificationLevel: string;
+};
+
+/**
+ * Finds only public and currently-available profiles that meet the conservative
+ * matching rules. This does not send mail and deliberately exposes no contact
+ * details, so it is safe for a parent match preview before membership purchase.
+ */
+export async function getNannyMatchesForJob(job: MatchableJob): Promise<NannyMatchPreview[]> {
+  const nannies = await prisma.nannyProfile.findMany({
+    where: { adminStatus: { in: ["APPROVED", "VERIFIED", "SPECIALIST"] }, placementStatus: "AVAILABLE" },
+    select: {
+      id: true,
+      slug: true,
+      suburb: true,
+      areasCovered: true,
+      careTypes: true,
+      hourlyRate: true,
+      verificationLevel: true,
+      adminStatus: true,
+      placementStatus: true,
+      user: { select: { name: true, email: true } },
+    },
+    take: 1000,
+  });
+
+  return (nannies as NannyWithUser[])
+    .filter((nanny) => nannyMatchesJob(nanny, job))
+    .map((nanny) => ({
+      id: nanny.id,
+      slug: nanny.slug,
+      name: nanny.user.name,
+      suburb: nanny.suburb,
+      hourlyRate: nanny.hourlyRate,
+      verificationLevel: nanny.verificationLevel,
+    }));
+}
 
 /** Alert available, public nannies after an admin makes a job live. */
 export async function notifyMatchingNanniesForJob(job: JobWithParent) {

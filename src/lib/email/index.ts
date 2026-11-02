@@ -118,12 +118,27 @@ export function sendNannyWelcome(name: string, email: string): Promise<boolean> 
   return sendEmail({ to: email, subject: "Welcome to NannyOra — application received", html: emailShell("Welcome to NannyOra", body, { label: "Go to your dashboard", href: `${SITE_URL}/dashboard/nanny` }) });
 }
 
-/** Welcome a newly-registered parent/family. */
-export function sendParentWelcome(name: string, email: string): Promise<boolean> {
+/** Welcome a family and confirm their mandatory first care brief. */
+export function sendParentWelcome(
+  name: string,
+  email: string,
+  onboarding?: {
+    jobTitle: string;
+    matchCount: number;
+    matchPreviews: { name: string; suburb: string; hourlyRate: number; verificationLevel: string }[];
+  },
+): Promise<boolean> {
+  const matchSummary = onboarding
+    ? onboarding.matchCount > 0
+      ? `<p>We found <strong>${onboarding.matchCount}</strong> currently available profile${onboarding.matchCount === 1 ? "" : "s"} that may fit the location, care type and budget in your care brief. These are initial matches—please review each profile and confirm the practical fit.</p>
+        <ul style="padding-left:20px;margin:14px 0">${onboarding.matchPreviews.map((nanny) => `<li><strong>${escapeHtml(nanny.name)}</strong> · ${escapeHtml(nanny.suburb)} · from NZ$${escapeHtml(String(nanny.hourlyRate))}/hour</li>`).join("")}</ul>
+        <p>Membership unlocks full profile access and direct, on-platform contact. Your job will be reviewed before it is shared with matching nannies.</p>`
+      : `<p>Your first care brief, <strong>${escapeHtml(onboarding.jobTitle)}</strong>, is with our team for review. We could not confirm a currently available exact match from the profile details today, but availability changes and you can still browse the directory after joining.</p>`
+    : `<p>Your family account is ready. You can now browse our agency-verified nannies across Auckland and send enquiries to the caregivers who fit your needs.</p>`;
   const body = `<p>Hi ${escapeHtml(name)},</p>
-    <p>Welcome to <strong>NannyOra</strong>. Your family account is ready. You can now browse our agency-verified
-    nannies across Auckland and send enquiries to the caregivers who fit your needs.</p>`;
-  return sendEmail({ to: email, subject: "Welcome to NannyOra", html: emailShell("Welcome to NannyOra", body, { label: "Find a nanny", href: `${SITE_URL}/find-a-nanny` }) });
+    <p>Welcome to <strong>NannyOra</strong>. Your family account is ready.</p>
+    ${matchSummary}`;
+  return sendEmail({ to: email, subject: "Your NannyOra care brief is ready", html: emailShell("Welcome to NannyOra", body, { label: onboarding?.matchCount ? "View your matches" : "View your dashboard", href: onboarding?.matchCount ? `${SITE_URL}/membership` : `${SITE_URL}/dashboard/parent` }) });
 }
 
 /** Notify a nanny when their verification / listing status changes. */
@@ -168,6 +183,16 @@ export function notifyAdminNewParent(name: string, email: string): Promise<boole
     "New family registration",
     `<p><strong>${escapeHtml(name)}</strong> (${escapeHtml(email)}) has registered as a family.</p>`,
     { label: "View family accounts", href: `${SITE_URL}/admin/families` },
+  );
+}
+
+/** One actionable admin alert for the account + initial job created together. */
+export function notifyAdminNewFamilyCareBrief(name: string, email: string, jobTitle: string, suburb: string): Promise<boolean> {
+  return notifyAdmin(
+    "New family care brief awaiting review",
+    "New family care brief",
+    `<p><strong>${escapeHtml(name)}</strong> (${escapeHtml(email)}) created a family account and submitted <strong>${escapeHtml(jobTitle)}</strong> in ${escapeHtml(suburb)}.</p><p>Review the job before it is made visible to matching nannies.</p>`,
+    { label: "Review job", href: `${SITE_URL}/admin/jobs` },
   );
 }
 
