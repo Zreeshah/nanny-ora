@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Providers } from "@/components/providers/Providers";
 import "./globals.css";
 
@@ -76,6 +77,13 @@ export default function RootLayout({
       className="h-full"
     >
       <head>
+        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-2656ZXW8LM" />
+        <Script id="google-analytics">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-2656ZXW8LM');`}
+        </Script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet" />
