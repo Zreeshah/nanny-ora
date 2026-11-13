@@ -173,6 +173,8 @@ export default function HowToHireANannyPage() {
         { href: "/nanny-contract", label: "Nanny contract guide", description: "Put hours, duties, pay and boundaries in writing." },
         { href: "/nanny-payroll", label: "Nanny payroll", description: "Understand status, PAYE, records and employer setup." },
         { href: "/nanny-safety", label: "Nanny safety", description: "Prepare your home, emergency information and first handover." },
+        { href: "/after-school-nanny", label: "After-school nanny care", description: "Plan pickup, transport, homework and holiday cover." },
+        { href: "/night-nanny", label: "Night nanny for newborns", description: "Set safe, practical overnight support boundaries." },
       ]}
       ctaTitle="Ready to find the right care?"
       ctaBody="Write your family brief, then browse NannyOra profiles or register your family to begin a considered search."
@@ -203,8 +205,8 @@ export default function HowToHireANannyPage() {
       <GuideSection id="choose-nanny-type" title="Choose a nanny type that matches your week" intro={<Prose>The right nanny type is determined by the work you need done, not by the most impressive label. Be explicit about hours and responsibilities so candidates can decide whether the role suits them.</Prose>}>
         <div className="grid sm:grid-cols-2 gap-4">
           <InfoCard title="Full-time or part-time"><Prose>A full-time nanny may cover most working days; a part-time nanny may fit around preschool, school, another caregiver or a parent’s roster. State guaranteed hours and what happens in holidays or when plans change.</Prose></InfoCard>
-          <InfoCard title="After-school or weekend care"><Prose>Include school permissions, collection times, homework, activities, meals, transport, term dates and public-holiday expectations. Short shifts can still require careful travel planning.</Prose></InfoCard>
-          <InfoCard title="Newborn, infant or night care"><Prose>Ask for recent, age-relevant examples. Discuss feeds, safe sleep, settling, handovers, overnight duties, parent preferences and when the nanny would call for help.</Prose></InfoCard>
+          <InfoCard title="After-school or weekend care"><Prose>Include school permissions, collection times, homework, activities, meals, transport, term dates and public-holiday expectations. Short shifts can still require careful travel planning. Use the <Link href="/after-school-nanny" className="text-primary underline underline-offset-2 font-semibold">after-school nanny guide</Link> to shape the brief.</Prose></InfoCard>
+          <InfoCard title="Newborn, infant or night care"><Prose>Ask for recent, age-relevant examples. Discuss feeds, safe sleep, settling, handovers, overnight duties, parent preferences and when the nanny would call for help. The <Link href="/night-nanny" className="text-primary underline underline-offset-2 font-semibold">night-nanny guide</Link> has practical overnight planning prompts.</Prose></InfoCard>
           <InfoCard title="Specialist or emergency support"><Prose>For sensory-aware, neurodiverse, disability-informed or short-notice care, define the child’s practical strengths and needs, the nanny’s scope and the support available from parents or professionals. See <Link href="/specialist-nanny-care" className="text-primary underline underline-offset-2 font-semibold">specialist nanny care</Link> for planning prompts.</Prose></InfoCard>
         </div>
       </GuideSection>
