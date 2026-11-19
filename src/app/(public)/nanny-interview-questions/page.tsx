@@ -25,6 +25,7 @@ export const metadata: Metadata = {
 };
 
 const faqs: GuideFaq[] = [
+  { question: "How do I assess a nanny's judgment in emergencies?", answer: "Ask for a real example, not a promise. A strong candidate describes a clear sequence: make the child safe, call 111 for an urgent medical emergency, follow the child's authorised plan, inform the parents promptly and record what happened. Check that child first aid is current, then test judgment with a scenario — for example, a baby's breathing looking unusual during a nap — and listen for priorities, when they would seek help and what they would document." },
   { question: "What should I ask when interviewing a nanny?", answer: "Ask about recent age-relevant experience, daily routines, behaviour guidance, safety, emergencies, communication, transport, duties, availability and employment expectations. Use open questions and ask for specific examples rather than yes-or-no assurances." },
   { question: "How long should a nanny interview take?", answer: "A first video call may take 20 to 30 minutes. A serious in-person interview often needs 45 to 75 minutes, plus time for the candidate’s questions. Do not compress a high-trust hiring decision into a rushed conversation." },
   { question: "Should my child be at the interview?", answer: "Complete the main adult conversation without relying on your child to assess the candidate. A brief, low-pressure introduction can be useful, followed by a separate paid trial where you can observe interaction safely." },
@@ -64,6 +65,7 @@ export default function NannyInterviewQuestionsPage() {
         { id: "safety-questions", label: "Safety and emergencies" },
         { id: "role-questions", label: "Duties and employment" },
         { id: "scenario-questions", label: "Scenario questions" },
+        { id: "assess-emergency-judgment", label: "Assess judgment in emergencies" },
         { id: "evaluate", label: "Evaluate the answers" },
         { id: "paid-trial", label: "Plan a paid trial" },
       ]}
@@ -251,6 +253,24 @@ export default function NannyInterviewQuestionsPage() {
             What do you do first? When and how do you tell the parent? How should vehicle, insurance, mileage and incident expectations have been agreed beforehand?
           </InfoCard>
         </div>
+      </GuideSection>
+
+      <GuideSection
+        id="assess-emergency-judgment"
+        title="How to assess a nanny's judgment in emergencies"
+        intro={<Prose>Emergency judgment is not about staying calm in the abstract — it is about knowing the sequence. Ask the candidate to talk through a real emergency they handled, then test them with a scenario of your own.</Prose>}
+      >
+        <Checklist items={[
+          "Ask for a specific example: what happened, what they did first, whom they called and what they recorded afterwards.",
+          "Listen for the right order: make the child safe, call 111 for an urgent medical emergency, follow the child's authorised plan, inform the parents promptly, then document what happened.",
+          "Check that child first aid is current and ask when they last used it in a real situation.",
+          "Test with a scenario, such as a baby's breathing looking unusual during a nap: what would they check immediately, when would they call 111, and how would they manage the other child?",
+          "Ask what they would do if they could not reach you — a strong answer names a backup contact and the family's written emergency plan, not improvisation.",
+          "Watch for limits: a good candidate says what they would not do, when they would seek help and what they would need to learn.",
+        ]} />
+        <Prose>
+          Vague reassurance is the warning sign. “I would stay calm” without a sequence, a contact order or a record tells you nothing about judgment. Compare the answer with the <Link href="/nanny-safety" className="text-primary underline underline-offset-2 font-semibold">nanny safety guide</Link> and make sure your home's emergency contacts, allergy plans and first aid supplies are ready before the first solo shift.
+        </Prose>
       </GuideSection>
 
       <GuideSection

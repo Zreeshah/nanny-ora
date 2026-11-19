@@ -96,6 +96,9 @@ export default function NannyVettingPage() {
         <InfoCard title="NannyOra is a platform—not the household employer" tone="soft">
           NannyOra makes profile discovery and verification information more transparent. The family still decides whom to interview and hire, confirms the match, and meets any employment, payroll and household safety responsibilities. Start by reading the verification badge and the individual checks shown on a profile.
         </InfoCard>
+        <Prose>
+          Once you know what to look for, browse <Link href="/find-a-nanny" className="text-primary underline underline-offset-2 font-semibold">nanny in Auckland</Link> profiles on NannyOra and compare the verification information shown on each one before you shortlist.
+        </Prose>
       </GuideSection>
 
       <GuideSection
