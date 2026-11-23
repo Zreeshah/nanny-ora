@@ -357,7 +357,7 @@ export default async function HomePage() {
             {/* Emotional background photography */}
             <Image
               src={finalCtaImage.src}
-              alt=""
+              alt={finalCtaImage.alt}
               fill
               className="object-cover"
               sizes="100vw"
