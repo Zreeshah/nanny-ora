@@ -282,11 +282,11 @@ export default function ApplyAsNannyPage() {
           Register your basic information and start receiving family enquiries at no cost. When
           you&apos;re ready, you can join our{" "}
           <strong className="text-foreground">
-            vetted pool (NZ${(NANNY_TIERS[0].priceCents / 100).toFixed(0)})
+            <Link href="/nanny-vetting" className="text-primary font-semibold hover:underline">vetted pool</Link> (NZ${(NANNY_TIERS[0].priceCents / 100).toFixed(0)})
           </strong>{" "}
           or go{" "}
           <strong className="text-foreground">
-            Premium (NZ${(NANNY_TIERS[1].priceCents / 100).toFixed(0)}, incl. First Aid training + a
+            Premium (NZ${(NANNY_TIERS[1].priceCents / 100).toFixed(0)}, incl. <Link href="/nanny-safety" className="text-primary font-semibold hover:underline">First Aid training</Link> + a
             Verified Premium badge)
           </strong>{" "}
           — a one-off payment, with no monthly nanny fee. A 10% service fee applies to completed
