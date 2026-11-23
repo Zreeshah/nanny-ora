@@ -260,6 +260,9 @@ const LEGAL_SECTIONS = [
   {
     title: "Written Employment Agreement",
     body: "Every employee must have a written employment agreement. It should identify the parties, work, place, hours, pay and required problem-resolution terms, plus the nanny-specific details listed earlier. Allow the nanny to seek advice before signing.",
+    links: [
+      { label: "Nanny contract guide", href: "/nanny-contract" },
+    ],
     note: "If you use a trial period, Employment New Zealand says it must be agreed in the employment agreement, last no more than 90 calendar days, apply to someone who has not worked for that employer before and be signed before work starts. A paid trial shift performed before signing can create serious risk for a later trial-period clause. Distinguish a recruitment trial session from an employment-law trial period and obtain advice.",
   },
   {
@@ -275,6 +278,7 @@ const LEGAL_SECTIONS = [
     title: "PAYE and the IR56 Rule",
     body: "Do not assume every nanny uses the same tax process. Inland Revenue defines a private domestic worker for IR56 purposes as someone who works in the employer’s home, does non-business domestic work, is paid directly by the employer and does not work more than 30 hours a week on average for each employer. An eligible IR56 worker registers with IRD and manages their own PAYE process. If the arrangement does not meet the IR56 conditions, the household may need to register as an employer, deduct and file PAYE, and handle other deductions.",
     links: [
+      { label: "Nanny payroll guide", href: "/nanny-payroll" },
       { label: "Private domestic worker guidance", href: "https://www.ird.govt.nz/roles/ir56-workers/private-domestic-workers" },
       { label: "Employer decision guidance", href: "https://www.ird.govt.nz/employing-staff/am-i-an-employer" },
     ],
