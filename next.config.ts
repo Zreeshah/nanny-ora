@@ -23,6 +23,15 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "10mb",
     },
   },
+  async redirects() {
+    return [
+      // Placeholder profile IDs that never existed as public profiles
+      // (reported as 404s in GSC, 2026-11-24). Send them to the directory.
+      { source: "/nannies/nanny-001", destination: "/find-a-nanny", permanent: true },
+      { source: "/nannies/nanny-002", destination: "/find-a-nanny", permanent: true },
+      { source: "/nannies/nanny-003", destination: "/find-a-nanny", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;
